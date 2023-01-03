@@ -1,0 +1,42 @@
+{%extends "index.html"%}
+
+{%block content%}
+{%- for category, message in get_flashed_messages(with_categories = true) %}
+<span style="width:50px;">
+<!--    <li class="p-1 mb-1 bg-danger text-white">{{ message }}</li>-->
+    {%if category== 'success'%}
+        <li class="p-1 mb-1 bg-success text-white">{{ message }}</li>
+    {%else%}
+        <li class="p-1 mb-1 bg-danger text-white">{{ message }}</li>
+    {%endif%}
+
+</span>
+{%- endfor %}
+
+<br>
+
+
+
+
+
+
+<div class="d-grid gap-2 col-3 mx-auto" style="margin:auto; margin-top:8%">
+    <form class="col g-3" action={{request.path}} method="post" enctype="multipart/form-data">
+        <div>
+
+            <label class="form-label">Bill PDF/Excel</label>
+                    <input type="file" class="form-control" name="file" accept=".csv" required>
+
+
+        </div>
+
+
+        <br>
+        <div class="d-grid gap-2 col-6 mx-auto">
+            <button type="submit" class="btn btn-outline-primary">Add</button>
+        </div>
+
+    </form>
+</div>
+
+{%endblock%}

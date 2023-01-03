@@ -1,0 +1,132 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% include 'alert.html' %}
+
+<div class="d-grid gap-2 col-5 mx-auto" style="margin-top:40px">
+
+    <form action="{{request.path}}" method="post" enctype="multipart/form-data">
+
+        <fieldset>
+            {{ form.csrf_token}}
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="form-outline">
+                        <label class="form-label">Client Name<span style="color:red">*</span></label>
+                        {{form.customer_name(class="form-select form-select-lg mb-3 bg-info text-light")}}
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">AD/GP/Others.<span style="color:red">*</span></label>
+                        <input type="text" id="form3Example2" value="{{request.form['content_advt']}}"
+                               class="form-control"
+                               name="content_advt" placeholder="AD/GP/Others." required/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">RO Date<span style="color:red">*</span></label>
+                        <input type="date" class="form-control" name="date_of_order"
+                               value="{{request.form['date_of_order']}}"
+                               placeholder="RO Date" required/>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">DoP<span style="color:red">*</span></label>
+                        <input type="date" class="form-control" name="dop"
+                               value="{{request.form['dop']}}"
+                               placeholder="DoP" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+
+                    <label class="form-label">Bill No.<span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="bill" value="{{request.form['bill']}}"
+                           placeholder="Bill No." required>
+                </div>
+                <div class="col">
+
+                    <label class="form-label">Bill Date<span style="color:red">*</span></label>
+                    <input type="date" class="form-control" name="bill_date" value="{{request.form['bill_date']}}"
+                           placeholder="Bill Date" required>
+                </div>
+
+
+                <div class="col">
+                    <label class="form-label">Amount (In Rs.)<span style="color:red">*</span></label>
+                    <input type="text" placeholder="Amount" class="form-control"
+                           value="{{request.form['amount']}}" name="amount" required>
+
+                </div>
+            </div>
+
+            <div class="row mb-3">
+
+                <div class="row mb-3" style="border-radius:15px" id="client_bg">
+
+
+                    <div class="col">
+                        <label class="form-label">Status (Pending, Received or Cancel)<span style="color:red">*</span></label>
+                        {{form.status_name(class="form-select form-select-lg mb-3 bg-info text-light")}}
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label">Date of (Pending, Received)<span style="color:red">*</span></label>
+                        <input type="date" class="form-control" value="{{request.form['amount_received_date']}}"
+                               name="amount_received_date" required>
+                    </div>
+
+                </div>
+                <div class="row mb-3">
+
+                    <!--                    <div class="col">-->
+                    <!--                        <label class="form-label">Pending Rs.</label>-->
+                    <!--                        <input type="text" placeholder="Pending Amount" class="form-control"-->
+                    <!--                               value="{{request.form['pending_amount']}}" name="pending_amount">-->
+                    <!--                    </div>-->
+                    <div class="col">
+                        <label class="form-label">Bill Copy</label>
+                        <input type="file" class="form-control" name="file">
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Pending Payment Received Date</label>
+                        <input type="date" class="form-control"
+                               value="{{request.form['pending_amount_received_date']}}"
+                               name="pending_amount_received_date">
+                    </div>
+
+
+                </div>
+                <div class="row mb-3">
+
+                </div>
+
+            </div>
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <button type="submit" class="btn btn-outline-primary" data-toggle="modal"
+                        data-target=".bd-example-modal-lg">Add
+                    Record
+                </button>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+<br>
+<br>
+<br>
+
+{% block script%}
+<script src="{{url_for('static', filename='form_disable.js')}}"></script>
+{% endblock %}
+
+{% include 'footer.html' %}
+{% endblock %}

@@ -1,0 +1,185 @@
+{%extends "index.html"%}
+
+{%block content%}
+
+<style>
+
+    table {
+    counter-reset: 1;
+}
+
+table tr {
+    counter-increment: rowNumber;
+}
+
+table tr td:first-child::before {
+    content: counter(rowNumber);
+
+}
+
+
+
+
+</style>
+
+
+<br>
+
+<h1 style="text-align:center" class="mb-2">Data Sheet</h1>
+<form method="POST">
+    <div class="row flex justify-content-start" style="margin-left:5px">
+        <div class="col-2">
+            <input type="text" class="form-control" name="search"
+                   placeholder="Search"/>
+        </div>
+        <div class="col-1">
+            <button type="submit" class="btn btn-primary" onclick="location.href='{{url_for('search')}}'">Search
+            </button>
+        </div>
+        <div style="text-align: center">
+            <u><h5 id="total_results"></h5></u>
+        </div>
+    </div>
+</form>
+<br>
+
+<div class="w-100" style="overflow-y:scroll;height:450px; margin:auto; margin-top:2px">
+    <div class="d-block" style="position:fixed;top:9rem; left:80rem;">
+        <div>
+            <a class="add_button"
+               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"
+               href="{{url_for('add_record')}}">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+        </div>
+
+    </div>
+    <form action="" method="post">
+        <table class="table table-hover table-sortable" id="table-sortable">
+
+            <thead>
+            <tr>
+                <th>S.No.</th>
+                <th>Client</th>
+                <th style="width:18%">AD/GP/Others</th>
+                <th>RO Date</th>
+                <th>DoP</th>
+
+                <th>Bill No.</th>
+                <th>Bill Date</th>
+                <th style="width:5%">Amount(Rs.)</th>
+                <th>Status</th>
+
+                <th>Pending(Rs.)</th>
+                <th>PP Received</th>
+
+                <th>Action</th>
+
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for res in rec%}
+            <tr>
+                <td></td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">
+                    {{res.customer_name.customer_name}}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{
+                    res.content_advt}}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{
+                    res.date_of_order}}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{ res.dop }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{res.bill }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{res.bill_date
+                    }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{ res.amount
+                    }}
+                </td>
+
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'" class="status">
+                    {{res.status_name.status_name}} ({{ res.amount_received_date }})
+                </td>
+
+
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'" id="pending_amount">
+                    {{
+                    res.pending_amount }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{
+                    res.pending_amount_received_date }}
+                </td>
+
+
+                <td>
+                    <button type="button" id="del" class="btn btn-outline-danger" onclick="del_rec({{rec.id}})"
+                            data-toggle="modal" data-target=".bd-example-modal-sm">
+                        Delete
+                    </button>
+
+                </td>
+
+                <td>
+                    <div id="bd-example-modal-sm{{rec.id}}" class="modal fade bd-example-modal-sm" tabindex="-1"
+                         role="dialog"
+                         aria-labelledby="mySmallModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    Are You Sure ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                            onclick="location.href='{{url_for('dashboard')}}'">Close
+                                    </button>
+                                    <a class="btn btn-danger" id="modal_del{{res.id}}"
+                                       href="location.href='{{url_for('delete_record', record_id = res.id)}}'">
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+
+    </form>
+</div>
+
+
+<script>
+function del_rec(id){
+    $('#bd-example-modal-sm'+id).modal('show');
+    $('#modal_del'+id).attr('href','')
+    $('#modal_del'+id).attr('href','/delete_record/'+id)
+ }
+
+
+
+var table = document.getElementById("table-sortable");
+var tbodyRowCount = table.tBodies[0].rows.length;
+console.log(tbodyRowCount)
+var total_results = document.getElementById("total_results").innerHTML ='Total Results Found'+' : '+ tbodyRowCount
+
+</script>
+
+{%endblock%}

@@ -1,0 +1,233 @@
+{%extends "index.html"%}
+
+{%block content%}
+
+<style>
+
+    table {
+    counter-reset: 1;
+}
+
+table tr {
+    counter-increment: rowNumber;
+}
+
+table tr td:first-child::before {
+    content: counter(rowNumber);
+
+}
+
+</style>
+
+
+<br>
+
+
+<h1 style="text-align:center" class="mb-2">Data Sheet</h1>
+<form method="POST" action="{{url_for('search')}}">
+    <div class="row flex justify-content-start" style="margin-left:2px">
+        <div class="col-2">
+            <input type="text" class="form-control" name="search"
+                   placeholder="Search"/>
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary" onclick="location.href='{{url_for('search')}}'">Search
+            </button>
+        </div>
+
+    </div>
+</form>
+<br>
+
+<div class="w-100" style="overflow-y:scroll;height:450px; margin:auto; margin-top:2px">
+    <div class="d-block" style="position:fixed;top:9rem; left:70rem;">
+        <div class="mb-1">
+            <a class="add_button"
+               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"
+               href="{{url_for('add_record')}}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+        </div>
+    </div>
+
+    <div class="row mb-1">
+
+        <div class="col-4" style="margin-left:20px; margin-bottom:5px">
+            <form action="{{url_for('csv_file_record_to_update')}}" method="POST">
+
+                <div class="">
+                    <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
+                    <button type="submit" class="btn btn-primary" id="check_rec_ids_btn">Generate Custom Report
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+
+        <div class="col col-sm-2">
+            <form method="POST" action="/get_checked_boxes">
+
+                <input type="text" id="rec_ids" name="rec_ids" hidden/>
+                <button type="submit" class="del_button" id="stu_ids_submit">
+                    Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+                </button>
+
+            </form>
+        </div>
+
+        <div class="col col-sm-2">
+            <form method="POST" action="/send_rec_id">
+
+                <input type="text" id="send_rec_ids" name="send_rec_ids" hidden/>
+                <button type="submit" class="update_button" id="class_ids_submit">
+                    Update Status<i class="fa fa-arrow-up" aria-hidden="true"></i>
+                </button>
+
+            </form>
+        </div>
+        <div class="col">
+            <form action="{{url_for('generate_report')}}" method="POST">
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary" id="print_records_btn">Print Records</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+    <form action="" method="post">
+        <table class="table table-hover table-sortable" id="table-sortable">
+
+            <thead>
+            <tr>
+                <th title="Serial Number">S.No.</th>
+                <th title="Client Name">Client</th>
+                <th style="width:18%" title="Advertisement/Guest Post">AD/GP/Others</th>
+                <th title="Release Order Date">RO Date</th>
+                <th title="Date of Publication">DoP</th>
+
+                <th title="Bill No.">Bill No.</th>
+                <th title='Bill Date'>Bill Date</th>
+                <th title="Final Amount on Which Client Agreed" style="width:5%">Amount(Rs.)</th>
+
+
+                <th title="Remaining Amount To be Paid">Pending(Rs.)</th>
+                <th title="Date of Pending Payment Received">PP Received</th>
+                <th title="Shows Current Status of Payment">Status</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for record in all_records %}
+            <tr>
+
+                <td>
+                    <input onchange="check_box()" class="form-check-input" name="check-box" id="check" type="checkbox" value="{{record.id}}">
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">
+                    {{record.customer_name.customer_name}}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">{{
+                    record.content_advt}}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">{{
+                    record.date_of_order}}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">{{ record.dop }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">{{record.bill }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">{{record.bill_date
+                    }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">{{ record.amount
+                    }}
+                </td>
+
+
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'" id="pending_amount">
+                    {{
+                    record.pending_amount }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">{{
+                    record.pending_amount_received_date }}
+                </td>
+
+                <td style="cursor: pointer"
+                    onclick="location.href='{{url_for('record_details', record_id = record.id)}}'" class="status">
+                    {{record.status_name.status_name}} ({{ record.amount_received_date }})
+                </td>
+                <td>
+                    <button type="button" id="del" class="btn btn-outline-danger" onclick="del_rec({{record.id}})"
+                            data-toggle="modal" data-target=".bd-example-modal-sm">
+                        Delete
+                    </button>
+
+                </td>
+
+                <td>
+                    <div id="bd-example-modal-sm{{record.id}}" class="modal fade bd-example-modal-sm" tabindex="-1"
+                         role="dialog"
+                         aria-labelledby="mySmallModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    Are You Sure ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                            onclick="location.href='{{url_for('dashboard')}}'">Close
+                                    </button>
+                                    <a class="btn btn-danger" id="modal_del{{record.id}}"
+                                       href="location.href='{{url_for('delete_record', record_id = record.id)}}'">
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </form>
+</div>
+
+
+<script>
+function del_rec(id){
+    $('#bd-example-modal-sm'+id).modal('show');
+    $('#modal_del'+id).attr('href','')
+    $('#modal_del'+id).attr('href','/delete_record/'+id)
+ }
+
+
+function check_box()
+{
+    if($('.form-check-input').is(":checked"))
+        $("#add").hide() && $("#print_records_btn").hide();
+
+
+    else
+        $("#add").show() && $("#print_records_btn").show();
+}
+
+</script>
+
+
+{%endblock%}

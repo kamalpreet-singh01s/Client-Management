@@ -1,0 +1,87 @@
+{%extends "index.html"%}
+
+{%block content%}
+
+
+<h1 style="text-align:center">Current Status List</h1>
+<br>
+
+<div style="margin:auto" class="d-grid gap-2 col-4 mx-auto">
+    <div style="overflow-y:scroll; height:200px; margin-left:10px">
+        <table class="table table-hover table-sortable">
+            <thead>
+            <tr>
+                <th>Status Name</th>
+                <th>Action</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for stat in all_status %}
+            <tr>
+                <td>{{ stat.status_name }}</td>
+
+                <td>
+                    <button type="button" d="del" class="btn btn-outline-danger" onclick="del_rec({{stat.id}})"
+                             data-target=".bd-example-modal-sm"
+                    >Delete
+                    </button>
+                    <button type="button" class="btn btn-outline-success"
+                            onclick="location.href='{{url_for('update_payment_status', status_id = stat.id)}}'"
+                    >Edit
+                    </button>
+
+                </td>
+
+                <td>
+                    <div id="bd-example-modal-sm{{stat.id}}" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+                         aria-labelledby="mySmallModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    Are You Sure ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                            onclick="location.href='{{url_for('show_all_payment_status')}}'">Close
+                                    </button>
+                                    <a class="btn btn-danger" id="modal_del{{stat.id}}"
+                                            href="location.href='{{url_for('delete_payment_status', status_id = stat.id)}}'">
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="d-grid gap-2 col-6 mx-auto" style="margin-top: 20px;">
+        <form action="{{url_for('payment_status')}}" method="POST">
+
+            <div>
+                <label class="form-label">Status Name</label>
+                <input type="text" class="form-control" placeholder="Status Name" name="status_name" required>
+                <br>
+            </div>
+            <div class="d-grid gap-2 col-5 mx-auto w-50">
+                <button type="submit" class="btn btn-outline-primary">Add</button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+<script>
+function del_rec(id){
+    $('#bd-example-modal-sm'+id).modal('show');
+    $('#modal_del'+id).attr('href','')
+    $('#modal_del'+id).attr('href','/delete_payment_status/'+id)
+ }
+</script>
+    {%endblock%}

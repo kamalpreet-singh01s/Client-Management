@@ -1,0 +1,69 @@
+{%extends "index.html"%}
+
+{%block content%}
+{%- for category, message in get_flashed_messages(with_categories = true) %}
+<span style="width:50px;">
+<!--    <li class="p-1 mb-1 bg-danger text-white">{{ message }}</li>-->
+    {%if category== 'success'%}
+        <li class="p-1 mb-1 bg-success text-white">{{ message }}</li>
+    {%else%}
+        <li class="p-1 mb-1 bg-danger text-white">{{ message }}</li>
+    {%endif%}
+
+</span>
+{%- endfor %}
+
+<br>
+
+
+<h1 style="text-align:center">Receipts</h1>
+<br>
+
+
+<div style="margin:auto" class="d-grid gap-2 col-11 mx-auto">
+    <div style="overflow-y:scroll; height:200px; margin-left:10px">
+        <table class="table table-hover table-sortable">
+            <thead>
+            <tr>
+                <th>S.No.</th>
+                <th>Client</th>
+                <th>AD/GP/Others.</th>
+                <th>RO Date</th>
+                <th>DoP</th>
+
+                <th>Bill</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for paid in paid_list %}
+            <tr>
+                <td>{{ paid.id }}</td>
+                <td>{{ paid.customer_name.customer_name }}</td>
+                <td>{{ paid.content_advt }}</td>
+                <td>{{ paid.date_of_order }}</td>
+
+                <td>{{ paid.dop }}</td>
+                <td>{{ paid.bill }}</td>
+                <td>{{ paid.bill_date }}</td>
+                <td>{{ paid.amount }}</td>
+                <td style="color:green; font-weight:600" class="status">{{ paid.status_name.status_name }}</td>
+                <td>
+
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    <hr>
+    <div class="d-flex justify-content-end" style="margin-right:150px">
+        <h6>Received Total: Rs. {{total}}</h6>
+    </div>
+
+</div>
+
+{%endblock%}

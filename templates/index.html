@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename= 'sm2.png')}}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='alert.css') }}">
+     <link rel="stylesheet" href="/static/light.css">
+    <link rel="stylesheet" href="/static/dark.css">
+
+
+    <title>{%block title%}{% endblock %}</title>
+
+    <style>
+     #navbarNav ul li a{
+            font-size: 18px;
+        }
+
+        #navbarNav ul li a:hover{
+            color:yellow;
+            text-decoration: overline;
+            transition : 1s;
+
+        }
+
+        .navbar-brand{
+            font-size:30px;
+            margin-left:10px;
+        }
+
+        .navbar-brand:hover{
+            color:yellow;
+            transition : 1s;
+        }
+a{
+    text-decoration:none
+}
+
+
+.logout:hover{
+    color:white;
+    background-color: red;
+}
+
+
+ ::-webkit-scrollbar {
+    width: 8px;
+ }
+
+ ::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: cyan;
+}
+
+table tr:hover{
+    background-color:lightcyan;
+}
+
+.del_button {
+            border: none;
+            background-color:white;
+            color: red;
+            font-size:17px;
+            font-weight:bold;
+        }
+
+        .del_button:focus {
+            border: none;
+            outline: none;
+        }
+
+        .update_button{
+            border: none;
+            background-color:white;
+            border: none;
+            outline: none;
+            font-size:17px;
+            font-weight:bold;
+        }
+
+        .update_button:focus{
+            outline:none !important;
+        }
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+
+<nav style="position:sticky; top:0; z-index:1;" class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a href="{{url_for('dashboard')}}" class="navbar-brand"><img src="{{url_for('static', filename= '0.png')}}"
+                                                                 style=""
+                                                                 height="40px" alt="LOGO" class="navbar-brand"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+            <li class="nav-item active">
+                <a href="{{url_for('dashboard')}}" class="nav-link active">Home</a>
+            </li>
+            <li class="nav-item active">
+                <a href="{{url_for('all_customer_names')}}" class="nav-link active">Clients</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{url_for('pending_payment_list')}}" class="nav-link active">Pending Payments</a>
+            </li>
+            <li class="nav-item">
+                <a href="{{url_for('paid_payment_list')}}" class="nav-link active">Receipts</a>
+            </li>
+        </ul>
+        <div class="dropdown show nav-item" style="margin-right: 100px">
+            <a class="btn btn-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+               data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                {{session.username.capitalize()}}
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                <a class="dropdown-item" href="{{url_for('manage_users')}}">Manage Users</a>
+                <a class="dropdown-item" href="{{url_for('show_all_payment_status')}}">Add Payment Status</a>
+                 <a class="dropdown-item" id="theme-toggle" >Dark Mode</a>
+                 <a class="dropdown-item" href="{{url_for('file_upload')}}">Import Data From File</a>
+
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item logout" href="{{url_for('logout')}}">Logout</a>
+            </div>
+        </div>
+    </div>
+
+</nav>
+{% include 'alert.html' %}
+
+{%block content%}{%endblock%}
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+<script src="{{url_for('static', filename='script.js')}}"></script>
+<script src="{{url_for('static', filename='dark_mode.js')}}"></script>
+<script src="{{url_for('static', filename='checkbox_del.js')}}"></script>
+{%include 'footer.html'%}
+</body>
+
+</html>

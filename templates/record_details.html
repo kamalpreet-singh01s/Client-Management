@@ -1,0 +1,166 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% include 'alert.html' %}
+
+<div class="d-grid gap-2 col-5 mx-auto" style="margin-top:40px">
+
+    <form action="{{request.path}}" method="post" enctype="multipart/form-data">
+        <div style="position:fixed; margin-left:700px; top:10rem;">
+
+            <div class="row mb-4">
+                <div class="col">
+                    <button type="button" class="btn btn-outline-success" onclick="hideDisable()" id="edit_button">
+                        Edit
+                    </button>
+                </div>
+                <br>
+                <div class="col">
+                    <input type="submit" value="Update" class="btn btn-outline-info" id="update_button" hidden/>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-outline-danger"
+                            onclick="location.href='{{url_for('record_details',record_id = record_to_update.id)}}'"
+                            id="discard_button" hidden>
+                        Discard
+                    </button>
+                </div>
+            </div>
+        </div>
+        <fieldset disabled class="form_disabled">
+            {{ form.csrf_token}}
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="form-outline">
+                        <label class="form-label">Client Name</label>
+                        {{form.customer_name(class="form-select form-select-lg mb-3 bg-info text-light")}}
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">AD/GP/Others.</label>
+                        <input type="text" id="form3Example2" value="{{record_to_update.content_advt}}"
+                               class="form-control"
+                               name="content_advt" placeholder="AD/GP/Others." required/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">RO Date</label>
+                        <input type="date" class="form-control" name="date_of_order"
+                               value="{{record_to_update.date_of_order}}"
+                               placeholder="RO Date" required/>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">DoP</label>
+                        <input type="date" class="form-control" name="dop"
+                               value="{{record_to_update.dop}}"
+                               placeholder="DoP" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+
+                    <label class="form-label">Bill No.</label>
+                    <input type="text" class="form-control" name="bill" value="{{record_to_update.bill}}"
+                           placeholder="Bill" required>
+                </div>
+
+                <div class="col">
+
+                    <label class="form-label">Bill Date</label>
+                    <input type="date" class="form-control" name="bill" value="{{record_to_update.bill_date}}"
+                           placeholder="Bill" required>
+                </div>
+
+
+                <div class="col">
+                    <label class="form-label">Amount (In Rs.) </label>
+                    <input type="text" placeholder="Amount" class="form-control"
+                           value="{{record_to_update.amount}}" name="amount" required id="amount">
+
+                </div>
+            </div>
+
+
+            <div class="row mb-3" style="border-radius:15px" id="client_bg">
+
+
+                <div class="col">
+                    <label class="form-label">Status (Pending, Received or Cancel)</label>
+                    {{form.status_name(class="form-select form-select-lg mb-3 bg-info text-light")}}
+                </div>
+
+                <div class="col">
+                    <label class="form-label">Date of (Pending, Received)</label>
+                    <input type="date" class="form-control" value="{{record_to_update.amount_received_date}}"
+                           name="amount_received_date" required>
+                </div>
+
+            </div>
+            <div class="row mb-3">
+
+                <div class="col">
+                    <label class="form-label">Pending Rs.</label>
+                    <input type="text" placeholder="Pending Amount" class="form-control"
+                           value="{{record_to_update.pending_amount}}" name="pending_amount" disabled>
+                </div>
+                <div class="col">
+                    <label class="form-label">Pending Payment Received Date</label>
+                    <input type="date" class="form-control"
+                           value="{{record_to_update.pending_amount_received_date}}"
+                           name="pending_amount_received_date">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label class="form-label">Bill Copy</label>
+                    <a style="text-decoration:none;" href="{{url_for('download', record_id = record_to_update.id)}}">{{record_to_update.filename}}</a>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">Upload New Bill Copy</label>
+                        <input type="file" class="form-control" name="file">
+                    </div>
+                </div>
+            </div>
+<input type="text" name="backup" id="backup" value="{{final_deal}}" hidden>
+
+</fieldset>
+   </form>
+</div>
+
+
+<br>
+<br>
+<br>
+
+{% block script%}
+<script src="{{url_for('static', filename='form_disable.js')}}"></script>
+
+<!--<script>-->
+<!--function myFunction() {-->
+<!--  var status = document.getElementById("status_name").value;-->
+<!--  var final_deal = document.getElementById("backup").value;-->
+<!--  var amount = document.getElementById("amount").value;-->
+<!--  console.log(status);-->
+<!--  if (status == 2){-->
+<!--       amount = final_deal;-->
+<!--       console.log(amount)-->
+<!--  }-->
+<!--}-->
+
+<!--</script>-->
+
+{% endblock %}
+
+{% include 'footer.html' %}
+{% endblock %}
