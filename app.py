@@ -6,11 +6,15 @@ from io import BytesIO
 
 import pandas as pd
 from flask import render_template, request, url_for, flash, redirect, send_file, session, send_from_directory
+from flask_migrate import Migrate
 from sqlalchemy import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from Form import Form
-from models import Customer, Records, app, db, Status, Users
+from form import Form
+from models import db, create_app, Customer, Records, Status, Users
+
+app = create_app()
+migrate = Migrate(app, db, render_as_batch=True)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -122,9 +126,7 @@ def add_customer():
                 flash(message, category='error')
 
             email_reg = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-            if re.fullmatch(email_reg, request.form['email']):
-                pass
-            else:
+            if not re.fullmatch(email_reg, request.form['email']):
                 message = "Enter a Valid Email"
                 flash(message, category='error')
 
@@ -229,9 +231,9 @@ def add_record():
         form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
 
         if request.method == "POST":
-            file = request.files['file']
-            getcustomer = Customer.query.filter_by(id=request.form["customer_name"]).first()
-            final_deal = getcustomer.final_deal
+            uploaded_file = request.files['file']
+            get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
+            final_deal = get_customer.final_deal
             record = Records(request.form["customer_name"], request.form["content_advt"], request.form["date_of_order"],
                              request.form["dop"], request.form["bill"], request.form["bill_date"],
                              float(request.form["amount"]),
@@ -239,7 +241,7 @@ def add_record():
                              amount_received_date=request.form["amount_received_date"],
                              pending_amount_received_date=request.form["pending_amount_received_date"],
                              status_id=request.form["status_name"],
-                             filename=file.filename, data=file.read())
+                             filename=uploaded_file.filename, data=uploaded_file.read())
 
             db.session.add(record)
             db.session.commit()
@@ -272,8 +274,8 @@ def record_details(record_id):
 
         if request.method == "POST":
 
-            getcustomer = Customer.query.filter_by(id=request.form["customer_name"]).first()
-            final_deal = getcustomer.final_deal
+            get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
+            final_deal = get_customer.final_deal
 
             record_to_update.customer_id = request.form["customer_name"]
             record_to_update.content_advt = request.form["content_advt"]
@@ -290,10 +292,10 @@ def record_details(record_id):
 
             # record_to_update.amount = request.form["amount"]
             # record_to_update.pending_amount = int(final_deal) - int(request.form["amount"])
-            file = request.files['file']
+            uploaded_file = request.files['file']
             if request.files['file']:
                 record_to_update.filename = request.files['file'].filename
-                record_to_update.data = file.read()
+                record_to_update.data = uploaded_file.read()
             print(type(record_to_update.status_id))
             if record_to_update.status_id == '2':
                 record_to_update.amount = float(request.form['backup'])
@@ -397,8 +399,9 @@ def download(record_id):
     return render_template('login.html')
 
 
+# Search records
 @app.route('/search', methods=['POST'])
-def search():
+def search_records():
     if "username" in session:
         all_records_for_search = Records.query.all()
         if request.method == 'POST':
@@ -542,9 +545,9 @@ def csv_file_record_to_update():
 @app.route('/file_upload', methods=['POST', 'GET'])
 def file_upload():
     if 'username' in session and request.method == "POST":
-        file = request.files['file']
-        file.save(os.path.join(Report_Generated_File, file.filename))
-        read_file = pd.read_csv(Report_Generated_File + '\\' + file.filename)
+        uploaded_file = request.files['file']
+        uploaded_file.save(os.path.join(Report_Generated_File, uploaded_file.filename))
+        read_file = pd.read_csv(Report_Generated_File + '\\' + uploaded_file.filename)
         record = Records.query.all()
         count = 0
         while count != len(read_file):
@@ -622,8 +625,4 @@ def file_upload_actions(action):
 
 
 if __name__ == "__main__":
-    # with app.app_context():
-    #     db.create_all()
-    #     app.run(debug=True)
-    db.create_all()
-    app.run(debug=True)
+    app.run()
