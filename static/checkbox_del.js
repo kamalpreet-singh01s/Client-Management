@@ -75,9 +75,9 @@ $(document).ready(function() {
 
 $(document).ready(function() {
 
-    var $submit = $("#check_rec_ids_btn").hide(),
+    var $submit = $("#check_rec_ids_btn").hide(), $update_check = $("#update_check").hide(), $update_label = $("#update_label").hide(),
         $cbs = $('input[name="check-box"]').click(function() {
-            $submit.toggle( $cbs.is(":checked") );
+            $submit.toggle( $cbs.is(":checked") ) && $update_check.toggle( $cbs.is(":checked") ) && $update_label.toggle( $cbs.is(":checked") );
         });
 
 });

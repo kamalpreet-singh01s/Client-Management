@@ -1,17 +1,16 @@
 import csv
+import os
 import re
 from datetime import timedelta
 from io import BytesIO
 
+import pandas as pd
 from flask import render_template, request, url_for, flash, redirect, send_file, session, send_from_directory
 from sqlalchemy import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from Form import Form
 from models import Customer, Records, app, db, Status, Users
-
-import pandas as pd
-import os
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -26,8 +25,6 @@ def login():
                 session["username"] = i.username
                 session.permanent = True
                 app.permanent_session_lifetime = timedelta(minutes=5)
-                # access_token = create_access_token(identity=username)
-                # return jsonify(access_token=access_token)
                 return redirect(url_for('dashboard'))
 
         flash('Username or password is incorrect', category='error')
@@ -311,7 +308,7 @@ def record_details(record_id):
         form.process()
 
         return render_template("record_details.html", record_to_update=record_to_update, form=form,
-                               final_deal=float(record_to_update.amount) + record_to_update.pending_amount)
+                               final_deal=float(record_to_update.amount) + float(record_to_update.pending_amount))
     return render_template('login.html')
 
 
@@ -471,7 +468,7 @@ def update_class():
     return render_template('login.html')
 
 
-Report_Generated_File = r'W:\flask new\client management\Report_Generated'
+Report_Generated_File = os.path.join(os.curdir, 'Report_Generated')
 
 app.config['Report_Generated'] = Report_Generated_File
 
@@ -503,24 +500,42 @@ def generate_report():
 @app.route('/csv_file_record_to_update', methods=['POST', 'GET'])
 def csv_file_record_to_update():
     if 'username' in session and request.method == "POST":
-        rec_id = request.form["check_rec_ids"]
-        file_name = 'Custom_Record.csv'
-        with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
-            write_file = csv.writer(file)
-            write_file.writerow(
-                ['No', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
-                 'Amount Received Date', 'Status',
-                 'Pending(Rs.)', 'PP Received', 'File Name', 'Data'])
-            for ids in rec_id.split(','):
-                record = Records.query.filter_by(id=ids).first()
-                final = [record.id, record.customer_name.customer_name, record.content_advt, record.date_of_order,
-                         record.dop, record.bill,
-                         record.bill_date,
-                         record.amount, record.amount_received_date, record.status_name.status_name,
-                         record.pending_amount,
-                         record.pending_amount_received_date, record.filename, record.data]
-                write_file.writerow(final)
-                print(ids)
+        rec_ids = request.form["check_rec_ids"]
+
+        if request.form.get("update_check"):
+            file_name = 'Update_Record.csv'
+            with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
+                write_file = csv.writer(file)
+                write_file.writerow(
+                    ['Id', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
+                     'Amount Received Date', 'Status',
+                     'Pending(Rs.)', 'PP Received', 'File Name', 'Data'])
+                for rec_id in rec_ids.split(','):
+                    record = Records.query.filter_by(id=rec_id).first()
+                    final = [record.id, record.customer_id, record.content_advt, record.date_of_order,
+                             record.dop, record.bill,
+                             record.bill_date,
+                             record.amount, record.amount_received_date, record.status_name.status_name,
+                             record.pending_amount,
+                             record.pending_amount_received_date, record.filename, record.data]
+                    write_file.writerow(final)
+        else:
+            file_name = 'Record.csv'
+            with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
+                write_file = csv.writer(file)
+                write_file.writerow(
+                    ['Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
+                     'Amount Received Date', 'Status',
+                     'Pending(Rs.)', 'PP Received', 'File Name', 'Data'])
+                for rec_id in rec_ids.split(','):
+                    record = Records.query.filter_by(id=rec_id).first()
+                    final = [record.customer_name.customer_name, record.content_advt, record.date_of_order,
+                             record.dop, record.bill,
+                             record.bill_date,
+                             record.amount, record.amount_received_date, record.status_name.status_name,
+                             record.pending_amount,
+                             record.pending_amount_received_date, record.filename, record.data]
+                    write_file.writerow(final)
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
 
@@ -533,34 +548,32 @@ def file_upload():
         record = Records.query.all()
         count = 0
         while count != len(read_file):
-            customer = Customer.query.filter(Customer.id).filter_by(
-                customer_name=read_file.loc[count, 'Client']).first()
+            if count >= len(read_file):
+                break
+
             for row in record:
-                if count == len(read_file):
-                    break
                 if read_file.loc[count, 'Status'] == 'Pending':
                     read_file.loc[count, 'Status'] = 1
                 elif read_file.loc[count, 'Status'] == 'Received':
                     read_file.loc[count, 'Status'] = 2
                 elif read_file.loc[count, 'Status'] == 'Cancel':
                     read_file.loc[count, 'Status'] = 3
-
-                if row.id == read_file.loc[count, 'No']:
-                    if row.customer_id == customer.id:
-                        print('if', count)
-                        row.customer_id = customer.id
-                        row.content_advt = read_file.loc[count, 'AD/GP/Others']
-                        row.date_of_order = read_file.loc[count, 'RO Date']
-                        row.dop = read_file.loc[count, 'DoP']
-                        row.bill = int(read_file.loc[count, 'Bill No.'])
-                        row.bill_date = read_file.loc[count, 'Bill Date']
-                        row.amount = float(read_file.loc[count, 'Amount(Rs.)'])
-                        row.amount_received_date = read_file.loc[count, 'Amount Received Date']
-                        row.pending_amount = int(read_file.loc[count, 'Pending(Rs.)'])
-                        row.pending_amount_received_date = read_file.loc[count, 'PP Received']
-                        row.status_id = read_file.loc[count, 'Status']
-                        db.session.commit()
+                if row.id == int(read_file.loc[count, 'Id']):
+                    row.customer_id = int(read_file.loc[count, 'Client'])
+                    row.content_advt = read_file.loc[count, 'AD/GP/Others']
+                    row.date_of_order = read_file.loc[count, 'RO Date']
+                    row.dop = read_file.loc[count, 'DoP']
+                    row.bill = int(read_file.loc[count, 'Bill No.'])
+                    row.bill_date = read_file.loc[count, 'Bill Date']
+                    row.amount = float(read_file.loc[count, 'Amount(Rs.)'])
+                    row.amount_received_date = read_file.loc[count, 'Amount Received Date']
+                    row.pending_amount = int(read_file.loc[count, 'Pending(Rs.)'])
+                    row.pending_amount_received_date = read_file.loc[count, 'PP Received']
+                    row.status_id = read_file.loc[count, 'Status']
+                    db.session.commit()
                     count += 1
+            if count >= len(read_file):
+                break
             else:
                 print('else', count)
                 if read_file.loc[count, 'Status'] == 'Pending':
@@ -569,7 +582,8 @@ def file_upload():
                     read_file.loc[count, 'Status'] = 2
                 elif read_file.loc[count, 'Status'] == 'Cancel':
                     read_file.loc[count, 'Status'] = 3
-                new_record = Records(customer_id=customer.id, content_advt=read_file.loc[count, 'AD/GP/Others'],
+                new_record = Records(customer_id=read_file.loc[count, 'Client'],
+                                     content_advt=read_file.loc[count, 'AD/GP/Others'],
                                      date_of_order=read_file.loc[count, 'RO Date'],
                                      dop=read_file.loc[count, 'DoP'], bill=int(read_file.loc[count, 'Bill No.']),
                                      bill_date=read_file.loc[count, 'Bill Date'],
@@ -596,6 +610,20 @@ def file_upload():
     return render_template('file_upload.html')
 
 
+@app.route('/file_upload/<action>', methods=['POST', 'GET'])
+def file_upload_actions(action):
+    if request.method == 'GET':
+        if action == 'create':
+            print("create method")
+        elif action == 'update':
+            print("write method")
+        else:
+            raise ValueError
+
+
 if __name__ == "__main__":
+    # with app.app_context():
+    #     db.create_all()
+    #     app.run(debug=True)
     db.create_all()
     app.run(debug=True)

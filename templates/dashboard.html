@@ -17,6 +17,8 @@ table tr td:first-child::before {
 
 }
 
+
+
 </style>
 
 
@@ -58,8 +60,12 @@ table tr td:first-child::before {
                     <button type="submit" class="btn btn-primary" id="check_rec_ids_btn">Generate Custom Report
                     </button>
                 </div>
-
+                <div>
+                <input type="checkbox" name="update_check" id="update_check">
+                <label id="update_label">Update Record</label>
+            </div>
             </form>
+
         </div>
 
 
@@ -123,7 +129,8 @@ table tr td:first-child::before {
             <tr>
 
                 <td>
-                    <input onchange="check_box()" class="form-check-input" name="check-box" id="check" type="checkbox" value="{{record.id}}">
+                    <input onchange="check_box()" class="form-check-input" name="check-box" id="check" type="checkbox"
+                           value="{{record.id}}">
                 </td>
                 <td style="cursor: pointer;"
                     onclick="location.href='{{url_for('record_details', record_id = record.id)}}'">
@@ -226,6 +233,8 @@ function check_box()
     else
         $("#add").show() && $("#print_records_btn").show();
 }
+
+
 
 </script>
 

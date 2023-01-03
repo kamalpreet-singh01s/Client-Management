@@ -1,18 +1,22 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+import psycopg2
+
 
 app = Flask(__name__)
 app.secret_key = "hello"
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///client.sqlite3'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///client.sqlite3'
+# SQLALCHEMY_DATABASE_URI = f"postgresql://postgres:root@localhost:5432/client_management"
+app.config['SQLALCHEMY_DATABASE_URI'] = psycopg2.connect("postgresql://postgres:root@localhost:5432/client_management")
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db, render_as_batch=True)
 
 
 class Users(db.Model):
-    __talename__ = "users"
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100))
