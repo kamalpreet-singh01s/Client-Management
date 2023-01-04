@@ -34,10 +34,10 @@ class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_name = db.Column(db.String(100))
     email = db.Column(db.String(100))
-    phone_no = db.Column(db.Integer)
+    phone_no = db.Column(db.Numeric)
     address = db.Column(db.String(500))
-    final_deal = db.Column(db.Integer)
-    gst = db.Column(db.Integer)
+    final_deal = db.Column(db.Float)
+    gst = db.Column(db.Float)
 
     def __init__(self, customer_name, email, phone_no, address, final_deal, gst):
         self.customer_name = customer_name
@@ -57,12 +57,12 @@ class Records(db.Model):
     content_advt = db.Column(db.String(100))
     date_of_order = db.Column(db.String(100))
     dop = db.Column(db.String(100))
-    bill = db.Column(db.String(100))
+    bill = db.Column(db.Numeric)
     bill_date = db.Column(db.String(100))
-    amount = db.Column(db.String(100))
+    amount = db.Column(db.Float)
     amount_received_date = db.Column(db.String(100))
-    pending_amount = db.Column(db.String(100))
-    pending_amount_received_date = db.Column(db.String(100))
+    pending_amount = db.Column(db.Float)
+
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
     status_name = db.relationship('Status')
 
@@ -71,7 +71,7 @@ class Records(db.Model):
 
     def __init__(self, customer_id, content_advt, date_of_order, dop, bill, bill_date, amount, amount_received_date,
                  pending_amount,
-                 pending_amount_received_date, status_id, filename=None, data=None):
+                 status_id, filename=None, data=None):
         self.customer_id = customer_id
         self.content_advt = content_advt
         self.date_of_order = date_of_order
@@ -81,7 +81,7 @@ class Records(db.Model):
         self.amount = amount
         self.amount_received_date = amount_received_date
         self.pending_amount = pending_amount
-        self.pending_amount_received_date = pending_amount_received_date
+
         self.status_id = status_id
 
         self.filename = filename

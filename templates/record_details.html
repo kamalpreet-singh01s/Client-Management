@@ -113,10 +113,10 @@
                            value="{{record_to_update.pending_amount}}" name="pending_amount" disabled>
                 </div>
                 <div class="col">
-                    <label class="form-label">Pending Payment Received Date</label>
-                    <input type="date" class="form-control"
-                           value="{{record_to_update.pending_amount_received_date}}"
-                           name="pending_amount_received_date">
+                    <div class="col">
+                        <label class="form-label">Upload New Bill Copy</label>
+                        <input type="file" class="form-control" name="file">
+                    </div>
                 </div>
             </div>
             <div class="row mb-3">
@@ -125,12 +125,7 @@
                     <a style="text-decoration:none;" href="{{url_for('download', record_id = record_to_update.id)}}">{{record_to_update.filename}}</a>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col">
-                        <label class="form-label">Upload New Bill Copy</label>
-                        <input type="file" class="form-control" name="file">
-                    </div>
-                </div>
+
             </div>
 <input type="text" name="backup" id="backup" value="{{final_deal}}" hidden>
 

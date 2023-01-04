@@ -117,7 +117,7 @@
 
 
                     <th title="Remaining Amount To be Paid">Pending(Rs.)</th>
-                    <th title="Date of Pending Payment Received">PP Received</th>
+
                     <th title="Shows Current Status of Payment">Status</th>
                     <th>Action</th>
                 </tr>
@@ -161,9 +161,7 @@
                             id="pending_amount">
                             {{ record.pending_amount }}
                         </td>
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.pending_amount_received_date }}
-                        </td>
+
 
                         <td style="cursor: pointer"
                             onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"

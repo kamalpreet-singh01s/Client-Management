@@ -1,4 +1,5 @@
 import csv
+import datetime
 import os
 import re
 from datetime import timedelta
@@ -219,6 +220,7 @@ def update_customer(customer_id):
 def dashboard():
     if "username" in session:
         all_records = Records.query.order_by(Records.bill.desc())
+        print(all_records)
         return render_template("dashboard.html", all_records=all_records)
     return render_template('login.html')
 
@@ -238,8 +240,8 @@ def add_record():
                              request.form["dop"], request.form["bill"], request.form["bill_date"],
                              float(request.form["amount"]),
                              pending_amount=float(final_deal) - float(request.form["amount"]),
-                             amount_received_date=request.form["amount_received_date"],
-                             pending_amount_received_date=request.form["pending_amount_received_date"],
+                             amount_received_date=datetime.date.today(),
+
                              status_id=request.form["status_name"],
                              filename=uploaded_file.filename, data=uploaded_file.read())
 
@@ -288,10 +290,6 @@ def record_details(record_id):
 
             record_to_update.amount_received_date = request.form["amount_received_date"]
 
-            record_to_update.pending_amount_received_date = request.form["pending_amount_received_date"]
-
-            # record_to_update.amount = request.form["amount"]
-            # record_to_update.pending_amount = int(final_deal) - int(request.form["amount"])
             uploaded_file = request.files['file']
             if request.files['file']:
                 record_to_update.filename = request.files['file'].filename
@@ -300,8 +298,6 @@ def record_details(record_id):
             if record_to_update.status_id == '2':
                 record_to_update.amount = float(request.form['backup'])
                 record_to_update.pending_amount = float(final_deal) - float(record_to_update.amount)
-            # record_to_update.amount = request.form["amount"]
-            # record_to_update.pending_amount = int(final_deal) - int(request.form["amount"])
             db.session.commit()
             flash(f'Record of {record_to_update.customer_id} Updated', category='success')
             return redirect(url_for('dashboard'))
@@ -487,17 +483,14 @@ def generate_report():
             write_file.writerow(
                 ['No', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
                  'Amount Received Date', 'Status',
-                 'Pending(Rs.)', 'PP Received', 'File Name', 'Data'])
+                 'Pending(Rs.)'])
             for i in data:
                 final = [i.id, i.customer_name.customer_name, i.content_advt, i.date_of_order, i.dop, i.bill,
                          i.bill_date,
-                         i.amount, i.amount_received_date, i.status_name.status_name, i.pending_amount,
-                         i.pending_amount_received_date, i.filename, i.data]
+                         i.amount, i.amount_received_date, i.status_name.status_name, i.pending_amount]
                 write_file.writerow(final)
 
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
-
-        # return redirect(url_for('dashboard'))
 
 
 @app.route('/csv_file_record_to_update', methods=['POST', 'GET'])
@@ -512,15 +505,14 @@ def csv_file_record_to_update():
                 write_file.writerow(
                     ['Id', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
                      'Amount Received Date', 'Status',
-                     'Pending(Rs.)', 'PP Received', 'File Name', 'Data'])
+                     'Pending(Rs.)'])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
                     final = [record.id, record.customer_id, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
                              record.amount, record.amount_received_date, record.status_name.status_name,
-                             record.pending_amount,
-                             record.pending_amount_received_date, record.filename, record.data]
+                             record.pending_amount]
                     write_file.writerow(final)
         else:
             file_name = 'Record.csv'
@@ -529,15 +521,14 @@ def csv_file_record_to_update():
                 write_file.writerow(
                     ['Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
                      'Amount Received Date', 'Status',
-                     'Pending(Rs.)', 'PP Received', 'File Name', 'Data'])
+                     'Pending(Rs.)'])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
                     final = [record.customer_name.customer_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
                              record.amount, record.amount_received_date, record.status_name.status_name,
-                             record.pending_amount,
-                             record.pending_amount_received_date, record.filename, record.data]
+                             record.pending_amount]
                     write_file.writerow(final)
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
@@ -571,7 +562,7 @@ def file_upload():
                     row.amount = float(read_file.loc[count, 'Amount(Rs.)'])
                     row.amount_received_date = read_file.loc[count, 'Amount Received Date']
                     row.pending_amount = int(read_file.loc[count, 'Pending(Rs.)'])
-                    row.pending_amount_received_date = read_file.loc[count, 'PP Received']
+
                     row.status_id = read_file.loc[count, 'Status']
                     db.session.commit()
                     count += 1
@@ -593,7 +584,7 @@ def file_upload():
                                      amount=float(read_file.loc[count, 'Amount(Rs.)']),
                                      amount_received_date=read_file.loc[count, 'Amount Received Date'],
                                      pending_amount=int(read_file.loc[count, 'Pending(Rs.)']),
-                                     pending_amount_received_date=read_file.loc[count, 'PP Received'],
+
                                      status_id=read_file.loc[count, 'Status'])
                 db.session.add(new_record)
                 db.session.commit()
