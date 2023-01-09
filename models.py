@@ -21,7 +21,7 @@ class Users(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100))
-    password = db.Column(db.String(100))
+    password = db.Column(db.String())
 
     def __init__(self, username, password):
         self.username = username
@@ -54,23 +54,22 @@ class Records(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
     customer_name = db.relationship('Customer')
-    content_advt = db.Column(db.String(100))
+    content_advt = db.Column(db.String())
     date_of_order = db.Column(db.String(100))
     dop = db.Column(db.String(100))
     bill = db.Column(db.Numeric)
     bill_date = db.Column(db.String(100))
-    amount = db.Column(db.Float)
-    amount_received_date = db.Column(db.String(100))
-    pending_amount = db.Column(db.Float)
-
+    # amount = db.Column(db.Float)
+    # amount_received_date = db.Column(db.String(100))
+    # pending_amount = db.Column(db.Float)
+    #
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
     status_name = db.relationship('Status')
 
-    filename = db.Column(db.String(50))
-    data = db.Column(db.LargeBinary)
+    filename = db.Column(db.String())
+    # data = db.Column(db.LargeBinary)
 
-    def __init__(self, customer_id, content_advt, date_of_order, dop, bill, bill_date, amount, amount_received_date,
-                 pending_amount,
+    def __init__(self, customer_id, content_advt, date_of_order, dop, bill, bill_date,
                  status_id, filename=None, data=None):
         self.customer_id = customer_id
         self.content_advt = content_advt
@@ -78,9 +77,9 @@ class Records(db.Model):
         self.dop = dop
         self.bill = bill
         self.bill_date = bill_date
-        self.amount = amount
-        self.amount_received_date = amount_received_date
-        self.pending_amount = pending_amount
+        # self.amount = amount
+        # self.amount_received_date = amount_received_date
+        # self.pending_amount = pending_amount
 
         self.status_id = status_id
 

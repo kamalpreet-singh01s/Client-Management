@@ -40,7 +40,7 @@
     </form>
     <br>
 
-    <div class="w-100" style="overflow-y:scroll;height:450px; margin:auto; margin-top:2px">
+    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
         <div class="d-block" style="position:fixed;top:9rem; left:70rem;">
             <div class="mb-1">
                 <a class="add_button"
@@ -104,28 +104,22 @@
             <table class="table table-hover table-sortable" id="table-sortable">
 
                 <thead>
-                <tr>
+                <tr class="text-center">
                     <th title="Serial Number">S.No.</th>
                     <th title="Client Name">Client</th>
-                    <th style="width:18%" title="Advertisement/Guest Post">AD/GP/Others</th>
-                    <th title="Release Order Date">RO Date</th>
-                    <th title="Date of Publication">DoP</th>
 
                     <th title="Bill No.">Bill No.</th>
                     <th title='Bill Date'>Bill Date</th>
-                    <th title="Final Amount on Which Client Agreed" style="width:5%">Amount(Rs.)</th>
-
-
-                    <th title="Remaining Amount To be Paid">Pending(Rs.)</th>
 
                     <th title="Shows Current Status of Payment">Status</th>
-                    <th>Action</th>
+                    <th></th>
+
                 </tr>
                 </thead>
 
                 <tbody>
                 {% for record in all_records %}
-                    <tr>
+                    <tr class="text-center">
 
                         <td>
                             <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
@@ -136,46 +130,29 @@
                             onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
                             {{ record.customer_name.customer_name }}
                         </td>
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.content_advt }}
-                        </td>
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.date_of_order }}
-                        </td>
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.dop }}
-                        </td>
+
                         <td style="cursor: pointer;"
                             onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill }}
                         </td>
                         <td style="cursor: pointer;"
                             onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill_date }}
                         </td>
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.amount }}
-                        </td>
 
-
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"
-                            id="pending_amount">
-                            {{ record.pending_amount }}
-                        </td>
 
 
                         <td style="cursor: pointer"
                             onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"
                             class="status">
-                            {{ record.status_name.status_name }} ({{ record.amount_received_date }})
+                            {{ record.status_name.status_name }}
                         </td>
-                        <td>
-                            <button type="button" id="del" class="btn btn-outline-danger"
-                                    onclick="del_rec({{ record.id }})"
-                                    data-toggle="modal" data-target=".bd-example-modal-sm">
-                                Delete
-                            </button>
+<!--                        <td>-->
+<!--                            <button type="button" id="del" class="btn btn-outline-danger"-->
+<!--                                    onclick="del_rec({{ record.id }})"-->
+<!--                                    data-toggle="modal" data-target=".bd-example-modal-sm">-->
+<!--                                Delete-->
+<!--                            </button>-->
 
-                        </td>
+<!--                        </td>-->
 
                         <td>
                             <div id="bd-example-modal-sm{{ record.id }}" class="modal fade bd-example-modal-sm"

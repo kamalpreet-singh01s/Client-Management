@@ -20,7 +20,7 @@
         </div>
         <div>
             <label class="form-label">Phone No.</label>
-            <input type="text" class="form-control" value="{{customer_to_update.phone_no}}" name="phone_no" required>
+            <input type="number" class="form-control" value="{{customer_to_update.phone_no}}" name="phone_no" required>
 
 
         </div>
@@ -33,7 +33,7 @@
         </div>
         <div>
             <label class="form-label">Final Deal Amount</label>
-            <input type="text" class="form-control" value="{{customer_to_update.final_deal}}" name="final_deal" required>
+            <input type="number" step=".01" class="form-control" value="{{customer_to_update.final_deal}}" name="final_deal" required>
 
 
         </div>

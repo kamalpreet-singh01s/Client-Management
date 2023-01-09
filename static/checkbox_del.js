@@ -81,3 +81,10 @@ $(document).ready(function() {
         });
 
 });
+
+
+
+
+
+
+$('.customer_name').prop('hidden', true);

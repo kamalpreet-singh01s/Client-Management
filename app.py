@@ -13,9 +13,15 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from form import Form
 from models import db, create_app, Customer, Records, Status, Users
+from werkzeug.utils import secure_filename
 
 app = create_app()
 migrate = Migrate(app, db, render_as_batch=True)
+
+UPLOAD_FOLDER = r'W:\work\flask new\client management\Uploaded_Bills'
+ALLOWED_EXTENSIONS = {'pdf'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -109,7 +115,7 @@ def update_user(user_id):
 def all_customer_names():
     if "username" in session:
         customers = Customer.query.order_by(desc(Customer.id))
-        return render_template("show_customer_name_list.html", customers=customers)
+        return render_template("client_list.html", customers=customers)
     return render_template('login.html')
 
 
@@ -139,7 +145,7 @@ def add_customer():
                 flash('Record not added', category='error')
                 return redirect('add_customer')
             else:
-                gst = int((18 / 100) * int(request.form['final_deal']))
+                gst = (18 / 100) * float(request.form['final_deal'])
                 print(type(gst))
                 added_customers = Customer(customer_name=request.form["customer_name"], email=request.form["email"],
                                            phone_no=request.form["phone_no"],
@@ -233,22 +239,25 @@ def add_record():
         form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
 
         if request.method == "POST":
-            uploaded_file = request.files['file']
+            file = request.files['file']
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+
+            # if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            # print(file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)), 'file test')
             get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
-            final_deal = get_customer.final_deal
             record = Records(request.form["customer_name"], request.form["content_advt"], request.form["date_of_order"],
                              request.form["dop"], request.form["bill"], request.form["bill_date"],
-                             float(request.form["amount"]),
-                             pending_amount=float(final_deal) - float(request.form["amount"]),
-                             amount_received_date=datetime.date.today(),
-
                              status_id=request.form["status_name"],
-                             filename=uploaded_file.filename, data=uploaded_file.read())
+                             filename=os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
             db.session.add(record)
             db.session.commit()
             flash('Record Added', category='success')
             return redirect(url_for('dashboard'))
+        form.status_name.default = 1
+        form.process()
         return render_template("add_record.html", form=form)
     return render_template('login.html')
 
@@ -268,8 +277,10 @@ def delete_record(record_id):
 @app.route('/record_details/<int:record_id>', methods=['GET', 'POST'])
 def record_details(record_id):
     if "username" in session:
-
+        date_now = datetime.date.today()
+        last_updated = date_now.strftime("%d/%b/%Y")
         record_to_update = Records.query.filter_by(id=record_id).first()
+        customer = Customer.query.filter(Customer.id == record_to_update.customer_id).first()
         form = Form()
         form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
         form.customer_name.choices = [(customer.id, customer.customer_name) for customer in Customer.query.all()]
@@ -277,37 +288,75 @@ def record_details(record_id):
         if request.method == "POST":
 
             get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
-            final_deal = get_customer.final_deal
+            print(get_customer)
+            # final_deal = get_customer.final_deal
+
+            # customer.customer_name = Customer.query.filter_by(id=request.form["customer_name"]).first()
+            customer.email = request.form["email"]
+            customer.phone_no = request.form["phone_no"]
+            customer.final_deal = request.form["final_deal"]
 
             record_to_update.customer_id = request.form["customer_name"]
             record_to_update.content_advt = request.form["content_advt"]
             record_to_update.date_of_order = request.form["date_of_order"]
             record_to_update.dop = request.form["dop"]
 
-            record_to_update.bill = request.form["bill"]
+            # record_to_update.bill = request.form["bill"]
 
-            record_to_update.status_id = request.form["status_name"]
+            # record_to_update.status_id = request.form["status_name"]
 
-            record_to_update.amount_received_date = request.form["amount_received_date"]
-
+            # record_to_update.amount_received_date = request.form["amount_received_date"]
             uploaded_file = request.files['file']
             if request.files['file']:
-                record_to_update.filename = request.files['file'].filename
-                record_to_update.data = uploaded_file.read()
-            print(type(record_to_update.status_id))
-            if record_to_update.status_id == '2':
-                record_to_update.amount = float(request.form['backup'])
-                record_to_update.pending_amount = float(final_deal) - float(record_to_update.amount)
+                record_to_update.filename = request.files['file']
+
+            # record_to_update.data = uploaded_file.read()
+            # if record_to_update.status_id == '2':
+            #     record_to_update.amount = float(request.form['backup'])
+            #     # record_to_update.pending_amount = float(final_deal) - float(record_to_update.amount)
             db.session.commit()
-            flash(f'Record of {record_to_update.customer_id} Updated', category='success')
-            return redirect(url_for('dashboard'))
+            flash('Record Updated', category='success')
+            # return redirect(url_for('record_details'))
         form.customer_name.default = record_to_update.customer_id
         form.status_name.default = record_to_update.status_id
         form.process()
 
         return render_template("record_details.html", record_to_update=record_to_update, form=form,
-                               final_deal=float(record_to_update.amount) + float(record_to_update.pending_amount))
+                               last_updated=last_updated)
+
     return render_template('login.html')
+
+
+@app.route('/set_receive/<int:record_id>', methods=['GET', 'POST'])
+def set_receive(record_id):
+    form = Form()
+    record_to_update = Records.query.filter_by(id=record_id).first()
+    print(record_to_update.id)
+    date_now = datetime.date.today()
+    last_updated = date_now.strftime("%d/%b/%Y")
+    record_to_update.status_id = 2
+
+    db.session.commit()
+    flash('Status Updated', category='success')
+    # return redirect(url_for('record_details'))
+    return render_template("record_details.html", record_to_update=record_to_update, form=form,
+                           last_updated=last_updated)
+
+
+@app.route('/set_cancel/<int:record_id>', methods=['GET', 'POST'])
+def set_cancel(record_id):
+    form = Form()
+    record_to_update = Records.query.filter_by(id=record_id).first()
+    print(record_to_update.id)
+    date_now = datetime.date.today()
+    last_updated = date_now.strftime("%d/%b/%Y")
+    record_to_update.status_id = 3
+
+    db.session.commit()
+    flash('Status Updated', category='success')
+    # return redirect(url_for('record_details'))
+    return render_template("record_details.html", record_to_update=record_to_update, form=form,
+                           last_updated=last_updated)
 
 
 @app.route('/show_all_payment_status')
@@ -384,13 +433,13 @@ def paid_payment_list():
     return render_template('login.html')
 
 
-@app.route('/download/<record_id>')
-def download(record_id):
+@app.route('/download/<int:record_id>/<path:filename>')
+def download(record_id, filename):
     if "username" in session:
-        upload = Records.query.filter_by(id=record_id).first()
-        print(upload.filename)
-        return send_file(BytesIO(upload.data), download_name=upload.filename,
-                         as_attachment=True)
+        record = Records.query.filter_by(id=record_id).first()
+        uploads = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        print(record.filename)
+        return send_from_directory(directory=uploads, path=filename, as_attachment=True)
 
     return render_template('login.html')
 

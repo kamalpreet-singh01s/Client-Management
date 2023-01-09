@@ -1,0 +1,182 @@
+{%extends "index.html"%}
+
+{%block content%}
+
+    <style>
+
+        table {
+            counter-reset: 1;
+        }
+
+        table tr {
+            counter-increment: rowNumber;
+        }
+
+        table tr td:first-child::before {
+            content: counter(rowNumber);
+
+        }
+
+
+    </style>
+
+
+    <br>
+
+
+    <h1 style="text-align:center" class="mb-2">Data Sheet</h1>
+    <form method="POST" action="{{ url_for('search_records') }}">
+        <div class="row flex justify-content-start" style="margin-left:2px">
+            <div class="col-2">
+                <input type="text" class="form-control" name="search"
+                       placeholder="Search"/>
+            </div>
+            <div class="col">
+                <button type="submit" class="btn btn-primary" onclick="location.href='{{ url_for('search_records') }}'">Search
+                </button>
+            </div>
+
+        </div>
+    </form>
+    <br>
+
+    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
+        <div class="d-block" style="position:fixed;top:9rem; left:70rem;">
+            <div class="mb-1">
+                <a class="add_button"
+                   style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"
+                   href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+        </div>
+
+        <div class="row mb-1">
+
+            <div class="col-4" style="margin-left:20px; margin-bottom:5px">
+                <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
+
+                    <div class="">
+                        <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
+                        <button type="submit" class="btn btn-primary" id="check_rec_ids_btn">Generate Custom Report
+                        </button>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="update_check" id="update_check">
+                        <label id="update_label">Update Record</label>
+                    </div>
+                </form>
+
+            </div>
+
+
+            <div class="col col-sm-2">
+                <form method="POST" action="/get_checked_boxes">
+
+                    <input type="text" id="rec_ids" name="rec_ids" hidden/>
+                    <button type="submit" class="del_button" id="stu_ids_submit">
+                        Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+                    </button>
+
+                </form>
+            </div>
+
+            <div class="col col-sm-2">
+                <form method="POST" action="/send_rec_id">
+
+                    <input type="text" id="send_rec_ids" name="send_rec_ids" hidden/>
+                    <button type="submit" class="update_button" id="class_ids_submit">
+                        Update Status<i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    </button>
+
+                </form>
+            </div>
+            <div class="col">
+                <form action="{{ url_for('generate_report') }}" method="POST">
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary" id="print_records_btn">Print Records</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    <h1 style="text-align:center" class="mb-2">Client List</h1>
+
+
+    <div>
+        <form action="" method="post">
+            <table class="table table-hover table-sortable text-center" id="table-sortable">
+
+                <thead>
+                <tr>
+                <th>Client Name</th>
+                <th>Email</th>
+                <th>Phone No.</th>
+                <th>Address</th>
+                <th>Deal (In Rs.)</th>
+                <th>GST (18%)</th>
+                <th>Action</th>
+                    <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.customer_name }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{{ customer.phone_no }}</td>
+                <td>{{ customer.address }}</td>
+                <td>{{ customer.final_deal }}</td>
+                <td>{{ customer.gst }}</td>
+
+                <td>
+                    <button type="button" id="del" class="btn btn-outline-danger" onclick="del_rec({{customer.id}})"
+                            data-toggle="modal" data-target=".bd-example-modal-sm"
+                    >Delete
+                    </button>
+
+                    <button type="button" class="btn btn-outline-success"
+                            onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'"
+                    >Edit &nbsp;&nbsp;&nbsp;
+                    </button>
+                </td>
+
+                <td>
+                    <div id="bd-example-modal-sm{{customer.id}}" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
+                         aria-labelledby="mySmallModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    Are You Sure ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                            onclick="location.href='{{url_for('all_customer_names')}}'">Close
+                                    </button>
+                                    <a class="btn btn-danger" id="modal_del{{customer.id}}"
+                                            href="location.href='{{url_for('delete_customer', customer_id = customer.id)}}'">
+                                        Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+            </tr>
+            {% endfor %}
+                </tbody>
+            </table>
+
+        </form>
+    </div>
+<br>
+<script>
+function del_rec(id){
+    $('#bd-example-modal-sm'+id).modal('show');
+    $('#modal_del'+id).attr('href','')
+    $('#modal_del'+id).attr('href','/delete_customer/'+id)
+ }
+</script>
+
+{%endblock%}
