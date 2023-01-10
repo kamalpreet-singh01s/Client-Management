@@ -14,6 +14,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from form import Form
 from models import db, create_app, Customer, Records, Status, Users
 from werkzeug.utils import secure_filename
+import webbrowser
 
 app = create_app()
 migrate = Migrate(app, db, render_as_batch=True)
@@ -244,9 +245,10 @@ def add_record():
             # empty file without a filename.
 
             # if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            # print(file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)), 'file test')
-            get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
+            # filename = secure_filename(file.filename)
+            filename = 'Bill No' + '-' + request.form["bill"] + '-' + request.form["date_of_order"] + '.pdf'
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
             record = Records(request.form["customer_name"], request.form["content_advt"], request.form["date_of_order"],
                              request.form["dop"], request.form["bill"], request.form["bill_date"],
                              status_id=request.form["status_name"],
@@ -300,16 +302,17 @@ def record_details(record_id):
             record_to_update.content_advt = request.form["content_advt"]
             record_to_update.date_of_order = request.form["date_of_order"]
             record_to_update.dop = request.form["dop"]
-
             # record_to_update.bill = request.form["bill"]
 
             # record_to_update.status_id = request.form["status_name"]
 
             # record_to_update.amount_received_date = request.form["amount_received_date"]
-            uploaded_file = request.files['file']
+            file = request.files['file']
             if request.files['file']:
-                record_to_update.filename = request.files['file']
-
+                filename = 'Bill No' + '-' + str(record_to_update.bill) + '-' + str(
+                    record_to_update.date_of_order) + '.pdf'
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                record_to_update.filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             # record_to_update.data = uploaded_file.read()
             # if record_to_update.status_id == '2':
             #     record_to_update.amount = float(request.form['backup'])
@@ -327,6 +330,7 @@ def record_details(record_id):
     return render_template('login.html')
 
 
+last_updated_for_report = ''
 @app.route('/set_receive/<int:record_id>', methods=['GET', 'POST'])
 def set_receive(record_id):
     form = Form()
@@ -334,6 +338,7 @@ def set_receive(record_id):
     print(record_to_update.id)
     date_now = datetime.date.today()
     last_updated = date_now.strftime("%d/%b/%Y")
+    last_updated_for_report = last_updated
     record_to_update.status_id = 2
 
     db.session.commit()
@@ -433,14 +438,11 @@ def paid_payment_list():
     return render_template('login.html')
 
 
-@app.route('/download/<int:record_id>/<path:filename>')
-def download(record_id, filename):
+@app.route('/download/<path:filename>')
+def download(filename):
     if "username" in session:
-        record = Records.query.filter_by(id=record_id).first()
         uploads = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        print(record.filename)
-        return send_from_directory(directory=uploads, path=filename, as_attachment=True)
-
+        webbrowser.open_new_tab(uploads)
     return render_template('login.html')
 
 
@@ -521,25 +523,25 @@ Report_Generated_File = os.path.join(os.curdir, 'Report_Generated')
 app.config['Report_Generated'] = Report_Generated_File
 
 
-@app.route('/generate_report', methods=['POST'])
-def generate_report():
-    if request.method == 'POST':
-        file_name = 'report.csv'
-
-        data = Records.query.all()
-        with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
-            write_file = csv.writer(file)
-            write_file.writerow(
-                ['No', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
-                 'Amount Received Date', 'Status',
-                 'Pending(Rs.)'])
-            for i in data:
-                final = [i.id, i.customer_name.customer_name, i.content_advt, i.date_of_order, i.dop, i.bill,
-                         i.bill_date,
-                         i.amount, i.amount_received_date, i.status_name.status_name, i.pending_amount]
-                write_file.writerow(final)
-
-        return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
+# @app.route('/generate_report', methods=['POST'])
+# def generate_report():
+#     if request.method == 'POST':
+#         file_name = 'report.csv'
+#
+#         data = Records.query.all()
+#         with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
+#             write_file = csv.writer(file)
+#             write_file.writerow(
+#                 ['No', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
+#                  'Amount Received Date', 'Status',
+#                  'Pending(Rs.)'])
+#             for i in data:
+#                 final = [i.id, i.customer_name.customer_name, i.content_advt, i.date_of_order, i.dop, i.bill,
+#                          i.bill_date,
+#                          i.amount, i.amount_received_date, i.status_name.status_name, i.pending_amount]
+#                 write_file.writerow(final)
+#
+#         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
 
 @app.route('/csv_file_record_to_update', methods=['POST', 'GET'])
@@ -553,15 +555,15 @@ def csv_file_record_to_update():
                 write_file = csv.writer(file)
                 write_file.writerow(
                     ['Id', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
-                     'Amount Received Date', 'Status',
-                     'Pending(Rs.)'])
+                     'Amount Received Date', 'Status'
+                     ])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
+                    customer = Customer.query.filter_by(Records.customer_id).first()
                     final = [record.id, record.customer_id, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
-                             record.amount, record.amount_received_date, record.status_name.status_name,
-                             record.pending_amount]
+                             customer.final_deal, set_receive.last_updated, record.status_name.status_name]
                     write_file.writerow(final)
         else:
             file_name = 'Record.csv'
@@ -573,11 +575,12 @@ def csv_file_record_to_update():
                      'Pending(Rs.)'])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
+                    customer = Customer.query.filter_by(id=Records.customer_id).first()
+                    print(customer)
                     final = [record.customer_name.customer_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
-                             record.amount, record.amount_received_date, record.status_name.status_name,
-                             record.pending_amount]
+                             customer.final_deal, last_updated_for_report, record.status_name.status_name]
                     write_file.writerow(final)
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 

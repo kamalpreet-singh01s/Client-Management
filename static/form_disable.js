@@ -69,11 +69,12 @@ console.log(status_name)
 
 function remove_pdf_file(){
 
-pdf_file = document.getElementById('pdf_file');
-pdf_file.parentNode.removeChild(pdf_file);
 
-add_file = document.getElementById('add_file');
-add_file.parentNode.removeChild(add_file);
+document.getElementById('current_pdf').hidden = true;
+
+
+document.getElementById('add_file').hidden=true;
+
 
 document.getElementById('pdf_upload').hidden = false;
 }

@@ -24,15 +24,15 @@
     <br>
 
 
-    <h1 style="text-align:center" class="mb-2">Data Sheet</h1>
+    <h4 style="text-align:center" class="mb-2">Data Sheet</h4>
     <form method="POST" action="{{ url_for('search_records') }}">
-        <div class="row flex justify-content-start" style="margin-left:2px">
+        <div class="row" style="margin-left:2px">
             <div class="col-2">
-                <input type="text" class="form-control" name="search"
+                <input type="text" class="form-control form-control-sm w-75" name="search"
                        placeholder="Search"/>
             </div>
-            <div class="col">
-                <button type="submit" class="btn btn-primary" onclick="location.href='{{ url_for('search_records') }}'">Search
+            <div class="col ">
+                <button type="submit" class="btn btn-primary btn-sm" onclick="location.href='{{ url_for('search_records') }}'">Search
                 </button>
             </div>
 
@@ -51,24 +51,13 @@
 
         <div class="row mb-1">
 
-            <div class="col-4" style="margin-left:20px; margin-bottom:5px">
-                <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
+<!--            <div class="col-4" style="margin-left:20px; margin-bottom:5px">-->
+<!--               -->
 
-                    <div class="">
-                        <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
-                        <button type="submit" class="btn btn-primary" id="check_rec_ids_btn">Generate Custom Report
-                        </button>
-                    </div>
-                    <div>
-                        <input type="checkbox" name="update_check" id="update_check">
-                        <label id="update_label">Update Record</label>
-                    </div>
-                </form>
-
-            </div>
+<!--            </div>-->
 
 
-            <div class="col col-sm-2">
+            <div class="col-5 d-flex justify-content-end">
                 <form method="POST" action="/get_checked_boxes">
 
                     <input type="text" id="rec_ids" name="rec_ids" hidden/>
@@ -79,7 +68,7 @@
                 </form>
             </div>
 
-            <div class="col col-sm-2">
+            <div class="col d-flex justify-content-end">
                 <form method="POST" action="/send_rec_id">
 
                     <input type="text" id="send_rec_ids" name="send_rec_ids" hidden/>
@@ -89,12 +78,18 @@
 
                 </form>
             </div>
-            <div class="col">
-                <form action="{{ url_for('generate_report') }}" method="POST">
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" class="btn btn-primary" id="print_records_btn">Print Records</button>
-                    </div>
+            <div class="col d-flex justify-content-end">
+                 <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
 
+                    <div class="">
+                        <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
+                        <button type="submit" class="btn btn-primary" id="check_rec_ids_btn">Generate Custom Report
+                        </button>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="update_check" id="update_check">
+                        <label id="update_label">Update Record</label>
+                    </div>
                 </form>
             </div>
         </div>

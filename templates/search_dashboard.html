@@ -25,25 +25,26 @@ table tr td:first-child::before {
 
 <br>
 
-<h1 style="text-align:center" class="mb-2">Data Sheet</h1>
-<form method="POST">
-    <div class="row flex justify-content-start" style="margin-left:5px">
-        <div class="col-2">
-            <input type="text" class="form-control" name="search"
-                   placeholder="Search"/>
-        </div>
-        <div class="col-1">
-            <button type="submit" class="btn btn-primary" onclick="location.href='{{url_for('search')}}'">Search
-            </button>
-        </div>
+    <h4 style="text-align:center" class="mb-2">Data Sheet</h4>
+    <form method="POST" action="{{ url_for('search_records') }}">
+        <div class="row" style="margin-left:2px">
+            <div class="col-2">
+                <input type="text" class="form-control form-control-sm w-75" name="search"
+                       placeholder="Search"/>
+            </div>
+            <div class="col ">
+                <button type="submit" class="btn btn-primary btn-sm" onclick="location.href='{{ url_for('search_records') }}'">Search
+                </button>
+            </div>
+
         <div style="text-align: center">
             <u><h5 id="total_results"></h5></u>
         </div>
-    </div>
-</form>
-<br>
+        </div>
+    </form>
+    <br>
 
-<div class="w-100" style="overflow-y:scroll;height:450px; margin:auto; margin-top:2px">
+<div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
     <div class="d-block" style="position:fixed;top:9rem; left:80rem;">
         <div>
             <a class="add_button"
@@ -53,25 +54,18 @@ table tr td:first-child::before {
 
     </div>
     <form action="" method="post">
-        <table class="table table-hover table-sortable" id="table-sortable">
+        <table class="table table-hover table-sortable text-center" id="table-sortable">
 
             <thead>
             <tr>
                 <th>S.No.</th>
                 <th>Client</th>
-                <th style="width:18%">AD/GP/Others</th>
-                <th>RO Date</th>
-                <th>DoP</th>
 
                 <th>Bill No.</th>
                 <th>Bill Date</th>
-                <th style="width:5%">Amount(Rs.)</th>
+
                 <th>Status</th>
 
-                <th>Pending(Rs.)</th>
-                <th>PP Received</th>
-
-                <th>Action</th>
 
             </tr>
             </thead>
@@ -84,17 +78,8 @@ table tr td:first-child::before {
                     onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">
                     {{res.customer_name.customer_name}}
                 </td>
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{
-                    res.content_advt}}
-                </td>
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{
-                    res.date_of_order}}
-                </td>
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{ res.dop }}
-                </td>
+
+
                 <td style="cursor: pointer;"
                     onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{res.bill }}
                 </td>
@@ -102,35 +87,13 @@ table tr td:first-child::before {
                     onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{res.bill_date
                     }}
                 </td>
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{ res.amount
-                    }}
-                </td>
 
                 <td style="cursor: pointer;"
                     onclick="location.href='{{url_for('record_details', record_id = res.id)}}'" class="status">
-                    {{res.status_name.status_name}} ({{ res.amount_received_date }})
+                    {{res.status_name.status_name}}
                 </td>
 
 
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'" id="pending_amount">
-                    {{
-                    res.pending_amount }}
-                </td>
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">{{
-                    res.pending_amount_received_date }}
-                </td>
-
-
-                <td>
-                    <button type="button" id="del" class="btn btn-outline-danger" onclick="del_rec({{rec.id}})"
-                            data-toggle="modal" data-target=".bd-example-modal-sm">
-                        Delete
-                    </button>
-
-                </td>
 
                 <td>
                     <div id="bd-example-modal-sm{{rec.id}}" class="modal fade bd-example-modal-sm" tabindex="-1"
