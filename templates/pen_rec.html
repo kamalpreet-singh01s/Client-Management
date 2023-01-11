@@ -3,12 +3,12 @@
 {%block content%}
 
 
-<h1 style="text-align:center">Current Status List</h1>
+<h4 style="text-align:center; margin-top:5rem">Payment Status List</h4>
 <br>
 
 <div style="margin:auto" class="d-grid gap-2 col-4 mx-auto">
     <div style="overflow-y:scroll; height:200px; margin-left:10px">
-        <table class="table table-hover table-sortable">
+        <table class="table table-hover table-sortable text-center">
             <thead>
             <tr>
                 <th>Status Name</th>
@@ -22,11 +22,11 @@
                 <td>{{ stat.status_name }}</td>
 
                 <td>
-                    <button type="button" d="del" class="btn btn-outline-danger" onclick="del_rec({{stat.id}})"
+                    <button type="button" id="del" class="btn btn-danger btn-sm" onclick="del_rec({{stat.id}})"
                              data-target=".bd-example-modal-sm"
                     >Delete
                     </button>
-                    <button type="button" class="btn btn-outline-success"
+                    <button type="button" class="btn btn-success btn-sm"
                             onclick="location.href='{{url_for('update_payment_status', status_id = stat.id)}}'"
                     >Edit
                     </button>
@@ -70,7 +70,7 @@
                 <br>
             </div>
             <div class="d-grid gap-2 col-5 mx-auto w-50">
-                <button type="submit" class="btn btn-outline-primary">Add</button>
+                <button type="submit" class="btn btn-primary btn-sm">Add</button>
             </div>
 
         </form>

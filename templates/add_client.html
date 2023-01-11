@@ -1,0 +1,57 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% include 'alert.html' %}
+
+
+<div class="row w-50 mx-auto mt-5">
+    <div class="col">
+        <div class="col-8 mx-auto">
+            <form action="{{url_for('add_client')}}" method="POST">
+                <br>
+                <h3 style="text-align:center">New Client</h3>
+                <br>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">Client Full Name</label>
+                        <input type="text" class="form-control" placeholder="Customer Name" name="customer_name"
+                               required>
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Email</label>
+                        <input type="text" class="form-control" placeholder="Email" name="email" required>
+
+                    </div>
+                </div>
+
+                <div>
+                    <label class="form-label">Phone No.</label>
+                    <input type="text" class="form-control" placeholder="Phone No." name="phone_no" required>
+                    <br>
+                </div>
+                <div>
+                    <label class="form-label">Address</label>
+                    <input type="text" class="form-control" placeholder="Address" name="address" required>
+                    <br>
+                </div>
+                <div>
+                    <label class="form-label">Amount Agreed Upon (In Rs.)</label>
+                    <input type="number" step=".01" class="form-control" placeholder="Final Deal Amount" name="final_deal"
+                           required>
+                    <br>
+                </div>
+
+                <div class="d-grid gap-2 col-5 mx-auto">
+                    <button type="submit" class="btn btn-outline-primary">Add</button>
+                </div>
+
+            </form>
+            <br>
+        </div>
+
+    </div>
+</div>
+
+
+{% include 'footer.html' %}
+{% endblock %}

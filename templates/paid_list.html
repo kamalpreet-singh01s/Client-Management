@@ -15,6 +15,20 @@
 
 <br>
 
+<style>
+           table {
+            counter-reset: 1;
+        }
+
+        table tr {
+            counter-increment: rowNumber;
+        }
+
+        table tr td:first-child::before {
+            content: counter(rowNumber);
+
+        }
+</style>
 
 <h1 style="text-align:center">Receipts</h1>
 <br>
@@ -33,14 +47,14 @@
 
                 <th>Bill</th>
                 <th>Date</th>
-                <th>Amount</th>
+
                 <th>Status</th>
             </tr>
             </thead>
             <tbody>
             {% for paid in paid_list %}
             <tr>
-                <td>{{ paid.id }}</td>
+                <td></td>
                 <td>{{ paid.customer_name.customer_name }}</td>
                 <td>{{ paid.content_advt }}</td>
                 <td>{{ paid.date_of_order }}</td>
@@ -48,7 +62,7 @@
                 <td>{{ paid.dop }}</td>
                 <td>{{ paid.bill }}</td>
                 <td>{{ paid.bill_date }}</td>
-                <td>{{ paid.amount }}</td>
+
                 <td style="color:green; font-weight:600" class="status">{{ paid.status_name.status_name }}</td>
                 <td>
 
@@ -60,7 +74,7 @@
 
     </div>
     <hr>
-    <div class="d-flex justify-content-end" style="margin-right:150px">
+    <div class="d-flex justify-content-end" style="margin-right:50px">
         <h6>Received Total: Rs. {{total}}</h6>
     </div>
 

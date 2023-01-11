@@ -3,8 +3,6 @@ import datetime
 import os
 import re
 from datetime import timedelta
-from io import BytesIO
-
 import pandas as pd
 from flask import render_template, request, url_for, flash, redirect, send_file, session, send_from_directory
 from flask_migrate import Migrate
@@ -120,8 +118,8 @@ def all_customer_names():
     return render_template('login.html')
 
 
-@app.route("/add_customer", methods=['GET', 'POST'])
-def add_customer():
+@app.route("/add_client", methods=['GET', 'POST'])
+def add_client():
     if "username" in session:
         if request.method == "POST":
             message = ''
@@ -157,7 +155,7 @@ def add_customer():
                 db.session.commit()
                 flash('Customer Added', category='success')
                 return redirect(url_for('all_customer_names'))
-        return redirect(url_for('all_customer_names'))
+        return render_template('add_client.html')
     return render_template('login.html')
 
 
@@ -241,14 +239,10 @@ def add_record():
 
         if request.method == "POST":
             file = request.files['file']
-            # If the user does not select a file, the browser submits an
-            # empty file without a filename.
 
-            # if file and allowed_file(file.filename):
-            # filename = secure_filename(file.filename)
             filename = 'Bill No' + '-' + request.form["bill"] + '-' + request.form["date_of_order"] + '.pdf'
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
+
             record = Records(request.form["customer_name"], request.form["content_advt"], request.form["date_of_order"],
                              request.form["dop"], request.form["bill"], request.form["bill_date"],
                              status_id=request.form["status_name"],
@@ -280,7 +274,9 @@ def delete_record(record_id):
 def record_details(record_id):
     if "username" in session:
         date_now = datetime.date.today()
+        time_now = datetime.datetime.now()
         last_updated = date_now.strftime("%d/%b/%Y")
+        last_updated_time = time_now.strftime("%I:%M %p")
         record_to_update = Records.query.filter_by(id=record_id).first()
         customer = Customer.query.filter(Customer.id == record_to_update.customer_id).first()
         form = Form()
@@ -291,9 +287,7 @@ def record_details(record_id):
 
             get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
             print(get_customer)
-            # final_deal = get_customer.final_deal
 
-            # customer.customer_name = Customer.query.filter_by(id=request.form["customer_name"]).first()
             customer.email = request.form["email"]
             customer.phone_no = request.form["phone_no"]
             customer.final_deal = request.form["final_deal"]
@@ -302,66 +296,64 @@ def record_details(record_id):
             record_to_update.content_advt = request.form["content_advt"]
             record_to_update.date_of_order = request.form["date_of_order"]
             record_to_update.dop = request.form["dop"]
-            # record_to_update.bill = request.form["bill"]
 
-            # record_to_update.status_id = request.form["status_name"]
-
-            # record_to_update.amount_received_date = request.form["amount_received_date"]
             file = request.files['file']
             if request.files['file']:
                 filename = 'Bill No' + '-' + str(record_to_update.bill) + '-' + str(
                     record_to_update.date_of_order) + '.pdf'
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 record_to_update.filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            # record_to_update.data = uploaded_file.read()
-            # if record_to_update.status_id == '2':
-            #     record_to_update.amount = float(request.form['backup'])
-            #     # record_to_update.pending_amount = float(final_deal) - float(record_to_update.amount)
+
             db.session.commit()
+            print('test')
             flash('Record Updated', category='success')
-            # return redirect(url_for('record_details'))
+
         form.customer_name.default = record_to_update.customer_id
         form.status_name.default = record_to_update.status_id
         form.process()
 
         return render_template("record_details.html", record_to_update=record_to_update, form=form,
-                               last_updated=last_updated)
+                               last_updated=last_updated, customer=customer, last_updated_time=last_updated_time)
 
     return render_template('login.html')
 
 
-last_updated_for_report = ''
 @app.route('/set_receive/<int:record_id>', methods=['GET', 'POST'])
 def set_receive(record_id):
     form = Form()
     record_to_update = Records.query.filter_by(id=record_id).first()
+    customer = Customer.query.filter(Customer.id == record_to_update.customer_id).first()
     print(record_to_update.id)
     date_now = datetime.date.today()
+    time_now = datetime.datetime.now()
     last_updated = date_now.strftime("%d/%b/%Y")
-    last_updated_for_report = last_updated
+    last_updated_time = time_now.strftime("%I:%M %p")
     record_to_update.status_id = 2
-
+    record_to_update.amount_received_date = date_now
     db.session.commit()
     flash('Status Updated', category='success')
     # return redirect(url_for('record_details'))
     return render_template("record_details.html", record_to_update=record_to_update, form=form,
-                           last_updated=last_updated)
+                           last_updated=last_updated, customer=customer, last_updated_time=last_updated_time)
 
 
 @app.route('/set_cancel/<int:record_id>', methods=['GET', 'POST'])
 def set_cancel(record_id):
     form = Form()
     record_to_update = Records.query.filter_by(id=record_id).first()
+    customer = Customer.query.filter(Customer.id == record_to_update.customer_id).first()
     print(record_to_update.id)
     date_now = datetime.date.today()
+    time_now = datetime.datetime.now()
     last_updated = date_now.strftime("%d/%b/%Y")
+    last_updated_time = time_now.strftime("%I:%M %p")
     record_to_update.status_id = 3
-
+    record_to_update.amount_received_date = date_now
     db.session.commit()
     flash('Status Updated', category='success')
-    # return redirect(url_for('record_details'))
+
     return render_template("record_details.html", record_to_update=record_to_update, form=form,
-                           last_updated=last_updated)
+                           last_updated=last_updated, customer=customer, last_updated_time=last_updated_time)
 
 
 @app.route('/show_all_payment_status')
@@ -414,10 +406,11 @@ def update_payment_status(status_id):
 def pending_payment_list():
     if "username" in session:
 
-        total_amount = Records.query.filter(Records.status_id == '1').all()
+        records = Records.query.filter(Records.status_id == '1').all()
         total = 0
-        for i in total_amount:
-            total = float(i.pending_amount) + total
+        for i in records:
+            customer = Customer.query.filter_by(id= i.customer_id).first()
+            total = float(customer.final_deal) + total
 
         pending_list = Records.query.filter(Records.status_id == '1').order_by(desc(Records.id)).all()
         return render_template('pending_list.html', pending_list=pending_list, total=total)
@@ -431,7 +424,8 @@ def paid_payment_list():
         total_amount = Records.query.filter(Records.status_id == '2').all()
         total = 0
         for i in total_amount:
-            total = float(i.amount) + total
+            customer = Customer.query.filter_by(id=i.customer_id).first()
+            total = float(customer.final_deal) + total
 
         paid_list = Records.query.filter(Records.status_id == '2').order_by(desc(Records.id)).all()
         return render_template('paid_list.html', paid_list=paid_list, total=total)
@@ -487,14 +481,38 @@ def get_checked_boxes():
     return render_template('login.html')
 
 
+@app.route('/get_checked_boxes_for_client', methods=['GET', 'POST'])
+def get_checked_boxes_for_client():
+    if 'username' in session and request.method == "POST":
+        rec_ids = request.form['rec_ids']
+
+        for ids in rec_ids.split(','):
+            delete = Customer.query.filter_by(id=ids).first()
+            if Records.query.filter_by(customer_id=delete.id).first():
+                flash("Client in use", category='error')
+                return redirect(url_for('all_customer_names'))
+            db.session.delete(delete)
+            db.session.commit()
+        flash("Customer Deleted", category='success')
+        return redirect(url_for('all_customer_names'))
+
+    return render_template('login.html')
+
+
 @app.route('/send_rec_id', methods=['GET', 'POST'])
 def send_rec_id():
     form = Form()
     form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
-    if 'username' in session:
+    if 'username' in session and request.method == "POST":
         send_rec_ids = request.form["send_rec_ids"]
-        if request.method == "POST":
-            return render_template('update_check_status.html', stu_ids=send_rec_ids, form=form)
+        for ids in send_rec_ids.split(','):
+            print(ids)
+            record_status_to_update = Records.query.filter_by(id=ids).first()
+            if record_status_to_update.status_id == 2 or record_status_to_update.status_id == 3:
+                flash("Please Uncheck Records with status Received/Cancelled", category='error')
+                return redirect(url_for('dashboard', form=form))
+
+        return render_template('update_check_status.html', stu_ids=send_rec_ids, form=form)
     return render_template('login.html')
 
 
@@ -507,10 +525,7 @@ def update_class():
         for ids in status_id.split(','):
             record_status_to_update = Records.query.filter_by(id=ids).first()
             print(request.form['status_name'])
-            if int(request.form['status_name']) == 2:
-                record_status_to_update.amount = float(record_status_to_update.amount) + float(
-                    record_status_to_update.pending_amount)
-                record_status_to_update.pending_amount = 0
+
             record_status_to_update.status_id = request.form["status_name"]
             db.session.commit()
         flash("record_updated", category='success')
@@ -521,28 +536,6 @@ def update_class():
 Report_Generated_File = os.path.join(os.curdir, 'Report_Generated')
 
 app.config['Report_Generated'] = Report_Generated_File
-
-
-# @app.route('/generate_report', methods=['POST'])
-# def generate_report():
-#     if request.method == 'POST':
-#         file_name = 'report.csv'
-#
-#         data = Records.query.all()
-#         with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
-#             write_file = csv.writer(file)
-#             write_file.writerow(
-#                 ['No', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
-#                  'Amount Received Date', 'Status',
-#                  'Pending(Rs.)'])
-#             for i in data:
-#                 final = [i.id, i.customer_name.customer_name, i.content_advt, i.date_of_order, i.dop, i.bill,
-#                          i.bill_date,
-#                          i.amount, i.amount_received_date, i.status_name.status_name, i.pending_amount]
-#                 write_file.writerow(final)
-#
-#         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
-
 
 @app.route('/csv_file_record_to_update', methods=['POST', 'GET'])
 def csv_file_record_to_update():
@@ -559,11 +552,12 @@ def csv_file_record_to_update():
                      ])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
-                    customer = Customer.query.filter_by(Records.customer_id).first()
+                    print(record.bill, type(record.bill))
+                    customer = Customer.query.filter_by(id=Records.customer_id).first()
                     final = [record.id, record.customer_id, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
-                             customer.final_deal, set_receive.last_updated, record.status_name.status_name]
+                             customer.final_deal, record.amount_received_date, record.status_name.status_name]
                     write_file.writerow(final)
         else:
             file_name = 'Record.csv'
@@ -580,7 +574,7 @@ def csv_file_record_to_update():
                     final = [record.customer_name.customer_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
-                             customer.final_deal, last_updated_for_report, record.status_name.status_name]
+                             customer.final_deal, record.amount_received_date, record.status_name.status_name]
                     write_file.writerow(final)
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
@@ -611,10 +605,8 @@ def file_upload():
                     row.dop = read_file.loc[count, 'DoP']
                     row.bill = int(read_file.loc[count, 'Bill No.'])
                     row.bill_date = read_file.loc[count, 'Bill Date']
-                    row.amount = float(read_file.loc[count, 'Amount(Rs.)'])
+                    # row.amount = float(read_file.loc[count, 'Amount(Rs.)'])
                     row.amount_received_date = read_file.loc[count, 'Amount Received Date']
-                    row.pending_amount = int(read_file.loc[count, 'Pending(Rs.)'])
-
                     row.status_id = read_file.loc[count, 'Status']
                     db.session.commit()
                     count += 1
@@ -631,11 +623,10 @@ def file_upload():
                 new_record = Records(customer_id=read_file.loc[count, 'Client'],
                                      content_advt=read_file.loc[count, 'AD/GP/Others'],
                                      date_of_order=read_file.loc[count, 'RO Date'],
-                                     dop=read_file.loc[count, 'DoP'], bill=int(read_file.loc[count, 'Bill No.']),
+                                     dop=read_file.loc[count, 'DoP'], bill=read_file.loc[count, 'Bill No.'],
                                      bill_date=read_file.loc[count, 'Bill Date'],
-                                     amount=float(read_file.loc[count, 'Amount(Rs.)']),
+
                                      amount_received_date=read_file.loc[count, 'Amount Received Date'],
-                                     pending_amount=int(read_file.loc[count, 'Pending(Rs.)']),
 
                                      status_id=read_file.loc[count, 'Status'])
                 db.session.add(new_record)

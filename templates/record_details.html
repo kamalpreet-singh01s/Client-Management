@@ -23,10 +23,6 @@
             transform: scale(1.1);
         }
 
-
-
-
-
 </style>
 
 <form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
@@ -81,25 +77,66 @@
         function client_unchanged(){
     document.getElementById('alert_client').hidden = false;
 }
+
     </script>
 
     <div class="w-100 row bg-light form-group">
         <div class="bg-light col">
-            <div class="row" style="margin-left:5rem; margin-top:2rem">
-                <div class="col-11 mt-5 display-6 mb-2" id="visible_customer_name">
-                    <u>{{record_to_update.customer_name.customer_name}}/{{record_to_update.bill}}</u>
+            <div class="row" style="margin-left:5rem; margin-top:2rem" id="hide_table">
+                <div class="col-11 mt-5 mb-2" style="font-size:x-large" id="visible_customer_name">
+                    <u>{{customer.customer_name}}/{{record_to_update.bill}}</u>
                 </div>
-                <div class="col-7 display-6 mt-5 mb-2 form_editable bg-info text-light customer_name"
-                     style="margin-left:13px" onclick="client_unchanged()" hidden>
+                <table class="table">
+
+                    <tbody>
+                    <tr>
+                        <td>Customer Name:</td>
+                        <td>{{customer.customer_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td>{{customer.email}}</td>
+                    </tr>
+                    <tr>
+                        <td>Phone:</td>
+                        <td>{{customer.phone_no}}</td>
+                    </tr>
+                    <tr>
+                        <td>Address:</td>
+                        <td>{{customer.address}}</td>
+                    </tr>
+                    <tr>
+                        <td>Final Deal:</td>
+                        <td>{{customer.final_deal}}</td>
+                    </tr>
+                    <tr>
+                        <td>GST(18%):</td>
+                        <td>{{customer.gst}} (Included)</td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+            <script>
+        function client_unchanged(){
+    document.getElementById('alert_client').hidden = false;
+}
+
+
+            </script>
+            <div class="w-75 mx-auto" style="margin-top:5rem">
+                <div class="col mb-2" style="font-size:x-large" id="client_details" hidden>
+                    <u>Client Details</u>
+                </div>
+                <div class="col-7 text-center mt-5 mb-2 form_editable bg-info text-light customer_name"
+                     onclick="client_unchanged()" style="font-size:x-large" hidden>
                     {{record_to_update.customer_name.customer_name}}
                 </div>
-                <div class="col mt-5 display-11 text-danger">
+                <div class="col display-11 text-danger">
                     <p id="alert_client" hidden>Client Cannot be Changed !</p>
                 </div>
                 <div class="row display-11">
-                    <div class="col" id="visible_email">
-                        Email: {{record_to_update.customer_name.email}}
-                    </div>
+
                     <div class="col form_editable" hidden>
                         <label>Email</label>
                         <input class="form-control" type="text" name="email"
@@ -107,9 +144,7 @@
                     </div>
                 </div>
                 <div class="row display-11">
-                    <div class="col" id="visible_phone">
-                        Phone: {{record_to_update.customer_name.phone_no}}
-                    </div>
+
                     <div class="col form_editable" hidden>
                         <label>Phone</label>
                         <input class="form-control" type="text" name="phone_no"
@@ -117,104 +152,106 @@
                     </div>
 
                 </div>
-                <div class="row display-11">
-                    <div class="col" id="visible_address">
-                        Address: {{record_to_update.customer_name.address}}
-                    </div>
-                    <div class="col form_editable" hidden>
-                        <label>Address</label>
-                        <input class="form-control" type="text" name="address"
-                               value="{{record_to_update.customer_name.address}}">
-                    </div>
 
+                <div class="col form_editable" hidden>
+                    <label>Address</label>
+                    <input class="form-control" type="text" name="address"
+                           value="{{record_to_update.customer_name.address}}">
                 </div>
+
+
                 <div class="row display-11">
-                    <div class="col" id="visible_final_deal">
-                        Final Deal: Rs. {{record_to_update.customer_name.final_deal}}/-
-                    </div>
-                    <div class="col form_editable" hidden>
+
+                    <div class="col form_editable mb-5" hidden>
                         <label>Final Deal</label>
                         <input class="form-control" type="text" name="final_deal"
                                value="{{record_to_update.customer_name.final_deal}}">
                     </div>
                 </div>
-                <div class="row display-11">
-                    <div class="col form_editable" id="visible_gst">
-                        GST(18%): Rs. {{record_to_update.customer_name.gst}}/- (Included)
-                    </div>
 
-                </div>
             </div>
         </div>
         <div class="vl col-1"
-             style="height:200px; border-left: 2px solid lightgrey; background-color:rgba(248,249,250); margin-top:5rem; margin-left:5rem; margin-bottom:5rem">
+             style="height:200px; border-left: 2px solid lightgrey; background-color:rgba(248,249,250); margin-top:10rem; margin-left:5rem; margin-bottom:5rem">
 
         </div>
-        <div class="col bg-light">
+        <div class="col bg-light" id="hide_table2">
             <div class="row bg-light mt-3">
                 <div class="col d-flex justify-content-end mt-5" style="font-size:small">
-                    Last Updated: {{last_updated}}
+                    Last Updated: {{last_updated}} ({{last_updated_time}})
                 </div>
             </div>
-            <div class="row" style="margin-left:5rem">
-                <div class="col display-6 mb-2">
+            <div class="row w-75">
+                <div class="col mb-2" style="font-size:x-large">
                     <u>Bill Details</u>
                 </div>
-                <div class="row display-11 mb-1">
-                    <div class="col" id="visible_content_advt">
-                        AD/GP/Others: {{record_to_update.content_advt}}
-                    </div>
-                    <div class="col form_editable" hidden>
-                        <label>AD/GP/Others</label>
-                        <textarea style="height:100px" class="form-control" name="content_advt">{{record_to_update.content_advt}}</textarea>
-                    </div>
-                </div>
-                <div class="row display-11 mb-1">
-                    <div class="col" id="visible_date_of_order">
-                        Release Order Date: {{record_to_update.date_of_order}}
-                    </div>
-                    <div class="col form_editable" hidden>
-                        <label>Release Order Date</label>
-                        <input class="form-control" type="date" name="date_of_order"
-                               value="{{record_to_update.date_of_order}}">
-                    </div>
-                </div>
-                <div class="row display-11 mb-1">
-                    <div class="col" id="dop">
-                        Date of Publication: {{record_to_update.dop}}
-                    </div>
-                    <div class="col form_editable" hidden>
-                        <label>Date of Publication</label>
-                        <input class="form-control" type="date" name="dop" value="{{record_to_update.dop}}">
-                    </div>
-                </div>
-                <div class="row display-11 mb-4">
-                    <div class="col" id="bill_date">
-                        Bill Date: {{record_to_update.bill_date}}
-                    </div>
-                    <div class="col form_editable" hidden>
-                        <label>Bill Date</label>
-                        <input class="form-control" type="date" name="bill_date" value="{{record_to_update.bill_date}}">
-                    </div>
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <td>AD/GP/Others:</td>
+                        <td>{{record_to_update.content_advt}}</td>
+                    </tr>
+                    <tr>
+                        <td>Release Order Date:</td>
+                        <td>{{record_to_update.date_of_order}}</td>
+                    </tr>
+                    <tr>
+                        <td>Date of Publication:</td>
+                        <td>{{record_to_update.dop}}</td>
+                    </tr>
+                    <tr>
+                        <td>Bill Date:</td>
+                        <td>{{record_to_update.bill_date}}</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Status:</td>
+                        <td><p class="status display-11" id="status">{{record_to_update.status_name.status_name}}</p>
+                        </td>
+                    </tr>
 
-                </div>
-                <!--                <div class="row display-11 mb-1">-->
-                <!--                    <div class="col">-->
-                <!--                        <hr/>-->
-                <!--                    </div>-->
-                <!--                </div>-->
+                    </tbody>
 
-                <div class="row display-11 mb-1" id="status_name">
-                    <div class="col-3">
-                        Payment Status:
-                    </div>
-                    <div class="col">
-                        <p class="status display-11" id="status">{{record_to_update.status_name.status_name}}</p>
-                    </div>
-
-                </div>
+                </table>
             </div>
         </div>
+        <div class="row w-50">
+            <div class="col mb-2" style="margin-top:5rem; font-size: x-large" id="bill_details" hidden>
+                <u>Bill Details</u>
+            </div>
+            <div class="row display-11 mb-1">
+
+                <div class="col form_editable" hidden>
+                    <label>AD/GP/Others</label>
+                    <textarea style="height:100px" class="form-control" name="content_advt">{{record_to_update.content_advt}}</textarea>
+                </div>
+            </div>
+            <div class="row display-11 mb-1">
+
+                <div class="col form_editable" hidden>
+                    <label>Release Order Date</label>
+                    <input class="form-control" type="date" name="date_of_order"
+                           value="{{record_to_update.date_of_order}}">
+                </div>
+            </div>
+            <div class="row display-11 mb-1">
+
+                <div class="col form_editable" hidden>
+                    <label>Date of Publication</label>
+                    <input class="form-control" type="date" name="dop" value="{{record_to_update.dop}}">
+                </div>
+            </div>
+            <div class="row display-11 mb-4">
+
+                <div class="col form_editable" hidden>
+                    <label>Bill Date</label>
+                    <input class="form-control" type="date" name="bill_date" value="{{record_to_update.bill_date}}">
+                </div>
+
+            </div>
+
+
+        </div>
+
     </div>
 
     <div class="row bg-light">
@@ -224,9 +261,9 @@
         </div>
     </div>
     <div class="row bg-light mb-5">
-        <div class="col display-6 d-flex justify-content-center" style="margin-left:5rem">
+        <div class="col d-flex justify-content-center" style="margin-left:5rem">
             <div class="row">
-                <div class="row d-flex justify-content-center">
+                <div class="row d-flex justify-content-center" style="font-size:x-large">
                     <u>Attachment</u>
                 </div>
                 <div class="row">
@@ -283,19 +320,6 @@
 
             </div>
 
-            <!--            <div class="vl col-1"-->
-            <!--                 style="height:200px; border-left: 2px solid lightgrey; background-color:rgba(248,249,250);margin-left:5rem; margin-top:5rem;">-->
-            <!--            </div>-->
-            <!--            <div class="col display-6" style="margin-left:5rem">-->
-            <!--                <u>Amount Details</u>-->
-            <!--            </div>-->
-            <!--        </div>-->
-            <!--    <div class="row">-->
-            <!--        <u>Bill Uploaded</u>-->
-            <!--        <div class="col" id="pdf_upload">-->
-            <!--            &lt;!&ndash;            <input type="file" name="file" >&ndash;&gt;-->
-            <!--            <embed src="{{url_for('static', filename='sample.pdf')}}" type="application/pdf" height="300px" width=200px">-->
-            <!--        </div>-->
 
         </div>
         {{form.customer_name (class="customer_name")}}
@@ -305,7 +329,7 @@
 
 
 {% block script%}
-<script src="{{url_for('static', filename='form_disable.js')}}"></script>
+
 <script src="{{url_for('static', filename='script.js')}}"></script>
 
 {% endblock %}

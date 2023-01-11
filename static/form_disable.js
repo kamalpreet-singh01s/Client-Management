@@ -14,39 +14,48 @@ action_buttons = document.getElementById("action_buttons")
 action_buttons.style.backgroundColor = "#141619";
 document.body.style.backgroundColor = "#141619";
 
-visible_customer_name = document.getElementById('visible_customer_name');
-visible_customer_name.parentNode.removeChild(visible_customer_name);
+//visible_customer_name = document.getElementById('visible_customer_name');
+//visible_customer_name.parentNode.removeChild(visible_customer_name);
+//
+//visible_email = document.getElementById('visible_email');
+//visible_email.parentNode.removeChild(visible_email);
+//
+//visible_phone = document.getElementById('visible_phone');
+//visible_phone.parentNode.removeChild(visible_phone);
+//
+//visible_address = document.getElementById('visible_address');
+//visible_address.parentNode.removeChild(visible_address);
+//
+//visible_final_deal = document.getElementById('visible_final_deal');
+//visible_final_deal.parentNode.removeChild(visible_final_deal);
+//
+//visible_gst = document.getElementById('visible_gst');
+//visible_gst.parentNode.removeChild(visible_gst);
+//
+//visible_content_advt = document.getElementById('visible_content_advt');
+//visible_content_advt.parentNode.removeChild(visible_content_advt);
+//
+//visible_date_of_order = document.getElementById('visible_date_of_order');
+//visible_date_of_order.parentNode.removeChild(visible_date_of_order);
+//
+//dop = document.getElementById('dop');
+//dop.parentNode.removeChild(dop);
+//
+//bill_date = document.getElementById('bill_date');
+//bill_date.parentNode.removeChild(bill_date);
+//
+//status_name = document.getElementById('status_name');
+//status_name.parentNode.removeChild(status_name);
 
-visible_email = document.getElementById('visible_email');
-visible_email.parentNode.removeChild(visible_email);
 
-visible_phone = document.getElementById('visible_phone');
-visible_phone.parentNode.removeChild(visible_phone);
+hide_table = document.getElementById('hide_table');
+hide_table.parentNode.removeChild(hide_table);
 
-visible_address = document.getElementById('visible_address');
-visible_address.parentNode.removeChild(visible_address);
+document.getElementById("client_details").hidden = false;
+document.getElementById("bill_details").hidden = false;
 
-visible_final_deal = document.getElementById('visible_final_deal');
-visible_final_deal.parentNode.removeChild(visible_final_deal);
-
-visible_gst = document.getElementById('visible_gst');
-visible_gst.parentNode.removeChild(visible_gst);
-
-visible_content_advt = document.getElementById('visible_content_advt');
-visible_content_advt.parentNode.removeChild(visible_content_advt);
-
-visible_date_of_order = document.getElementById('visible_date_of_order');
-visible_date_of_order.parentNode.removeChild(visible_date_of_order);
-
-dop = document.getElementById('dop');
-dop.parentNode.removeChild(dop);
-
-bill_date = document.getElementById('bill_date');
-bill_date.parentNode.removeChild(bill_date);
-
-status_name = document.getElementById('status_name');
-status_name.parentNode.removeChild(status_name);
-
+hide_table = document.getElementById('hide_table2');
+hide_table.parentNode.removeChild(hide_table);
 
 
 

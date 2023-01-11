@@ -130,7 +130,7 @@ table tr:hover{
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" href="{{url_for('manage_users')}}">Manage Users</a>
                 <a class="dropdown-item" href="{{url_for('show_all_payment_status')}}">Add Payment Status</a>
-                 <a class="dropdown-item" id="theme-toggle" >Dark Mode</a>
+<!--                 <a class="dropdown-item" id="theme-toggle" >Dark Mode</a>-->
                  <a class="dropdown-item" href="{{url_for('file_upload')}}">Import Data From File</a>
 
                 <div class="dropdown-divider"></div>
@@ -154,8 +154,13 @@ table tr:hover{
         crossorigin="anonymous"></script>
 
 <script src="{{url_for('static', filename='script.js')}}"></script>
-<script src="{{url_for('static', filename='dark_mode.js')}}"></script>
+<!--<script src="{{url_for('static', filename='dark_mode.js')}}"></script>-->
+<script src="{{url_for('static', filename='client_checkbox.js')}}"></script>
+<script src="{{url_for('static', filename='record_details.js')}}"></script>
+<script src="{{url_for('static', filename='form_disable.js')}}"></script>
 <script src="{{url_for('static', filename='checkbox_del.js')}}"></script>
+
+
 {%include 'footer.html'%}
 </body>
 

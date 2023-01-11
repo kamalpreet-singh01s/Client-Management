@@ -57,30 +57,25 @@ class Records(db.Model):
     content_advt = db.Column(db.String())
     date_of_order = db.Column(db.String(100))
     dop = db.Column(db.String(100))
-    bill = db.Column(db.Numeric)
+    bill = db.Column(db.String())
     bill_date = db.Column(db.String(100))
-    # amount = db.Column(db.Float)
-    # amount_received_date = db.Column(db.String(100))
-    # pending_amount = db.Column(db.Float)
-    #
+
+    amount_received_date = db.Column(db.String(100))
+
     status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
     status_name = db.relationship('Status')
 
     filename = db.Column(db.String())
-    # data = db.Column(db.LargeBinary)
 
     def __init__(self, customer_id, content_advt, date_of_order, dop, bill, bill_date,
-                 status_id, filename=None, data=None):
+                 status_id, filename=None, data=None, amount_received_date=None):
         self.customer_id = customer_id
         self.content_advt = content_advt
         self.date_of_order = date_of_order
         self.dop = dop
         self.bill = bill
         self.bill_date = bill_date
-        # self.amount = amount
-        # self.amount_received_date = amount_received_date
-        # self.pending_amount = pending_amount
-
+        self.amount_received_date = amount_received_date
         self.status_id = status_id
 
         self.filename = filename

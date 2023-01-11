@@ -20,39 +20,78 @@ table tr td:first-child::before {
 
 
 
+
+
 </style>
 
 
 <br>
 
-    <h4 style="text-align:center" class="mb-2">Data Sheet</h4>
+<h4 style="text-align:center" class="mb-2">Data Sheet</h4>
     <form method="POST" action="{{ url_for('search_records') }}">
         <div class="row" style="margin-left:2px">
-            <div class="col-2">
+            <div class="col-2 d-flex justify-content-end">
                 <input type="text" class="form-control form-control-sm w-75" name="search"
                        placeholder="Search"/>
             </div>
-            <div class="col ">
+            <div class="col-2 d-flex justify-content-start">
                 <button type="submit" class="btn btn-primary btn-sm" onclick="location.href='{{ url_for('search_records') }}'">Search
                 </button>
             </div>
-
-        <div style="text-align: center">
+            <div style="text-align: center">
             <u><h5 id="total_results"></h5></u>
         </div>
         </div>
     </form>
-    <br>
+<br>
 
 <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
-    <div class="d-block" style="position:fixed;top:9rem; left:80rem;">
-        <div>
-            <a class="add_button"
-               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"
-               href="{{url_for('add_record')}}">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+    <div class="d-block" style="position:fixed;top:9rem; left:70rem;">
+            <div class="mb-1">
+                <a class="add_button"
+                   style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"
+                   href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
         </div>
 
-    </div>
+        <div class="row mb-1">
+
+            <div class="col-5 d-flex justify-content-end">
+                <form method="POST" action="/get_checked_boxes">
+
+                    <input type="text" id="rec_ids" name="rec_ids" hidden/>
+                    <button type="submit" class="del_button" id="stu_ids_submit">
+                        Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+                    </button>
+
+                </form>
+            </div>
+
+            <div class="col d-flex justify-content-end">
+                <form method="POST" action="/send_rec_id">
+
+                    <input type="text" id="send_rec_ids" name="send_rec_ids" hidden/>
+                    <button type="submit" class="update_button" id="class_ids_submit">
+                        Update Status<i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    </button>
+
+                </form>
+            </div>
+            <div class="col d-flex justify-content-end">
+                 <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
+
+                    <div class="">
+                        <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
+                        <button type="submit" class="btn btn-primary" id="check_rec_ids_btn">Generate Custom Report
+                        </button>
+                    </div>
+                    <div>
+                        <input type="checkbox" name="update_check" id="update_check">
+                        <label id="update_label">Update Record</label>
+                    </div>
+                </form>
+            </div>
+        </div>
     <form action="" method="post">
         <table class="table table-hover table-sortable text-center" id="table-sortable">
 
@@ -73,7 +112,11 @@ table tr td:first-child::before {
 
             {% for res in rec%}
             <tr>
-                <td></td>
+                <td>
+                    <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
+                           type="checkbox"
+                           value="{{ res.id }}">
+                </td>
                 <td style="cursor: pointer;"
                     onclick="location.href='{{url_for('record_details', record_id = res.id)}}'">
                     {{res.customer_name.customer_name}}
@@ -92,7 +135,6 @@ table tr td:first-child::before {
                     onclick="location.href='{{url_for('record_details', record_id = res.id)}}'" class="status">
                     {{res.status_name.status_name}}
                 </td>
-
 
 
                 <td>
@@ -142,6 +184,8 @@ var table = document.getElementById("table-sortable");
 var tbodyRowCount = table.tBodies[0].rows.length;
 console.log(tbodyRowCount)
 var total_results = document.getElementById("total_results").innerHTML ='Total Results Found'+' : '+ tbodyRowCount
+
+
 
 </script>
 

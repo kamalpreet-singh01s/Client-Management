@@ -3,49 +3,156 @@
 {% block content %}
 {% include 'alert.html' %}
 
+<style>
+    .image-upload>input {
+  display: none;
+}
+#pdf_upload {
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
 
-<div class="d-grid gap-2 col-3 mx-auto" style="margin:auto; margin-top:8%">
-    <form class="col g-3" action={{request.path}} method="post">
-        <div>
-            <label class="form-label">Customer Name</label>
-            <input type="text" class="form-control" value="{{customer_to_update.customer_name}}" name="customer_name" required>
+        #pdf_upload img {
+            width: 100%;
+            transition: 0.5s all ease-in-out;
+        }
 
+        #pdf_upload:hover img {
+            transform: scale(1.1);
+        }
+
+
+
+
+
+
+</style>
+
+<form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
+    <div class="w-100" id="action_buttons" style="display:block; position:fixed;">
+
+        <div class="row mb-2">
+            <div class="col-2">
+                <button style="margin-left:30px" type="button" class="btn btn-success btn-sm edit_button mt-2"
+                        onclick="hideDisable()"
+                        id="edit_button">
+                    Edit
+                </button>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-1">
+                <input style="margin-left:30px" type="submit" value="Update" class="update_btn btn btn-success btn-sm"
+                       onclick="location.href='{{url_for('update_customer',customer_id = customer_to_update.id)}}'"
+                       id="update_button" hidden/>
+
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-danger btn-sm"
+                        onclick="location.href='{{url_for('update_customer',customer_id = customer_to_update.id)}}'"
+                        id="discard_button" hidden>
+                    Discard
+                </button>
+            </div>
 
         </div>
-        <div>
-            <label class="form-label">Email</label>
-            <input type="text" class="form-control" value="{{customer_to_update.email}}" name="email" required>
 
+    </div>
 
+    <div class="w-50 mx-auto row bg-light form-group" style="margin-top:10rem">
+        <div id="hide_table">
+            <table class="table">
+
+            <tbody>
+            <tr>
+                <td>Customer Name: </td>
+                <td>{{customer_to_update.customer_name}}</td>
+            </tr>
+            <tr>
+                <td>Email: </td>
+                <td>{{customer_to_update.email}}</td>
+            </tr>
+            <tr>
+                <td>Phone:  </td>
+                <td>{{customer_to_update.phone_no}}</td>
+            </tr>
+            <tr>
+                <td>Address:  </td>
+                <td>{{customer_to_update.address}}</td>
+            </tr>
+            <tr>
+                <td>Final Deal:  </td>
+                <td>{{customer_to_update.final_deal}}</td>
+            </tr>
+            <tr>
+                <td>GST(18%): </td>
+                <td>{{customer_to_update.gst}}</td>
+            </tr>
+            </tbody>
+
+        </table>
         </div>
-        <div>
-            <label class="form-label">Phone No.</label>
-            <input type="number" class="form-control" value="{{customer_to_update.phone_no}}" name="phone_no" required>
 
+        <div class="bg-light col">
+            <div class="row" style="margin-left:5rem; ">
+                <div class="col display-11 mb-2 form_editable customer_name"
+                      id="customer_name" hidden>
+                    <label>Customer Name</label>
+                    <input class="form-control" type="text" name="customer_name"
+                               value="{{customer_to_update.customer_name}}">
+                </div>
 
+                <div class="row display-11">
+
+                    <div class="col form_editable" hidden>
+                        <label>Email</label>
+                        <input class="form-control" type="text" name="email"
+                               value="{{customer_to_update.email}}">
+                    </div>
+                </div>
+                <div class="row display-11">
+
+                    <div class="col form_editable" hidden>
+                        <label>Phone</label>
+                        <input class="form-control" type="text" name="phone_no"
+                               value="{{customer_to_update.phone_no}}">
+                    </div>
+
+                </div>
+                <div class="row display-11">
+
+                    <div class="col form_editable" hidden>
+                        <label>Address</label>
+                        <input class="form-control" type="text" name="address"
+                               value="{{customer_to_update.address}}">
+                    </div>
+
+                </div>
+                <div class="row display-11">
+
+                    <div class="col form_editable mb-2" hidden>
+                        <label>Final Deal</label>
+                        <input class="form-control" type="text" name="final_deal"
+                               value="{{customer_to_update.final_deal}}">
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <div>
-            <label class="form-label">Address</label>
-            <input type="text" class="form-control" value="{{customer_to_update.address}}" name="address"
-                   required>
+
+    </div>
+    <input type="text" name="old_final_deal" value="{{old_final_deal}}" hidden>
+</form>
 
 
-        </div>
-        <div>
-            <label class="form-label">Final Deal Amount</label>
-            <input type="number" step=".01" class="form-control" value="{{customer_to_update.final_deal}}" name="final_deal" required>
+{% block script%}
+<script src="{{url_for('static', filename='customer.js')}}"></script>
+<script src="{{url_for('static', filename='script.js')}}"></script>
 
+{% endblock %}
 
-        </div>
-
-        <br>
-        <div class="d-grid gap-2 col-6 mx-auto">
-            <button type="submit" class="btn btn-outline-primary">Update Customer</button>
-        </div>
-        <input type="text" name="old_final_deal" value="{{old_final_deal}}" hidden>
-    </form>
-</div>
-<br>
-<br>
-
+{% include 'footer.html' %}
 {% endblock %}
