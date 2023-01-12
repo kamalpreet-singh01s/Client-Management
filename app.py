@@ -72,7 +72,7 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/manage_users', methods=['GET', 'POST'])
+@app.route('/users', methods=['GET', 'POST'])
 def manage_users():
     if 'username' in session:
         users = Users.query.all()
@@ -80,7 +80,7 @@ def manage_users():
     return render_template('login.html')
 
 
-@app.route('/delete_user/<int:user_id>', methods=['GET', 'POST'])
+@app.route('/delete-user/<int:user_id>', methods=['GET', 'POST'])
 def delete_user(user_id):
     if 'username' in session:
         user_to_del = Users.query.filter_by(id=user_id).first()
@@ -95,7 +95,7 @@ def delete_user(user_id):
     return render_template('login.html')
 
 
-@app.route('/update_user/<int:user_id>', methods=['GET', 'POST'])
+@app.route('/update-user/<int:user_id>', methods=['GET', 'POST'])
 def update_user(user_id):
     if 'username' in session:
         user_to_update = Users.query.filter_by(id=user_id).first()
@@ -110,7 +110,7 @@ def update_user(user_id):
     return render_template('login.html')
 
 
-@app.route('/all_customer_names')
+@app.route('/client-names')
 def all_customer_names():
     if "username" in session:
         customers = Customer.query.order_by(desc(Customer.id))
@@ -118,7 +118,7 @@ def all_customer_names():
     return render_template('login.html')
 
 
-@app.route("/add_client", methods=['GET', 'POST'])
+@app.route("/new-client", methods=['GET', 'POST'])
 def add_client():
     if "username" in session:
         if request.method == "POST":
@@ -159,7 +159,7 @@ def add_client():
     return render_template('login.html')
 
 
-@app.route('/delete_customer/<int:customer_id>')
+@app.route('/delete-client/<int:customer_id>')
 def delete_customer(customer_id):
     if "username" in session:
         customer_to_delete = Customer.query.filter_by(id=customer_id).first()
@@ -176,7 +176,7 @@ def delete_customer(customer_id):
     return render_template('login.html')
 
 
-@app.route('/update_customer/<int:customer_id>', methods=['GET', 'POST'])
+@app.route('/update-client/<int:customer_id>', methods=['GET', 'POST'])
 def update_customer(customer_id):
     if "username" in session:
         customer_to_update = Customer.query.filter_by(id=customer_id).first()
@@ -230,7 +230,7 @@ def dashboard():
     return render_template('login.html')
 
 
-@app.route('/add_record', methods=['GET', 'POST'])
+@app.route('/add-record', methods=['GET', 'POST'])
 def add_record():
     if "username" in session:
         form = Form()
@@ -258,7 +258,7 @@ def add_record():
     return render_template('login.html')
 
 
-@app.route('/delete_record/<int:record_id>')
+@app.route('/delete-record/<int:record_id>')
 def delete_record(record_id):
     if "username" in session:
         record_to_delete = Records.query.filter_by(id=record_id).first()
@@ -270,7 +270,7 @@ def delete_record(record_id):
     return render_template('login.html')
 
 
-@app.route('/record_details/<int:record_id>', methods=['GET', 'POST'])
+@app.route('/record-details/<int:record_id>', methods=['GET', 'POST'])
 def record_details(record_id):
     if "username" in session:
         date_now = datetime.date.today()
@@ -318,7 +318,7 @@ def record_details(record_id):
     return render_template('login.html')
 
 
-@app.route('/set_receive/<int:record_id>', methods=['GET', 'POST'])
+@app.route('/set-receive/<int:record_id>', methods=['GET', 'POST'])
 def set_receive(record_id):
     form = Form()
     record_to_update = Records.query.filter_by(id=record_id).first()
@@ -337,7 +337,7 @@ def set_receive(record_id):
                            last_updated=last_updated, customer=customer, last_updated_time=last_updated_time)
 
 
-@app.route('/set_cancel/<int:record_id>', methods=['GET', 'POST'])
+@app.route('/set-cancel/<int:record_id>', methods=['GET', 'POST'])
 def set_cancel(record_id):
     form = Form()
     record_to_update = Records.query.filter_by(id=record_id).first()
@@ -356,14 +356,14 @@ def set_cancel(record_id):
                            last_updated=last_updated, customer=customer, last_updated_time=last_updated_time)
 
 
-@app.route('/show_all_payment_status')
+@app.route('/payment-status-list')
 def show_all_payment_status():
     if "username" in session:
         return render_template('pen_rec.html', all_status=Status.query.all())
     return render_template('login.html')
 
 
-@app.route('/payment_status', methods=['GET', 'POST'])
+@app.route('/payment-status', methods=['GET', 'POST'])
 def payment_status():
     if "username" in session:
         if request.method == "POST":
@@ -375,7 +375,7 @@ def payment_status():
     return render_template('login.html')
 
 
-@app.route('/delete_payment_status/<int:status_id>')
+@app.route('/delete-payment-status/<int:status_id>')
 def delete_payment_status(status_id):
     if "username" in session:
         status_to_delete = Status.query.filter_by(id=status_id).first()
@@ -387,7 +387,7 @@ def delete_payment_status(status_id):
     return render_template('login.html')
 
 
-@app.route('/update_payment_status/<int:status_id>', methods=['GET', 'POST'])
+@app.route('/update-payment-status/<int:status_id>', methods=['GET', 'POST'])
 def update_payment_status(status_id):
     if "username" in session:
         status_to_update = Status.query.filter_by(id=status_id).first()
@@ -402,14 +402,14 @@ def update_payment_status(status_id):
     return render_template('login.html')
 
 
-@app.route('/pending_payment_list')
+@app.route('/pending-payment-list')
 def pending_payment_list():
     if "username" in session:
 
         records = Records.query.filter(Records.status_id == '1').all()
         total = 0
         for i in records:
-            customer = Customer.query.filter_by(id= i.customer_id).first()
+            customer = Customer.query.filter_by(id=i.customer_id).first()
             total = float(customer.final_deal) + total
 
         pending_list = Records.query.filter(Records.status_id == '1').order_by(desc(Records.id)).all()
@@ -417,7 +417,7 @@ def pending_payment_list():
     return render_template('login.html')
 
 
-@app.route('/paid_payment_list')
+@app.route('/paid-payment-list')
 def paid_payment_list():
     if "username" in session:
 
@@ -481,23 +481,6 @@ def get_checked_boxes():
     return render_template('login.html')
 
 
-@app.route('/get_checked_boxes_for_client', methods=['GET', 'POST'])
-def get_checked_boxes_for_client():
-    if 'username' in session and request.method == "POST":
-        rec_ids = request.form['rec_ids']
-
-        for ids in rec_ids.split(','):
-            delete = Customer.query.filter_by(id=ids).first()
-            if Records.query.filter_by(customer_id=delete.id).first():
-                flash("Client in use", category='error')
-                return redirect(url_for('all_customer_names'))
-            db.session.delete(delete)
-            db.session.commit()
-        flash("Customer Deleted", category='success')
-        return redirect(url_for('all_customer_names'))
-
-    return render_template('login.html')
-
 
 @app.route('/send_rec_id', methods=['GET', 'POST'])
 def send_rec_id():
@@ -532,10 +515,30 @@ def update_class():
         return redirect(url_for('dashboard', form=form))
     return render_template('login.html')
 
+@app.route('/get_checked_boxes_for_client', methods=['GET', 'POST'])
+def get_checked_boxes_for_client():
+    if 'username' in session and request.method == "POST":
+        record_ids = request.form['rec_ids']
+        print(record_ids)
+        for ids in record_ids.split(','):
+            delete = Customer.query.filter_by(id=ids).first()
+            if Records.query.filter_by(customer_id=delete.id).first():
+                flash("Client in use", category='error')
+                return redirect(url_for('all_customer_names'))
+            db.session.delete(delete)
+            db.session.commit()
+        flash("Customer Deleted", category='success')
+        return redirect(url_for('all_customer_names'))
+
+    return render_template('login.html')
+
+
+
 
 Report_Generated_File = os.path.join(os.curdir, 'Report_Generated')
 
 app.config['Report_Generated'] = Report_Generated_File
+
 
 @app.route('/csv_file_record_to_update', methods=['POST', 'GET'])
 def csv_file_record_to_update():

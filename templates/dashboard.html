@@ -77,11 +77,11 @@
 
                     <div class="">
                         <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
-                        <button type="submit" class="btn btn-primary" id="check_rec_ids_btn">Generate Custom Report
+                        <button type="submit" class="btn btn-primary btn-sm" id="check_rec_ids_btn">Generate Custom Report
                         </button>
                     </div>
                     <div>
-                        <input type="checkbox" name="update_check" id="update_check">
+                        <input type="checkbox" name="update_check" class="form-check-input" id="update_check">
                         <label id="update_label">Update Record</label>
                     </div>
                 </form>
@@ -95,11 +95,9 @@
                 <thead>
                 <tr class="text-center">
                     <th title="Serial Number">S.No.</th>
-                    <th title="Client Name">Client</th>
-
                     <th title="Bill No.">Bill No.</th>
                     <th title='Bill Date'>Bill Date</th>
-
+                    <th title="Client Name">Client</th>
                     <th title="Shows Current Status of Payment">Status</th>
                     <th></th>
 
@@ -116,32 +114,22 @@
                                    value="{{ record.id }}">
                         </td>
                         <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
-                            {{ record.customer_name.customer_name }}
-                        </td>
-
-                        <td style="cursor: pointer;"
                             onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill }}
                         </td>
                         <td style="cursor: pointer;"
                             onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill_date }}
                         </td>
 
-
+                        <td style="cursor: pointer;"
+                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
+                            {{ record.customer_name.customer_name }}
+                        </td>
 
                         <td style="cursor: pointer"
                             onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"
                             class="status">
                             {{ record.status_name.status_name }}
                         </td>
-<!--                        <td>-->
-<!--                            <button type="button" id="del" class="btn btn-outline-danger"-->
-<!--                                    onclick="del_rec({{ record.id }})"-->
-<!--                                    data-toggle="modal" data-target=".bd-example-modal-sm">-->
-<!--                                Delete-->
-<!--                            </button>-->
-
-<!--                        </td>-->
 
                         <td>
                             <div id="bd-example-modal-sm{{ record.id }}" class="modal fade bd-example-modal-sm"
@@ -177,26 +165,7 @@
         </form>
     </div>
 
-
-    <script>
-        function del_rec(id) {
-            $('#bd-example-modal-sm' + id).modal('show');
-            $('#modal_del' + id).attr('href', '')
-            $('#modal_del' + id).attr('href', '/delete_record/' + id)
-        }
-
-
-        function check_box() {
-            if ($('.form-check-input').is(":checked"))
-                $("#add").hide() && $("#print_records_btn").hide();
-
-
-            else
-                $("#add").show() && $("#print_records_btn").show();
-        }
-
-
-    </script>
+<script src="{{url_for('static', filename='checkbox_del.js')}}"></script>
 
 
 {% endblock %}

@@ -6,12 +6,11 @@
           integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename= 'sm2.png')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename= 'alert.css')}}">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='alert.css') }}">
-     <link rel="stylesheet" href="/static/light.css">
-    <link rel="stylesheet" href="/static/dark.css">
 
 
     <title>{%block title%}{% endblock %}</title>
@@ -92,6 +91,7 @@ table tr:hover{
 
 
 
+
     </style>
 </head>
 <body>
@@ -99,7 +99,7 @@ table tr:hover{
 
 <nav style="position:sticky; top:0; z-index:1;" class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a href="{{url_for('dashboard')}}" class="navbar-brand"><img src="{{url_for('static', filename= 'logo.png')}}"
-                                                                 style=""
+                                                                 style="background-color: #ffffff; border-radius:50px;"
                                                                  height="40px" alt="LOGO" class="navbar-brand"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -130,8 +130,7 @@ table tr:hover{
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" href="{{url_for('manage_users')}}">Manage Users</a>
                 <a class="dropdown-item" href="{{url_for('show_all_payment_status')}}">Add Payment Status</a>
-<!--                 <a class="dropdown-item" id="theme-toggle" >Dark Mode</a>-->
-                 <a class="dropdown-item" href="{{url_for('file_upload')}}">Import Data From File</a>
+                <a class="dropdown-item" href="{{url_for('file_upload')}}">Import Data From File</a>
 
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item logout" href="{{url_for('logout')}}">Logout</a>
@@ -140,12 +139,12 @@ table tr:hover{
     </div>
 
 </nav>
+
 {% include 'alert.html' %}
 
 {%block content%}{%endblock%}
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
+
+
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
@@ -153,12 +152,8 @@ table tr:hover{
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 
+
 <script src="{{url_for('static', filename='script.js')}}"></script>
-<!--<script src="{{url_for('static', filename='dark_mode.js')}}"></script>-->
-<script src="{{url_for('static', filename='client_checkbox.js')}}"></script>
-<script src="{{url_for('static', filename='record_details.js')}}"></script>
-<script src="{{url_for('static', filename='form_disable.js')}}"></script>
-<script src="{{url_for('static', filename='checkbox_del.js')}}"></script>
 
 
 {%include 'footer.html'%}

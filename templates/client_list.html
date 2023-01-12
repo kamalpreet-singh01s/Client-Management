@@ -63,16 +63,6 @@
             </form>
         </div>
 
-<!--        <div class="col d-flex justify-content-end">-->
-<!--            <form method="POST" action="/send_rec_id">-->
-
-<!--                <input type="text" id="send_rec_ids" name="send_rec_ids" hidden/>-->
-<!--                <button type="submit" class="update_button" id="class_ids_submit">-->
-<!--                    Update Status<i class="fa fa-arrow-up" aria-hidden="true"></i>-->
-<!--                </button>-->
-
-<!--            </form>-->
-<!--        </div>-->
         <div class="col d-flex justify-content-end">
             <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
 
@@ -130,24 +120,7 @@
 </div>
 <br>
 
-{% block script%}
 <script src="{{url_for('static', filename='client_checkbox.js')}}"></script>
-<script>
-function del_rec(id){
-    $('#bd-example-modal-sm'+id).modal('show');
-    $('#modal_del'+id).attr('href','')
-    $('#modal_del'+id).attr('href','/delete_customer/'+id)
- }
 
-     function check_box() {
-            if ($('.form-check-input').is(":checked"))
-                $("#add").hide() && $("#check_rec_ids_btn").hide() && $("#update_check").hide() && $("#update_label").hide();
-
-
-            else
-                $("#add").show() && $("#check_rec_ids_btn").show() && $("#update_check").show() && $("#update_label").show();
-        }
-</script>
-{% endblock %}
 
 {%endblock%}

@@ -30,7 +30,7 @@
         }
 </style>
 
-<h1 style="text-align:center">Receipts</h1>
+<h4 style="text-align:center">Receipts</h4>
 <br>
 
 
@@ -41,13 +41,11 @@
             <tr>
                 <th>S.No.</th>
                 <th>Client</th>
-                <th>AD/GP/Others.</th>
+                <th>Bill No.</th>
+                <th>Bill Date</th>
                 <th>RO Date</th>
                 <th>DoP</th>
-
-                <th>Bill</th>
-                <th>Date</th>
-
+                <th>AD/GP/Others.</th>
                 <th>Status</th>
             </tr>
             </thead>
@@ -56,12 +54,12 @@
             <tr>
                 <td></td>
                 <td>{{ paid.customer_name.customer_name }}</td>
-                <td>{{ paid.content_advt }}</td>
-                <td>{{ paid.date_of_order }}</td>
-
-                <td>{{ paid.dop }}</td>
                 <td>{{ paid.bill }}</td>
                 <td>{{ paid.bill_date }}</td>
+                 <td>{{ paid.date_of_order }}</td>
+
+                <td>{{ paid.dop }}</td>
+                <td>{{ paid.content_advt }}</td>
 
                 <td style="color:green; font-weight:600" class="status">{{ paid.status_name.status_name }}</td>
                 <td>

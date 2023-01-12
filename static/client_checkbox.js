@@ -1,20 +1,28 @@
 
-var values=[];
+var cli_values=[];
 
 textbox = document.getElementById("rec_ids")
 
 $(".form-check-input").click(function(){
-    values=[];
+    cli_values=[];
     $(".form-check-input").each(function(){
         if($(this).is(":checked")){
-        values.push($(this).val());
+        cli_values.push($(this).val());
         }
         });
-        console.log(values);
-        textbox.value = values
+        console.log(cli_values);
+        textbox.value = cli_values
 
     });
 
+$(document).ready(function() {
+
+    var $submit = $("#stu_ids_submit").hide(),
+        $cbs = $('input[name="check-box"]').click(function() {
+            $submit.toggle( $cbs.is(":checked") );
+        });
+
+});
 
 
 
@@ -39,23 +47,7 @@ $(".form-check-input").click(function(){
 
 
 
-$(document).ready(function() {
 
-    var $submit = $("#stu_ids_submit").hide(),
-        $cbs = $('input[name="check-box"]').click(function() {
-            $submit.toggle( $cbs.is(":checked") );
-        });
-
-});
-
-$(document).ready(function() {
-
-    var $submit = $("#class_ids_submit").hide(),
-        $cbs = $('input[name="check-box"]').click(function() {
-            $submit.toggle( $cbs.is(":checked") );
-        });
-
-});
 
 $(document).ready(function() {
 
@@ -70,5 +62,15 @@ $(document).ready(function() {
 
 
 
+function del_rec(id){
+    $('#bd-example-modal-sm'+id).modal('show');
+    $('#modal_del'+id).attr('href','')
+    $('#modal_del'+id).attr('href','/delete_customer/'+id)
+ }
 
-$('.customer_name').prop('hidden', true);
+function check_box() {
+    if ($('.form-check-input').is(":checked"))
+        $("#add").hide()
+    else
+        $("#add").show()
+}

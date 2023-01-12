@@ -19,4 +19,3 @@ $(document).ready(function(){
 //    $( ".status:contains('Received')" ).css( "background-color", "green" );
     $( ".status:contains('Received')" ).css( "font-weight" , "bold" );
 })
-

@@ -9,8 +9,6 @@ $(".form-check-input").click(function(){
         if($(this).is(":checked")){
         values.push($(this).val());
         }
-
-
         });
         console.log(values);
         textbox.value = values
@@ -85,6 +83,19 @@ $(document).ready(function() {
 
 
 
+function del_rec(id) {
+    $('#bd-example-modal-sm' + id).modal('show');
+    $('#modal_del' + id).attr('href', '')
+    $('#modal_del' + id).attr('href', '/delete_record/' + id)
+}
 
 
-$('.customer_name').prop('hidden', true);
+function check_box() {
+    if ($('.form-check-input').is(":checked"))
+        $("#add").hide();
+
+
+    else
+        $("#add").show();
+}
+
