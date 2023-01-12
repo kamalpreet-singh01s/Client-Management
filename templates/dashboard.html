@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <style>
+<style>
 
         table {
             counter-reset: 1;
@@ -18,154 +18,170 @@
         }
 
 
-    </style>
 
 
-    <br>
+</style>
 
 
-    <h4 style="text-align:center" class="mb-2">Data Sheet</h4>
-    <form method="POST" action="{{ url_for('search_records') }}">
-        <div class="row" style="margin-left:2px">
-            <div class="col-2 d-flex justify-content-end">
-                <input type="text" class="form-control form-control-sm w-75" name="search"
-                       placeholder="Search"/>
-            </div>
-            <div class="col-2 d-flex justify-content-start">
-                <button type="submit" class="btn btn-primary btn-sm" onclick="location.href='{{ url_for('search_records') }}'">Search
+<br>
+
+
+<h4 style="text-align:center" class="mb-2">Data Sheet</h4>
+<form method="POST" action="{{ url_for('search_records') }}">
+    <div class="row" style="margin-left:2px">
+        <div class="col-2 d-flex justify-content-end">
+            <input type="text" class="form-control form-control-sm w-75" name="search"
+                   placeholder="Search"/>
+        </div>
+        <div class="col-2 d-flex justify-content-start">
+            <button type="submit" class="btn btn-primary btn-sm"
+                    onclick="location.href='{{ url_for('search_records') }}'">Search
+            </button>
+        </div>
+
+    </div>
+</form>
+<br>
+
+<div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
+    <div class="d-block" style="position:fixed;top:9rem; left:70rem;">
+        <div class="mb-1">
+            <a class="add_button"
+               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"
+               href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-2 text-center bg-light" id="action_dropdown">
+            <div class="btn-group btn-group-sm mt-2">
+                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                    Action
                 </button>
-            </div>
-
-        </div>
-    </form>
-    <br>
-
-    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
-        <div class="d-block" style="position:fixed;top:9rem; left:70rem;">
-            <div class="mb-1">
-                <a class="add_button"
-                   style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"
-                   href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+                <div class="dropdown-menu">
+                    <button type="button" class="dropdown-item" onclick="del_fun()">Delete Selected</button>
+                    <button type="button" class="dropdown-item" onclick="update_fun()">Update Status</button>
+                </div>
             </div>
         </div>
+        <div class="col text-end  bg-light">
+            <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
 
-        <div class="row mb-1">
-
-            <div class="col-5 d-flex justify-content-end">
-                <form method="POST" action="/get_checked_boxes">
-
-                    <input type="text" id="rec_ids" name="rec_ids" hidden/>
-                    <button type="submit" class="del_button" id="stu_ids_submit">
-                        Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+                <div class="mt-2">
+                    <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
+                    <button type="submit" class="btn btn-primary btn-sm" id="check_rec_ids_btn">Generate Custom Report
                     </button>
-
-                </form>
-            </div>
-
-            <div class="col d-flex justify-content-end">
-                <form method="POST" action="/send_rec_id">
-
-                    <input type="text" id="send_rec_ids" name="send_rec_ids" hidden/>
-                    <button type="submit" class="update_button" id="class_ids_submit">
-                        Update Status<i class="fa fa-arrow-up" aria-hidden="true"></i>
-                    </button>
-
-                </form>
-            </div>
-            <div class="col d-flex justify-content-end">
-                 <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
-
-                    <div class="">
-                        <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
-                        <button type="submit" class="btn btn-primary btn-sm" id="check_rec_ids_btn">Generate Custom Report
-                        </button>
-                    </div>
-                    <div>
-                        <input type="checkbox" name="update_check" class="form-check-input" id="update_check">
-                        <label id="update_label">Update Record</label>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div>
+                    <input type="checkbox" name="update_check" class="form-check-input" id="update_check">
+                    <label id="update_label">Update Record</label>
+                </div>
+            </form>
         </div>
+    </div>
 
 
-        <form action="" method="post">
-            <table class="table table-hover table-sortable" id="table-sortable">
+    <form action="" method="post">
+        <table class="table table-hover table-sortable" id="table-sortable">
 
-                <thead>
-                <tr class="text-center">
-                    <th title="Serial Number">S.No.</th>
-                    <th title="Bill No.">Bill No.</th>
-                    <th title='Bill Date'>Bill Date</th>
-                    <th title="Client Name">Client</th>
-                    <th title="Shows Current Status of Payment">Status</th>
-                    <th></th>
+            <thead>
+            <tr class="text-center">
+                <th title="Serial Number">S.No.</th>
+                <th title="Bill No.">Bill No.</th>
+                <th title='Bill Date'>Bill Date</th>
+                <th title="Client Name">Client</th>
+                <th title="Shows Current Status of Payment">Status</th>
+                <th></th>
 
-                </tr>
-                </thead>
+            </tr>
+            </thead>
 
-                <tbody>
-                {% for record in all_records %}
-                    <tr class="text-center">
+            <tbody>
+            {% for record in all_records %}
+            <tr class="text-center">
 
-                        <td>
-                            <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
-                                   type="checkbox"
-                                   value="{{ record.id }}">
-                        </td>
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill }}
-                        </td>
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill_date }}
-                        </td>
+                <td>
+                    <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
+                           type="checkbox"
+                           value="{{ record.id }}">
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill_date
+                    }}
+                </td>
 
-                        <td style="cursor: pointer;"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
-                            {{ record.customer_name.customer_name }}
-                        </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
+                    {{ record.customer_name.customer_name }}
+                </td>
 
-                        <td style="cursor: pointer"
-                            onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"
-                            class="status">
-                            {{ record.status_name.status_name }}
-                        </td>
+                <td style="cursor: pointer"
+                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"
+                    class="status">
+                    {{ record.status_name.status_name }}
+                </td>
 
-                        <td>
-                            <div id="bd-example-modal-sm{{ record.id }}" class="modal fade bd-example-modal-sm"
-                                 tabindex="-1"
-                                 role="dialog"
-                                 aria-labelledby="mySmallModalLabel"
-                                 aria-hidden="true">
-                                <div class="modal-dialog modal-sm">
-                                    <div class="modal-content">
-                                        <div class="modal-body">
-                                            Are You Sure ?
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                                    onclick="location.href='{{ url_for('dashboard') }}'">Close
-                                            </button>
-                                            <a class="btn btn-danger" id="modal_del{{ record.id }}"
-                                               href="location.href='{{ url_for('delete_record', record_id = record.id) }}'">
-                                                Delete
-                                            </a>
-                                        </div>
-                                    </div>
+                <td>
+                    <div id="bd-example-modal-sm{{ record.id }}" class="modal fade bd-example-modal-sm"
+                         tabindex="-1"
+                         role="dialog"
+                         aria-labelledby="mySmallModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    Are You Sure ?
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                                            onclick="location.href='{{ url_for('dashboard') }}'">Close
+                                    </button>
+                                    <a class="btn btn-danger" id="modal_del{{ record.id }}"
+                                       href="location.href='{{ url_for('delete_record', record_id = record.id) }}'">
+                                        Delete
+                                    </a>
                                 </div>
                             </div>
-                        </td>
+                        </div>
+                    </div>
+                </td>
 
-                    </tr>
+            </tr>
 
-                {% endfor %}
-                </tbody>
-            </table>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+    </form>
+    <div hidden>
+        <form method="POST" action="/get_checked_boxes">
+
+            <input type="text" id="rec_ids" name="rec_ids"/>
+            <button type="submit" class="del_button" id="stu_ids_submit">
+                Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+            </button>
 
         </form>
     </div>
 
-<script src="{{url_for('static', filename='checkbox_del.js')}}"></script>
+    <div hidden>
+        <form method="POST" action="/send_rec_id">
 
+            <input type="text" id="send_rec_ids" name="send_rec_ids"/>
+            <button type="submit" class="update_button" id="class_ids_submit">
+                Update Status<i class="fa fa-arrow-up" aria-hidden="true"></i>
+            </button>
+
+        </form>
+    </div>
+</div>
+
+<script src="{{url_for('static', filename='checkbox_del.js')}}"></script>
 
 {% endblock %}

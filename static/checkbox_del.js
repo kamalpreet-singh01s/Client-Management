@@ -51,25 +51,23 @@ $(".form-check-input").click(function(){
     });
 
 
-
-
-$(document).ready(function() {
-
-    var $submit = $("#stu_ids_submit").hide(),
-        $cbs = $('input[name="check-box"]').click(function() {
-            $submit.toggle( $cbs.is(":checked") );
-        });
-
-});
-
-$(document).ready(function() {
-
-    var $submit = $("#class_ids_submit").hide(),
-        $cbs = $('input[name="check-box"]').click(function() {
-            $submit.toggle( $cbs.is(":checked") );
-        });
-
-});
+//$(document).ready(function() {
+//
+//    var $submit = $("#stu_ids_submit").hide(),
+//        $cbs = $('input[name="check-box"]').click(function() {
+//            $submit.toggle( $cbs.is(":checked") );
+//        });
+//
+//});
+//
+//$(document).ready(function() {
+//
+//    var $submit = $("#class_ids_submit").hide(),
+//        $cbs = $('input[name="check-box"]').click(function() {
+//            $submit.toggle( $cbs.is(":checked") );
+//        });
+//
+//});
 
 $(document).ready(function() {
 
@@ -99,3 +97,20 @@ function check_box() {
         $("#add").show();
 }
 
+function del_fun(){
+        $('#stu_ids_submit').click()
+    }
+function update_fun(){
+        $('#class_ids_submit').click()
+    }
+
+
+
+$(document).ready(function() {
+
+    var $submit = $("#action_dropdown").hide(),
+        $cbs = $('input[name="check-box"]').click(function() {
+            $submit.toggle( $cbs.is(":checked") );
+        });
+
+});

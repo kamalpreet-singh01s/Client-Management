@@ -21,10 +21,18 @@ class Users(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100))
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    email = db.Column(db.String(100))
+    phone_no = db.Column(db.String(100))
     password = db.Column(db.String())
 
-    def __init__(self, username, password):
+    def __init__(self, username, firstname, last_name, email, phone_no, password):
         self.username = username
+        self.first_name = firstname
+        self.last_name = last_name
+        self.email = email
+        self.phone_no = phone_no
         self.password = password
 
 

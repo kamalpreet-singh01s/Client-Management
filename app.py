@@ -41,15 +41,17 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
+@app.route('/add-user', methods=['GET', 'POST'])
+def add_user():
     if request.method == 'POST':
         userpass = request.form["password"]
         confirm_userpass = request.form["confirm_password"]
         hash_pass = generate_password_hash(userpass)
 
-        add_user = Users(username=request.form["username"], password=hash_pass)
-
+        add_new_user = Users(username=request.form["username"], firstname=request.form["first_name"],
+                             last_name=request.form["last_name"], email=request.form["email"],
+                             phone_no=request.form["phone_no"],
+                             password=hash_pass)
         exists = db.session.query(db.exists().where(
             Users.username == request.form["username"])).scalar()
         if exists:
@@ -59,10 +61,10 @@ def register():
             flash("Password does not match", category='error')
             return render_template('register.html')
         else:
-            db.session.add(add_user)
+            db.session.add(add_new_user)
             db.session.commit()
             flash('User Created', category='success')
-            return redirect(url_for('login'))
+            return redirect(url_for('manage_users'))
     return render_template('register.html')
 
 
@@ -80,33 +82,63 @@ def manage_users():
     return render_template('login.html')
 
 
-@app.route('/delete-user/<int:user_id>', methods=['GET', 'POST'])
-def delete_user(user_id):
-    if 'username' in session:
-        user_to_del = Users.query.filter_by(id=user_id).first()
-        if session["username"] == user_to_del.username:
-            flash('Cannot delete a user that is logged in', category='error')
-            return redirect(url_for('manage_users'))
-        elif user_to_del:
-            db.session.delete(user_to_del)
-            db.session.commit()
-            flash("User Deleted", category='success')
-        return redirect(url_for('manage_users'))
-    return render_template('login.html')
+# @app.route('/delete-user/<int:user_id>', methods=['GET', 'POST'])
+# def delete_user(user_id):
+#     if 'username' in session:
+#         user_to_del = Users.query.filter_by(id=user_id).first()
+#         if session["username"] == user_to_del.username:
+#             flash('Cannot delete a user that is logged in', category='error')
+#             return redirect(url_for('manage_users'))
+#         elif user_to_del:
+#             db.session.delete(user_to_del)
+#             db.session.commit()
+#             flash("User Deleted", category='success')
+#         return redirect(url_for('manage_users'))
+#     return render_template('login.html')
 
 
-@app.route('/update-user/<int:user_id>', methods=['GET', 'POST'])
-def update_user(user_id):
+@app.route('/admin-details/<int:admin_id>', methods=['GET', 'POST'])
+def admin_details(admin_id):
     if 'username' in session:
-        user_to_update = Users.query.filter_by(id=user_id).first()
+        admin_to_update = Users.query.filter_by(id=admin_id).first()
         if request.method == 'POST':
-            user_to_update.username = request.form["username"]
-            user_to_update.password = generate_password_hash(request.form["password"])
+            admin_to_update.username = request.form["username"]
+            admin_to_update.first_name = request.form["first_name"]
+            admin_to_update.last_name = request.form["last_name"]
+            admin_to_update.email = request.form["email"]
+            admin_to_update.phone_no = request.form["phone_no"]
+            admin_to_update.password = generate_password_hash(request.form["password"])
+            confirm_userpass = request.form["confirm_password"]
 
+            same_email = Users.query.filter(
+                Users.email == admin_to_update.email)
+
+            same_username = Users.query.filter(
+                Users.id != admin_to_update.id, Users.username == admin_to_update.username
+            )
+
+            for res in same_email:
+                if res.id == admin_to_update.id:
+                    continue
+                flash("Email already in use", category='error')
+
+                return render_template('admin_details.html', admin_to_update=admin_to_update)
+
+            for res in same_username:
+
+                if res.id == admin_to_update.id:
+                    continue
+
+                flash("Username Already Taken", category='error')
+
+                return render_template('admin_details.html', admin_to_update=admin_to_update)
+            if admin_to_update.password != confirm_userpass:
+                flash("Password does not match", category='error')
+                return render_template('admin_details.html', admin_to_update=admin_to_update)
             db.session.commit()
             flash('User Updated', category='success')
             return redirect(url_for('manage_users'))
-        return render_template('update_user.html', user_to_update=user_to_update)
+        return render_template('admin_details.html', admin_to_update=admin_to_update)
     return render_template('login.html')
 
 
@@ -215,7 +247,6 @@ def update_customer(customer_id):
                     print('else')
                 db.session.commit()
                 flash('Client Updated.', category='success')
-                return redirect(url_for('all_customer_names'))
         return render_template("update_customer.html", customer_to_update=customer_to_update,
                                old_final_deal=old_final_deal)
     return render_template('login.html')
@@ -481,7 +512,6 @@ def get_checked_boxes():
     return render_template('login.html')
 
 
-
 @app.route('/send_rec_id', methods=['GET', 'POST'])
 def send_rec_id():
     form = Form()
@@ -515,6 +545,7 @@ def update_class():
         return redirect(url_for('dashboard', form=form))
     return render_template('login.html')
 
+
 @app.route('/get_checked_boxes_for_client', methods=['GET', 'POST'])
 def get_checked_boxes_for_client():
     if 'username' in session and request.method == "POST":
@@ -533,6 +564,22 @@ def get_checked_boxes_for_client():
     return render_template('login.html')
 
 
+@app.route('/get_checked_boxes_for_admin', methods=['GET', 'POST'])
+def get_checked_boxes_for_admin():
+    if 'username' in session and request.method == "POST":
+        record_ids = request.form['rec_ids']
+        print(record_ids)
+        for ids in record_ids.split(','):
+            user_to_del = Users.query.filter_by(id=ids).first()
+            if session["username"] == user_to_del.username:
+                flash('Cannot delete a user that is logged in', category='error')
+                return redirect(url_for('manage_users'))
+            db.session.delete(user_to_del)
+            db.session.commit()
+        flash("User Deleted", category='success')
+        return redirect(url_for('manage_users'))
+
+    return render_template('login.html')
 
 
 Report_Generated_File = os.path.join(os.curdir, 'Report_Generated')

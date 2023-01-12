@@ -1,0 +1,136 @@
+{% extends 'index.html' %}
+
+{% block content %}
+{% include 'alert.html' %}
+
+<form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
+    <div class="w-100" id="action_buttons" style="display:block; position:fixed;">
+
+        <div class="row mb-2">
+            <div class="col-2">
+                <button style="margin-left:30px" type="button" class="btn btn-success btn-sm edit_button mt-2"
+                        onclick="editClient()"
+                        id="edit_button">
+                    Edit
+                </button>
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-1">
+                <input style="margin-left:30px" type="submit" value="Update" class="update_btn btn btn-success btn-sm"
+                       onclick="location.href='{{url_for('admin_details',admin_id = admin_to_update.id)}}'; check_error();"
+                       id="update_button" hidden/>
+
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-danger btn-sm"
+                        onclick="location.href='{{url_for('admin_details',admin_id = admin_to_update.id)}}'"
+                        id="discard_button" hidden>
+                    Discard
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="w-50 mx-auto row bg-light form-group" style="margin-top:7rem">
+        <div id="hide_table">
+            <table class="table">
+
+            <tbody>
+            <tr>
+                <td>Username: </td>
+                <td>{{admin_to_update.username}}</td>
+            </tr>
+            <tr>
+                <td>First Name: </td>
+                <td>{{admin_to_update.first_name}}</td>
+            </tr>
+            <tr>
+                <td>Last Name: </td>
+                <td>{{admin_to_update.last_name}}</td>
+            </tr>
+            <tr>
+                <td>Email: </td>
+                <td>{{admin_to_update.email}}</td>
+            </tr>
+            <tr>
+                <td>Phone No.: </td>
+                <td>{{admin_to_update.phone_no}}</td>
+            </tr>
+
+            </tbody>
+
+        </table>
+        </div>
+
+        <div class="bg-light col mt-2 mb-2">
+            <div class="row">
+                <div class="row">
+                    <div class="col display-11 mb-2 form_editable"
+                      id="username" hidden>
+                    <label class="mb-2">Username</label>
+                    <input class="form-control" type="text" name="username"
+                               value="{{admin_to_update.username}}">
+                </div>
+                </div>
+
+                <div class="row display-11">
+
+                    <div class="col form_editable mb-2" hidden>
+                        <label class="mb-2">First Name</label>
+                        <input class="form-control" type="text" name="first_name"
+                               value="{{admin_to_update.first_name}}">
+                    </div>
+                </div>
+                <div class="row display-11">
+
+                    <div class="col form_editable mb-2" hidden>
+                        <label class="mb-2">Last Name</label>
+                        <input class="form-control" type="text" name="last_name"
+                               value="{{admin_to_update.last_name}}">
+                    </div>
+
+                </div>
+                <div class="row display-11">
+
+                    <div class="col form_editable mb-2" hidden>
+                        <label class="mb-2">Email</label>
+                        <input class="form-control" type="text" name="email"
+                               value="{{admin_to_update.email}}">
+                    </div>
+
+                </div>
+                <div class="row display-11">
+
+                    <div class="col form_editable mb-2" hidden>
+                        <label class="mb-2">Phone No.</label>
+                        <input class="form-control" type="text" name="phone_no"
+                               value="{{admin_to_update.phone_no}}">
+                    </div>
+                </div>
+                <div class="row display-11">
+
+                    <div class="col form_editable mb-2" hidden>
+                        <label class="mb-2">New Password</label>
+                        <input class="form-control" type="password" name="password"
+                               value="{{admin_to_update.password}}">
+                    </div>
+                    <div class="col form_editable mb-2" hidden>
+                        <label class="mb-2">Confirm Password</label>
+                        <input class="form-control" type="password" name="confirm_password"
+                               value="{{admin_to_update.password}}">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <input type="text" name="old_final_deal" value="{{old_final_deal}}" hidden>
+</form>
+<script src="{{url_for('static', filename='admin_edit.js')}}"></script>
+{% include 'footer.html' %}
+{% endblock %}

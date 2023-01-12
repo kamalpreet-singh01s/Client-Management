@@ -36,7 +36,7 @@
         <div class="row mb-2">
             <div class="col-2">
                 <button style="margin-left:30px" type="button" class="btn btn-success btn-sm edit_button mt-2"
-                        onclick="hideDisable()"
+                        onclick="editClient()"
                         id="edit_button">
                     Edit
                 </button>
@@ -97,12 +97,14 @@
         </div>
 
         <div class="bg-light col">
-            <div class="row" style="margin-left:5rem; ">
-                <div class="col display-11 mb-2 form_editable customer_name"
+            <div class="row">
+                <div class="row">
+                    <div class="col display-11 mb-2 form_editable customer_name"
                       id="customer_name" hidden>
                     <label>Customer Name</label>
                     <input class="form-control" type="text" name="customer_name"
                                value="{{customer_to_update.customer_name}}">
+                </div>
                 </div>
 
                 <div class="row display-11">
@@ -146,6 +148,6 @@
     </div>
     <input type="text" name="old_final_deal" value="{{old_final_deal}}" hidden>
 </form>
-
+<script src="{{url_for('static', filename='edit_client.js')}}"></script>
 {% include 'footer.html' %}
 {% endblock %}

@@ -1,76 +1,119 @@
 {%extends "index.html"%}
 
 {%block content%}
-{% include 'alert.html' %}
 
+<style>
+
+        table {
+            counter-reset: 1;
+        }
+
+        table tr {
+            counter-increment: rowNumber;
+        }
+
+        table tr td:first-child::before {
+            content: counter(rowNumber);
+
+        }
+
+
+
+
+
+</style>
+
+<h4 style="text-align:center; margin-top:5rem">Users List</h4>
 <br>
-<br>
 
-<h2 style="text-align:center">Users List</h2>
-<br>
-
-<div style="width:500px; margin:auto" class="d-grid gap-2 col-6 mx-auto">
-    <div style="overflow-y:scroll; height:200px">
-        <table class="table table-hover" id="tb">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Action</th>
-
-            </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.username }}</td>
-                <td>
-                    <button type="button" id="del" class="btn btn-outline-danger" onclick="del_rec({{user.id}})"
-                            data-toggle="modal" data-target=".bd-example-modal-sm">
-                        Delete
-                    </button>
-                    <button type="button" class="btn btn-outline-success"
-                            onclick="location.href='{{url_for('update_user', user_id = user.id)}}'">
-                        Edit
-                    </button>
+<div class="row w-50 mx-auto bg-light">
+    <div class="row mt-3 mb-2">
+        <div class="col-2 text-center" id="action_dropdown">
+            <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                    Action
+                </button>
+                <div class="dropdown-menu">
+                    <button type="button" class="dropdown-item" onclick="del_fun()">Delete Selected</button>
+                </div>
+            </div>
+        </div>
+        <div class="col text-end">
+            <button type="button" class="btn btn-success btn-sm" id="add" onclick="location.href='{{ url_for('add_user')}}'">Add</button>
+        </div>
+    </div>
+    <div class="col text-center">
+        <div class="row">
+            <table class="table table-hover table-sortable text-center" style="cursor:pointer">
+                <thead>
+                <tr>
+                    <th>S No.</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone No.</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                    <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
+                           type="checkbox"
+                           value="{{ user.id }}">
                 </td>
+                    <td onclick="location.href='{{ url_for('admin_details', admin_id = user.id) }}'">{{user.username}}</td>
+                    <td onclick="location.href='{{ url_for('admin_details', admin_id = user.id) }}'">{{ user.first_name }} {{ user.last_name }}</td>
+                    <td onclick="location.href='{{ url_for('admin_details', admin_id = user.id) }}'">{{ user.email }}</td>
+                    <td onclick="location.href='{{ url_for('admin_details', admin_id = user.id) }}'">{{ user.phone_no }}</td>
 
-                <td>
-                    <div id="bd-example-modal-sm{{user.id}}" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog"
-                         aria-labelledby="mySmallModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-sm">
+
+                    <td>
+                        <div class="modal fade" id="exampleModalCenter{{user.id}}" tabindex="-1" role="dialog"
+                         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
-                                <div class="modal-body">
-                                    Are You Sure ?
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" style="text-align:left">
+                                    Do you really want to delete this record?
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                            onclick="location.href='{{url_for('manage_users')}}'">Close
-                                    </button>
-                                    <a class="btn btn-danger" id="modal_del{{user.id}}"
-                                            href="location.href='{{url_for('delete_user', user_id = user.id)}}'">
+                                    <a class="btn btn-danger btn-sm" id="modal_del{{user.id}}"
+                                            href="location.href='{{url_for('delete_payment_status', status_id = user.id)}}'">
                                         Delete
                                     </a>
+                                    <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
+                                            onclick="location.href='{{url_for('show_all_payment_status')}}'">Close
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </td>
+                    </td>
 
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-
-
-
 </div>
-<script>
-function del_rec(id){
-    $('#bd-example-modal-sm'+id).modal('show');
-    $('#modal_del'+id).attr('href','')
-    $('#modal_del'+id).attr('href','/delete_user/'+id)
- }
-</script>
+<div hidden>
+        <form method="POST" action="/get_checked_boxes_for_admin">
+
+            <input type="text" id="rec_ids" name="rec_ids"/>
+            <button type="submit" class="del_button" id="stu_ids_submit">
+                Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+            </button>
+
+        </form>
+    </div>
+<script src="{{url_for('static', filename='admin.js')}}"></script>
 {%endblock%}
