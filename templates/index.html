@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename= 'favicon.ico')}}">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -97,7 +100,7 @@ table tr:hover{
 <body>
 
 
-<nav style="position:sticky; top:0; z-index:1;" class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav style="position:sticky; top:0; z-index:1; box-shadow: rgb(38, 57, 77) 0px 10px 20px -10px;" class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a href="{{url_for('dashboard')}}" class="navbar-brand"><img src="{{url_for('static', filename= 'logo.png')}}"
                                                                  style="background-color: #ffffff; border-radius:50px;"
                                                                  height="40px" alt="LOGO" class="navbar-brand"></a>
@@ -120,8 +123,8 @@ table tr:hover{
                 <a href="{{url_for('paid_payment_list')}}" class="nav-link active">Receipts</a>
             </li>
         </ul>
-        <div class="dropdown show nav-item" style="margin-right: 100px">
-            <a class="btn btn-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+        <div class="dropdown show nav-item" style="margin-right: 150px">
+            <a class="btn btn-success btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
                 {{session.username.capitalize()}}
@@ -139,8 +142,6 @@ table tr:hover{
     </div>
 
 </nav>
-
-{% include 'alert.html' %}
 
 {%block content%}{%endblock%}
 

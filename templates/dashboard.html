@@ -20,25 +20,52 @@
 
 
 
+
 </style>
 
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left">
+                Do you really want to delete this record?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm"
+                        onclick="del_fun()">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
+                        onclick="location.href='{{url_for('dashboard')}}'">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <br>
 
 
-<h4 style="text-align:center" class="mb-2">Data Sheet</h4>
 <form method="POST" action="{{ url_for('search_records') }}">
     <div class="row" style="margin-left:2px">
         <div class="col-2 d-flex justify-content-end">
-            <input type="text" class="form-control form-control-sm w-75" name="search"
+            <input type="text" class="form-control form-control-sm w-75" style="height:20px" name="search"
                    placeholder="Search"/>
         </div>
-        <div class="col-2 d-flex justify-content-start">
+        <div class="col-2  justify-content-start">
             <button type="submit" class="btn btn-primary btn-sm"
                     onclick="location.href='{{ url_for('search_records') }}'">Search
             </button>
         </div>
-
+        <div class="col text-start">
+            <h4 class="mb-2" style="margin-left:10rem">Data Sheet</h4>
+        </div>
     </div>
 </form>
 <br>
@@ -54,19 +81,21 @@
 
     <div class="row">
 
-        <div class="col-2 text-center bg-light" id="action_dropdown">
+        <div class="col-2 text-center" id="action_dropdown">
             <div class="btn-group btn-group-sm mt-2">
                 <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
                     Action
                 </button>
                 <div class="dropdown-menu">
-                    <button type="button" class="dropdown-item" onclick="del_fun()">Delete Selected</button>
+                    <button type="button" class="dropdown-item" data-target="#exampleModalCenter" data-toggle="modal">
+                        Delete Selected
+                    </button>
                     <button type="button" class="dropdown-item" onclick="update_fun()">Update Status</button>
                 </div>
             </div>
         </div>
-        <div class="col text-end  bg-light">
+        <div class="col text-end ">
             <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
 
                 <div class="mt-2">
@@ -75,14 +104,19 @@
                     </button>
                 </div>
                 <div>
-                    <input type="checkbox" name="update_check" class="form-check-input" id="update_check">
+                    <input type="checkbox" name="update_check" class="" id="update_check">
                     <label id="update_label">Update Record</label>
                 </div>
             </form>
+
         </div>
     </div>
 
-
+    <div class="row">
+        <div class="col">
+            {% include 'alert.html' %}
+        </div>
+    </div>
     <form action="" method="post">
         <table class="table table-hover table-sortable" id="table-sortable">
 
@@ -93,7 +127,7 @@
                 <th title='Bill Date'>Bill Date</th>
                 <th title="Client Name">Client</th>
                 <th title="Shows Current Status of Payment">Status</th>
-                <th></th>
+
 
             </tr>
             </thead>
@@ -126,30 +160,6 @@
                     {{ record.status_name.status_name }}
                 </td>
 
-                <td>
-                    <div id="bd-example-modal-sm{{ record.id }}" class="modal fade bd-example-modal-sm"
-                         tabindex="-1"
-                         role="dialog"
-                         aria-labelledby="mySmallModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-sm">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                    Are You Sure ?
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal"
-                                            onclick="location.href='{{ url_for('dashboard') }}'">Close
-                                    </button>
-                                    <a class="btn btn-danger" id="modal_del{{ record.id }}"
-                                       href="location.href='{{ url_for('delete_record', record_id = record.id) }}'">
-                                        Delete
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </td>
 
             </tr>
 
@@ -164,7 +174,7 @@
 
             <input type="text" id="rec_ids" name="rec_ids"/>
             <button type="submit" class="del_button" id="stu_ids_submit">
-                Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+                Del Selected<i class="fa fa-minus" aria-hidden="true" style="display:none"></i>
             </button>
 
         </form>
@@ -175,7 +185,7 @@
 
             <input type="text" id="send_rec_ids" name="send_rec_ids"/>
             <button type="submit" class="update_button" id="class_ids_submit">
-                Update Status<i class="fa fa-arrow-up" aria-hidden="true"></i>
+                Update Status<i class="fa fa-arrow-up" aria-hidden="true" style="display:none"></i>
             </button>
 
         </form>

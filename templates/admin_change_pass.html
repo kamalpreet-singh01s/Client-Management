@@ -1,0 +1,35 @@
+{%extends "index.html"%}
+
+{%block content%}
+
+<div class="row w-25 mx-auto">
+    <div class="row text-center mt-5 mb-5">
+        <h4>Change Password</h4>
+    </div>
+    <form method="POST" action="{{change_admin_pass}}">
+        <div class="col">
+            <label class="mb-2">Current Password <span style="color:red">*</span></label>
+            <input class="form-control" type="password" name="current_password" required>
+
+            <div class="row">
+                <div class="col">
+                    <label class="mb-2">New Password <span style="color:red">*</span></label>
+                    <input class="form-control" type="password" name="new_password" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label class="mb-2">Confirm Password <span style="color:red">*</span></label>
+                    <input class="form-control" type="password" name="confirm_password" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-primary btn-sm mt-3 w-100">Change Password</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{%endblock%}

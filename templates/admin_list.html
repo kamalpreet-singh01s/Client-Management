@@ -1,0 +1,134 @@
+{%extends "index.html"%}
+
+{%block content%}
+
+<style>
+
+        table {
+            counter-reset: 1;
+        }
+
+        table tr {
+            counter-increment: rowNumber;
+        }
+
+        table tr td:first-child::before {
+            content: counter(rowNumber);
+
+        }
+
+
+
+
+
+
+</style>
+
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left">
+                Do you really want to delete this record?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm"
+                        onclick="del_fun()">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
+                        onclick="location.href='{{url_for('manage_users')}}'">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 style="text-align:center; margin-top:5rem">Users List</h4>
+<br>
+
+<div class="row w-50 mx-auto">
+    <div class="row mt-3 mb-2">
+        <div class="col-2 text-center" id="action_dropdown">
+            <div class="btn-group btn-group-sm">
+                <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                    Action
+                </button>
+                <div class="dropdown-menu">
+                    <button type="button" class="dropdown-item" id="del"
+                            data-target="#exampleModalCenter" data-toggle="modal">Delete Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col text-end">
+            <button type="button" class="btn btn-success btn-sm" id="add"
+                    onclick="location.href='{{ url_for('add_user')}}'">Add
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {% include 'alert.html' %}
+        </div>
+    </div>
+    <div class="col text-center">
+        <div class="row">
+            <table class="table table-hover text-center" style="cursor:pointer">
+                <thead>
+                <tr>
+                    <th>S No.</th>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone No.</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
+                               type="checkbox"
+                               value="{{ user.id }}">
+                    </td>
+                    <td onclick="location.href='{{ url_for('admin_details', admin_id = user.id) }}'">{{user.username}}
+                    </td>
+                    <td onclick="location.href='{{ url_for('admin_details', admin_id = user.id) }}'">{{ user.first_name
+                        }} {{ user.last_name }}
+                    </td>
+                    <td onclick="location.href='{{ url_for('admin_details', admin_id = user.id) }}'">{{ user.email }}
+                    </td>
+                    <td onclick="location.href='{{ url_for('admin_details', admin_id = user.id) }}'">{{ user.phone_no
+                        }}
+                    </td>
+
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div hidden>
+    <form method="POST" action="/get_checked_boxes_for_admin">
+
+        <input type="text" id="rec_ids" name="rec_ids"/>
+        <button type="submit" class="del_button" id="stu_ids_submit">
+            Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+        </button>
+
+    </form>
+</div>
+<script src="{{url_for('static', filename='admin.js')}}"></script>
+{%endblock%}

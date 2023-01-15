@@ -19,6 +19,7 @@
 
 
 
+
 </style>
 
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
@@ -51,22 +52,23 @@
 <br>
 
 
+<h4 style="text-align:center" class="mb-2">Client List</h4>
 <form method="POST" action="{{ url_for('search_clients') }}">
-        <div class="row" style="margin-left:2px">
+    <div class="row" style="margin-left:2px">
         <div class="col-2 d-flex justify-content-end">
-            <input type="text" class="form-control form-control-sm w-75" style="height:20px" name="search"
-                   placeholder="Search"/>
+            <input type="text" class="form-control form-control-sm w-75" name="search_clients"
+                   placeholder="Search" value="{{request.form['search_clients']}}"/>
         </div>
-        <div class="col-2  justify-content-start">
+        <div class="col-2 d-flex justify-content-start">
             <button type="submit" class="btn btn-primary btn-sm"
                     onclick="location.href='{{ url_for('search_clients') }}'">Search
             </button>
         </div>
-        <div class="col text-start">
-            <h4 class="mb-2" style="margin-left:10rem">Client List</h4>
+        <div style="text-align: center">
+            <u><h5 id="total_results"></h5></u>
         </div>
     </div>
-    </form>
+</form>
 <br>
 
 <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
@@ -87,7 +89,9 @@
                     Action
                 </button>
                 <div class="dropdown-menu">
-                    <button type="button" class="dropdown-item" data-target="#exampleModalCenter" data-toggle="modal">Delete Selected</button>
+                    <button type="button" class="dropdown-item" data-target="#exampleModalCenter" data-toggle="modal">
+                        Delete Selected
+                    </button>
                 </div>
             </div>
         </div>
@@ -108,11 +112,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col">
-            {% include 'alert.html' %}
-        </div>
-    </div>
+
     <form action="" method="post">
         <table class="table table-hover table-sortable text-center" id="table-sortable">
 
@@ -129,20 +129,31 @@
             </tr>
             </thead>
             <tbody>
-            {% for customer in customers %}
+            {% for res in rec %}
 
             <tr style="cursor:pointer">
                 <td>
                     <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
                            type="checkbox"
-                           value="{{ customer.id }}">
+                           value="{{ res.id }}">
                 </td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.customer_name }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.email }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.phone_no }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.address }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.final_deal }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.gst }}</td>
+                <td onclick="location.href='{{url_for('update_customer', customer_id = res.id)}}'">{{
+                    res.customer_name }}
+                </td>
+                <td onclick="location.href='{{url_for('update_customer', customer_id = res.id)}}'">{{ res.email
+                    }}
+                </td>
+                <td onclick="location.href='{{url_for('update_customer', customer_id = res.id)}}'">{{ res.phone_no
+                    }}
+                </td>
+                <td onclick="location.href='{{url_for('update_customer', customer_id = res.id)}}'">{{ res.address
+                    }}
+                </td>
+                <td onclick="location.href='{{url_for('update_customer', customer_id = res.id)}}'">{{
+                    res.final_deal }}
+                </td>
+                <td onclick="location.href='{{url_for('update_customer', customer_id = res.id)}}'">{{ res.gst }}
+                </td>
 
             </tr>
             {% endfor %}
@@ -154,18 +165,28 @@
 <br>
 
 
-    <div hidden>
-        <form method="POST" action="/get_checked_boxes_for_client">
+<div hidden>
+    <form method="POST" action="/get_checked_boxes_for_client">
 
-            <input type="text" id="rec_ids" name="rec_ids"/>
-            <button type="submit" class="del_button" id="stu_ids_submit">
-                Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
-            </button>
+        <input type="text" id="rec_ids" name="rec_ids"/>
+        <button type="submit" class="del_button" id="stu_ids_submit">
+            Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+        </button>
 
-        </form>
-    </div>
+    </form>
+</div>
 
 <script src="{{url_for('static', filename='client_checkbox.js')}}"></script>
 
+<script>
 
+var table = document.getElementById("table-sortable");
+var tbodyRowCount = table.tBodies[0].rows.length;
+console.log(tbodyRowCount)
+var total_results = document.getElementById("total_results").innerHTML ='Total Results Found'+' : '+ tbodyRowCount
+
+
+
+
+</script>
 {%endblock%}

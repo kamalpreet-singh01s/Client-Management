@@ -43,29 +43,32 @@ def login():
 
 @app.route('/add-user', methods=['GET', 'POST'])
 def add_user():
-    if request.method == 'POST':
-        userpass = request.form["password"]
-        confirm_userpass = request.form["confirm_password"]
-        hash_pass = generate_password_hash(userpass)
+    if 'username' in session:
+        if request.method == 'POST':
+            userpass = request.form["password"]
+            confirm_userpass = request.form["confirm_password"]
+            hash_pass = generate_password_hash(userpass)
 
-        add_new_user = Users(username=request.form["username"], firstname=request.form["first_name"],
-                             last_name=request.form["last_name"], email=request.form["email"],
-                             phone_no=request.form["phone_no"],
-                             password=hash_pass)
-        exists = db.session.query(db.exists().where(
-            Users.username == request.form["username"])).scalar()
-        if exists:
-            flash("User with same username already exists", category='error')
-            return render_template('register.html')
-        if userpass != confirm_userpass:
-            flash("Password does not match", category='error')
-            return render_template('register.html')
-        else:
-            db.session.add(add_new_user)
-            db.session.commit()
-            flash('User Created', category='success')
-            return redirect(url_for('manage_users'))
-    return render_template('register.html')
+            add_new_user = Users(username=request.form["username"], firstname=request.form["first_name"],
+                                 last_name=request.form["last_name"], email=request.form["email"],
+                                 phone_no=request.form["phone_no"],
+                                 password=hash_pass)
+            exists = db.session.query(db.exists().where(
+                Users.username == request.form["username"])).scalar()
+            if exists:
+                flash("User with same username already exists", category='error')
+                return render_template('register.html')
+            if userpass != confirm_userpass:
+                flash("Password does not match", category='error')
+                return render_template('register.html')
+            else:
+                db.session.add(add_new_user)
+                db.session.commit()
+                flash('User Created', category='success')
+                return redirect(url_for('manage_users'))
+        return render_template('register.html')
+
+    return render_template('login.html')
 
 
 @app.route('/logout', methods=['GET', 'POST'])
@@ -78,7 +81,7 @@ def logout():
 def manage_users():
     if 'username' in session:
         users = Users.query.all()
-        return render_template('users.html', users=users)
+        return render_template('admin_list.html', users=users)
     return render_template('login.html')
 
 
@@ -107,8 +110,8 @@ def admin_details(admin_id):
             admin_to_update.last_name = request.form["last_name"]
             admin_to_update.email = request.form["email"]
             admin_to_update.phone_no = request.form["phone_no"]
-            admin_to_update.password = generate_password_hash(request.form["password"])
-            confirm_userpass = request.form["confirm_password"]
+            # admin_to_update.password = generate_password_hash(request.form["password"])
+            # confirm_userpass = generate_password_hash(request.form["confirm_password"])
 
             same_email = Users.query.filter(
                 Users.email == admin_to_update.email)
@@ -132,13 +135,38 @@ def admin_details(admin_id):
                 flash("Username Already Taken", category='error')
 
                 return render_template('admin_details.html', admin_to_update=admin_to_update)
-            if admin_to_update.password != confirm_userpass:
-                flash("Password does not match", category='error')
-                return render_template('admin_details.html', admin_to_update=admin_to_update)
+            # if check_password_hash(admin_to_update.password, admin_to_update.password) != check_password_hash(confirm_userpass, admin_to_update.password):
+            #     flash("Password does not match", category='error')
+            #     db.session.rollback()
+            #     return render_template('admin_details.html', admin_to_update=admin_to_update)
             db.session.commit()
             flash('User Updated', category='success')
             return redirect(url_for('manage_users'))
         return render_template('admin_details.html', admin_to_update=admin_to_update)
+    return render_template('login.html')
+
+
+@app.route('/change-admin-pass/<int:admin_id>', methods=['GET', 'POST'])
+def change_admin_pass(admin_id):
+    admin = Users.query.filter_by(id=admin_id).first()
+    if "username" in session:
+        if request.method == "POST":
+            current_password = request.form["current_password"]
+            new_password = request.form["new_password"]
+            confirm_password = request.form["confirm_password"]
+
+            if not check_password_hash(admin.password, current_password):
+                flash("Current Password is Not Correct", category='error')
+                return render_template("admin_change_pass.html")
+            elif new_password != confirm_password:
+                flash("Password doesn't match", category='error')
+                return render_template("admin_change_pass.html")
+            else:
+                admin.password = generate_password_hash(new_password)
+                db.session.commit()
+                flash("Password Changed Successfully", category='success')
+                return redirect(url_for('manage_users'))
+        return render_template("admin_change_pass.html")
     return render_template('login.html')
 
 
@@ -478,6 +506,14 @@ def search_records():
         all_records_for_search = Records.query.all()
         if request.method == 'POST':
             search = request.form['search'].lower()
+            # for i in all_records_for_search:
+            #     if search == i.customer_name.customer_name.lower() or search == i.content_advt.lower() \
+            #             or search == i.bill.lower() or search == i.status_name.status_name.lower():
+            #         rec = Records.query.filter(Records.customer_id == i.customer_id).all()
+            #         [print(i) for i in rec]
+            #         return render_template("search_dashboard.html", rec=rec)
+            # flash(f'No Record Found with Name - {search}')
+            # return redirect(url_for('dashboard'))
             if not search.isdigit():
                 for i in all_records_for_search:
                     if search in i.customer_name.customer_name.lower():
@@ -486,15 +522,38 @@ def search_records():
                             return render_template("search_dashboard.html", rec=rec)
                         flash(f'No Record Found with Name - {search}')
                         return redirect(url_for('dashboard'))
-                flash(f'No Record Found with Name - {search}')
+                flash(f'No Matching Record Found with "{search}"')
                 return redirect(url_for('dashboard'))
             else:
                 rec = Records.query.filter(Records.bill == search).all()
                 if rec:
                     return render_template("search_dashboard.html", rec=rec)
-                flash(f'No Record Found with Bill No. - {search}')
+                flash(f'No Matching Record Found with "{search}"')
                 return redirect(url_for('dashboard'))
         return redirect(url_for('dashboard'))
+    return render_template('login.html')
+
+
+@app.route('/search-clients', methods=['POST'])
+def search_clients():
+    if "username" in session:
+        all_clients_for_search = Customer.query.all()
+        if request.method == 'POST':
+            search = request.form['search'].lower()
+            count = 0
+            while count <= db.session.query(Customer).count():
+                for i in all_clients_for_search:
+                    if (search in i.customer_name.lower()) or (search in i.email.lower()) \
+                            or (search in str(i.phone_no)) or (search in i.address.lower()) or (
+                            search in str(i.final_deal)):
+                        rec = Customer.query.filter(Customer.id == i.id).all()
+                        [print(i) for i in rec]
+
+                        return render_template("search_client.html", rec=rec)
+
+            flash(f'No Record Found with Name - {search}')
+            return redirect(url_for('all_customer_names'))
+        return redirect(url_for('all_customer_names'))
     return render_template('login.html')
 
 

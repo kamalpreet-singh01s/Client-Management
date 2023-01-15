@@ -53,15 +53,22 @@
             {% for paid in paid_list %}
             <tr>
                 <td></td>
-                <td>{{ paid.customer_name.customer_name }}</td>
-                <td>{{ paid.bill }}</td>
-                <td>{{ paid.bill_date }}</td>
-                 <td>{{ paid.date_of_order }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.customer_name.customer_name }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.bill }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.bill_date }}</td>
+                 <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.date_of_order }}</td>
 
-                <td>{{ paid.dop }}</td>
-                <td>{{ paid.content_advt }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.dop }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.content_advt }}</td>
 
-                <td style="color:green; font-weight:600" class="status">{{ paid.status_name.status_name }}</td>
+                <td style="color:green; font-weight:600; cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'" class="status">{{ paid.status_name.status_name }}</td>
                 <td>
 
                 </td>

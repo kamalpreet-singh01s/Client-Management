@@ -43,7 +43,7 @@
                 <th>S.No.</th>
                 <th>Client</th>
                 <th>Bill No.</th>
-                <th>Date</th>
+                <th>Bill Date</th>
                 <th>RO Date</th>
                 <th>DoP</th>
                 <th>AD/GP/Others.</th>
@@ -54,17 +54,24 @@
             {% for pending in pending_list %}
             <tr>
                 <td></td>
-                <td>{{ pending.customer_name.customer_name }}</td>
-                <td>{{ pending.bill }}</td>
-                <td>{{ pending.bill_date }}</td>
-                <td>{{ pending.date_of_order }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.customer_name.customer_name }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.bill }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.bill_date }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.date_of_order }}</td>
 
-                <td>{{ pending.dop }}</td>
-                <td>{{ pending.content_advt }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.dop }}</td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.content_advt }}</td>
 
 
 
-                <td style="color:red; font-weight:600" class="status">{{ pending.status_name.status_name }}</td>
+                <td style="color:red; font-weight:600; cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'" class="status">{{ pending.status_name.status_name }}</td>
                 <td>
 
                 </td>

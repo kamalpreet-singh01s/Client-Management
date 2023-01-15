@@ -36,45 +36,53 @@
     </div>
 
     <div class="w-50 mx-auto row bg-light form-group" style="margin-top:7rem">
+        <div class="row ">
+            <div class="col text-end mt-2">
+                <button type="button" class="btn btn-info btn-sm text-white"
+                        onclick="location.href='{{url_for('change_admin_pass', admin_id = admin_to_update.id)}}'">Change
+                    Password
+                </button>
+            </div>
+        </div>
         <div id="hide_table">
             <table class="table">
 
-            <tbody>
-            <tr>
-                <td>Username: </td>
-                <td>{{admin_to_update.username}}</td>
-            </tr>
-            <tr>
-                <td>First Name: </td>
-                <td>{{admin_to_update.first_name}}</td>
-            </tr>
-            <tr>
-                <td>Last Name: </td>
-                <td>{{admin_to_update.last_name}}</td>
-            </tr>
-            <tr>
-                <td>Email: </td>
-                <td>{{admin_to_update.email}}</td>
-            </tr>
-            <tr>
-                <td>Phone No.: </td>
-                <td>{{admin_to_update.phone_no}}</td>
-            </tr>
+                <tbody>
+                <tr>
+                    <td>Username:</td>
+                    <td>{{admin_to_update.username}}</td>
+                </tr>
+                <tr>
+                    <td>First Name:</td>
+                    <td>{{admin_to_update.first_name}}</td>
+                </tr>
+                <tr>
+                    <td>Last Name:</td>
+                    <td>{{admin_to_update.last_name}}</td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td>{{admin_to_update.email}}</td>
+                </tr>
+                <tr>
+                    <td>Phone No.:</td>
+                    <td>{{admin_to_update.phone_no}}</td>
+                </tr>
 
-            </tbody>
+                </tbody>
 
-        </table>
+            </table>
         </div>
 
         <div class="bg-light col mt-2 mb-2">
             <div class="row">
                 <div class="row">
                     <div class="col display-11 mb-2 form_editable"
-                      id="username" hidden>
-                    <label class="mb-2">Username</label>
-                    <input class="form-control" type="text" name="username"
+                         id="username" hidden>
+                        <label class="mb-2">Username</label>
+                        <input class="form-control" type="text" name="username"
                                value="{{admin_to_update.username}}">
-                </div>
+                    </div>
                 </div>
 
                 <div class="row display-11">
@@ -111,19 +119,19 @@
                                value="{{admin_to_update.phone_no}}">
                     </div>
                 </div>
-                <div class="row display-11">
+                <!--                <div class="row display-11">-->
 
-                    <div class="col form_editable mb-2" hidden>
-                        <label class="mb-2">New Password</label>
-                        <input class="form-control" type="password" name="password"
-                               value="{{admin_to_update.password}}">
-                    </div>
-                    <div class="col form_editable mb-2" hidden>
-                        <label class="mb-2">Confirm Password</label>
-                        <input class="form-control" type="password" name="confirm_password"
-                               value="{{admin_to_update.password}}">
-                    </div>
-                </div>
+                <!--                    <div class="col form_editable mb-2" hidden>-->
+                <!--                        <label class="mb-2">New Password</label>-->
+                <!--                        <input class="form-control" type="password" name="password"-->
+                <!--                               value="{{admin_to_update.password}}">-->
+                <!--                    </div>-->
+                <!--                    <div class="col form_editable mb-2" hidden>-->
+                <!--                        <label class="mb-2">Confirm Password</label>-->
+                <!--                        <input class="form-control" type="password" name="confirm_password"-->
+                <!--                               value="{{admin_to_update.password}}">-->
+                <!--                    </div>-->
+                <!--                </div>-->
 
             </div>
         </div>
