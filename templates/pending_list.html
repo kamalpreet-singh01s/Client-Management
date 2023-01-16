@@ -47,6 +47,7 @@
                 <th>RO Date</th>
                 <th>DoP</th>
                 <th>AD/GP/Others.</th>
+                <th>Deal (Rs.)</th>
                 <th>Status</th>
             </tr>
             </thead>
@@ -67,14 +68,14 @@
                     onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.dop }}</td>
                 <td style="cursor: pointer;"
                     onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.content_advt }}</td>
+                 <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.client_name.final_deal }}</td>
 
 
 
                 <td style="color:red; font-weight:600; cursor: pointer;"
                     onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'" class="status">{{ pending.status_name.status_name }}</td>
-                <td>
 
-                </td>
             </tr>
             {% endfor %}
             </tbody>

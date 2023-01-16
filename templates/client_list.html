@@ -68,7 +68,10 @@
     </div>
     </form>
 <br>
-
+<div style="text-align: center">
+            <u><h5 id="total_results"></h5></u>
+        </div>
+<br>
 <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
     <div class="d-block" style="position:fixed;top:9rem; left:70rem;">
         <div class="mb-1">
@@ -93,17 +96,17 @@
         </div>
 
         <div class="col d-flex justify-content-end">
-            <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
+            <form action="{{ url_for('csv_for_client') }}" method="POST">
 
                 <div class="">
                     <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
                     <button type="submit" class="btn btn-primary btn-sm" id="check_rec_ids_btn">Generate Custom Report
                     </button>
                 </div>
-                <div>
-                    <input type="checkbox" name="update_check" id="update_check">
-                    <label id="update_label">Update Record</label>
-                </div>
+<!--                <div>-->
+<!--                    <input type="checkbox" name="update_check" id="update_check">-->
+<!--                    <label id="update_label">Update Record</label>-->
+<!--                </div>-->
             </form>
         </div>
     </div>

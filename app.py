@@ -195,7 +195,7 @@ def add_client():
                 return redirect('add_client')
             else:
                 gst = round((18 / 100) * float(request.form['final_deal']), 2)
-                print(type(gst))
+
                 added_client = Client(client_name=request.form["client_name"], email=request.form["email"],
                                       phone_no=request.form["phone_no"],
                                       address=request.form["address"],
@@ -257,12 +257,12 @@ def update_client(client_id):
                     gst = get_client.gst
                     client_to_update.final_deal = float(request.form["old_final_deal"])
                     client_to_update.gst = gst
-                    print('if')
+
                 else:
                     gst = float((18 / 100) * float(request.form["final_deal"]))
                     client_to_update.final_deal = float(request.form["final_deal"]) + gst
                     client_to_update.gst = gst
-                    print('else')
+
                 db.session.commit()
                 flash('Client Updated.', category='success')
         return render_template("update_client.html", client_to_update=client_to_update,
@@ -274,7 +274,7 @@ def update_client(client_id):
 def dashboard():
     if "username" in session:
         all_records = Records.query.order_by(Records.bill.desc())
-        print(all_records)
+
         return render_template("dashboard.html", all_records=all_records)
     return render_template('login.html')
 
@@ -335,7 +335,7 @@ def record_details(record_id):
         if request.method == "POST":
 
             get_client = Client.query.filter_by(id=request.form["client_name"]).first()
-            print(get_client)
+
 
             client.email = request.form["email"]
             client.phone_no = request.form["phone_no"]
@@ -354,7 +354,7 @@ def record_details(record_id):
                 record_to_update.filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
             db.session.commit()
-            print('test')
+
             flash('Record Updated', category='success')
 
         form.client_name.default = record_to_update.client_id
@@ -372,7 +372,7 @@ def set_receive(record_id):
     form = Form()
     record_to_update = Records.query.filter_by(id=record_id).first()
     client = Client.query.filter(Client.id == record_to_update.client_id).first()
-    print(record_to_update.id)
+
     date_now = datetime.date.today()
     time_now = datetime.datetime.now()
     last_updated = date_now.strftime("%d/%b/%Y")
@@ -391,7 +391,7 @@ def set_cancel(record_id):
     form = Form()
     record_to_update = Records.query.filter_by(id=record_id).first()
     client = Client.query.filter(Client.id == record_to_update.client_id).first()
-    print(record_to_update.id)
+
     date_now = datetime.date.today()
     time_now = datetime.datetime.now()
     last_updated = date_now.strftime("%d/%b/%Y")
@@ -459,7 +459,7 @@ def pending_payment_list():
         total = 0
         for i in records:
             client = Client.query.filter_by(id=i.client_id).first()
-            total = float(client.final_deal) + total
+            total = round(float(client.final_deal) + total, 2)
 
         pending_list = Records.query.filter(Records.status_id == '1').order_by(desc(Records.id)).all()
         return render_template('pending_list.html', pending_list=pending_list, total=total)
@@ -471,10 +471,11 @@ def paid_payment_list():
     if "username" in session:
 
         total_amount = Records.query.filter(Records.status_id == '2').all()
+
         total = 0
         for i in total_amount:
             client = Client.query.filter_by(id=i.client_id).first()
-            total = float(client.final_deal) + total
+            total = round(float(client.final_deal) + total, 2)
 
         paid_list = Records.query.filter(Records.status_id == '2').order_by(desc(Records.id)).all()
         return render_template('paid_list.html', paid_list=paid_list, total=total)
@@ -496,27 +497,15 @@ def search_records():
 
         if request.method == 'POST':
             search = request.form['search'].lower()
-
-            all_records = Records.query.filter(Records.client_name.like(f"%{search}%")).all()
-            # all_records = getattr(Records, 'client_name').like(f"%{search}%").all()
-
-            return render_template("dashboard.html", all_records=all_records)
-            # if not search.isdigit():
-            #     for i in all_records_for_search:
-            #         if search in i.client_name.client_name.lower():
-            #             rec = Records.query.filter(Records.client_id == i.client_id).all()
-            #             if rec:
-            #                 return render_template("search_dashboard.html", rec=rec)
-            #             flash(f'No Record Found with Name - {search}')
-            #             return redirect(url_for('dashboard'))
-            #     flash(f'No Matching Record Found with "{search}"')
-            #     return redirect(url_for('dashboard'))
-            # else:
-            #     rec = Records.query.filter(Records.bill == search).all()
-            #     if rec:
-            #         return render_template("search_dashboard.html", rec=rec)
-            #     flash(f'No Matching Record Found with "{search}"')
-            #     return redirect(url_for('dashboard'))
+            clients = Client.query.filter(Client.client_name.ilike(f"%{search}%")).all()
+            client_ids = [client.id for client in clients]
+            all_records = Records.query.filter(
+                Records.client_id.in_(client_ids) | Records.bill.ilike(f"%{search}%")).all()
+            if all_records:
+                print(all_records)
+                return render_template("dashboard.html", all_records=all_records)
+            flash('No Record Found')
+            return redirect(url_for('dashboard'))
         return redirect(url_for('dashboard'))
     return render_template('login.html')
 
@@ -524,12 +513,15 @@ def search_records():
 @app.route('/search-clients', methods=['POST'])
 def search_clients():
     if "username" in session:
+        total_results = []
         if request.method == 'POST':
             search = request.form['search'].lower()
             clients = Client.query.filter(
-                Client.client_name.like(f"%{search}%") | Client.phone_no.like(f"%{search}%") | Client.address.like(
-                    f"%{search}%") | Client.email.like(f"%{search}%")).all()
+                Client.client_name.ilike(f"%{search}%") | Client.phone_no.ilike(f"%{search}%") | Client.address.ilike(
+                    f"%{search}%") | Client.email.ilike(f"%{search}%")).all()
+
             if clients:
+
                 return render_template("client_list.html", clients=clients)
             else:
                 flash('No Record Found')
@@ -559,7 +551,7 @@ def send_rec_id():
     if 'username' in session and request.method == "POST":
         send_rec_ids = request.form["send_rec_ids"]
         for ids in send_rec_ids.split(','):
-            print(ids)
+
             record_status_to_update = Records.query.filter_by(id=ids).first()
             if record_status_to_update.status_id == 2 or record_status_to_update.status_id == 3:
                 flash("Please Uncheck Records with status Received/Cancelled", category='error')
@@ -577,8 +569,6 @@ def update_class():
         status_id = request.form["status_id"]
         for ids in status_id.split(','):
             record_status_to_update = Records.query.filter_by(id=ids).first()
-            print(request.form['status_name'])
-
             record_status_to_update.status_id = request.form["status_name"]
             db.session.commit()
         flash("record_updated", category='success')
@@ -590,7 +580,7 @@ def update_class():
 def get_checked_boxes_for_client():
     if 'username' in session and request.method == "POST":
         record_ids = request.form['rec_ids']
-        print(record_ids)
+
         for ids in record_ids.split(','):
             delete = Client.query.filter_by(id=ids).first()
             if Records.query.filter_by(client_id=delete.id).first():
@@ -608,7 +598,7 @@ def get_checked_boxes_for_client():
 def get_checked_boxes_for_admin():
     if 'username' in session and request.method == "POST":
         record_ids = request.form['rec_ids']
-        print(record_ids)
+
         for ids in record_ids.split(','):
             user_to_del = Users.query.filter_by(id=ids).first()
             if session["username"] == user_to_del.username:
@@ -642,7 +632,7 @@ def csv_file_record_to_update():
                      ])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
-                    print(record.bill, type(record.bill))
+
                     client = client.query.filter_by(id=Records.client_id).first()
                     final = [record.id, record.client_id, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
@@ -660,13 +650,37 @@ def csv_file_record_to_update():
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
                     client = client.query.filter_by(id=Records.client_id).first()
-                    print(client)
+
                     final = [record.client_name.client_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
                              client.final_deal, record.amount_received_date, record.status_name.status_name]
                     write_file.writerow(final)
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
+
+
+Client_List_File = os.path.join(os.curdir, 'ClientList')
+
+app.config['Client_List_File'] = Client_List_File
+
+
+@app.route('/csv-for-client', methods=['POST', 'GET'])
+def csv_for_client():
+    client_ids = request.form["check_rec_ids"]
+    file_name = 'Clients.csv'
+    with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
+        write_file = csv.writer(file)
+        write_file.writerow(
+            ['Name', 'Email', 'Phone No.', 'Address', 'Final Deal', 'GST'])
+        for cli_id in client_ids.split(','):
+            client = Client.query.filter_by(id=cli_id).first()
+            # client = client.query.filter_by(id=Records.client_id).first()
+            final = [client.client_name, client.email, client.phone_no,
+                     client.address, client.final_deal,
+                     client.gst]
+            write_file.writerow(final)
+
+    return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
 
 @app.route('/file_upload', methods=['POST', 'GET'])
@@ -736,16 +750,6 @@ def file_upload():
         #         sleep(1)
     return render_template('file_upload.html')
 
-
-@app.route('/file_upload/<action>', methods=['POST', 'GET'])
-def file_upload_actions(action):
-    if request.method == 'GET':
-        if action == 'create':
-            print("create method")
-        elif action == 'update':
-            print("write method")
-        else:
-            raise ValueError
 
 
 if __name__ == "__main__":
