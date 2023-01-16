@@ -4,14 +4,13 @@ import os
 import re
 from datetime import timedelta
 import pandas as pd
-from flask import render_template, request, url_for, flash, redirect, send_file, session, send_from_directory
+from flask import render_template, request, url_for, flash, redirect, session, send_from_directory
 from flask_migrate import Migrate
 from sqlalchemy import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from form import Form
-from models import db, create_app, Customer, Records, Status, Users
-from werkzeug.utils import secure_filename
+from models import db, create_app, Client, Records, Status, Users
 import webbrowser
 
 app = create_app()
@@ -48,6 +47,19 @@ def add_user():
             userpass = request.form["password"]
             confirm_userpass = request.form["confirm_password"]
             hash_pass = generate_password_hash(userpass)
+            email_regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+            if not request.form["first_name"].isalpha():
+                flash("Only Alphabets allowed in First name", category='error')
+                return render_template('register.html')
+            elif not request.form["last_name"].isalpha():
+                flash("Only Alphabets allowed in Last name", category='error')
+                return render_template('register.html')
+            elif not re.match(email_regex, request.form["email"]):
+                flash("Invalid Email", category='error')
+                return render_template('register.html')
+            elif not request.form["phone_no"].isdigit():
+                flash("Only Digits allowed in Phone No.", category='error')
+                return render_template('register.html')
 
             add_new_user = Users(username=request.form["username"], firstname=request.form["first_name"],
                                  last_name=request.form["last_name"], email=request.form["email"],
@@ -85,21 +97,6 @@ def manage_users():
     return render_template('login.html')
 
 
-# @app.route('/delete-user/<int:user_id>', methods=['GET', 'POST'])
-# def delete_user(user_id):
-#     if 'username' in session:
-#         user_to_del = Users.query.filter_by(id=user_id).first()
-#         if session["username"] == user_to_del.username:
-#             flash('Cannot delete a user that is logged in', category='error')
-#             return redirect(url_for('manage_users'))
-#         elif user_to_del:
-#             db.session.delete(user_to_del)
-#             db.session.commit()
-#             flash("User Deleted", category='success')
-#         return redirect(url_for('manage_users'))
-#     return render_template('login.html')
-
-
 @app.route('/admin-details/<int:admin_id>', methods=['GET', 'POST'])
 def admin_details(admin_id):
     if 'username' in session:
@@ -110,9 +107,6 @@ def admin_details(admin_id):
             admin_to_update.last_name = request.form["last_name"]
             admin_to_update.email = request.form["email"]
             admin_to_update.phone_no = request.form["phone_no"]
-            # admin_to_update.password = generate_password_hash(request.form["password"])
-            # confirm_userpass = generate_password_hash(request.form["confirm_password"])
-
             same_email = Users.query.filter(
                 Users.email == admin_to_update.email)
 
@@ -135,10 +129,6 @@ def admin_details(admin_id):
                 flash("Username Already Taken", category='error')
 
                 return render_template('admin_details.html', admin_to_update=admin_to_update)
-            # if check_password_hash(admin_to_update.password, admin_to_update.password) != check_password_hash(confirm_userpass, admin_to_update.password):
-            #     flash("Password does not match", category='error')
-            #     db.session.rollback()
-            #     return render_template('admin_details.html', admin_to_update=admin_to_update)
             db.session.commit()
             flash('User Updated', category='success')
             return redirect(url_for('manage_users'))
@@ -171,10 +161,10 @@ def change_admin_pass(admin_id):
 
 
 @app.route('/client-names')
-def all_customer_names():
+def all_client_names():
     if "username" in session:
-        customers = Customer.query.order_by(desc(Customer.id))
-        return render_template("client_list.html", customers=customers)
+        clients = Client.query.order_by(desc(Client.id))
+        return render_template("client_list.html", clients=clients)
     return render_template('login.html')
 
 
@@ -183,7 +173,7 @@ def add_client():
     if "username" in session:
         if request.method == "POST":
             message = ''
-            if request.form["customer_name"].isnumeric():
+            if request.form["client_name"].isnumeric():
                 message = 'Name cannot contain numbers or any special symbol'
                 flash(message, category='error')
 
@@ -202,49 +192,49 @@ def add_client():
 
             if message:
                 flash('Record not added', category='error')
-                return redirect('add_customer')
+                return redirect('add_client')
             else:
-                gst = (18 / 100) * float(request.form['final_deal'])
+                gst = round((18 / 100) * float(request.form['final_deal']), 2)
                 print(type(gst))
-                added_customers = Customer(customer_name=request.form["customer_name"], email=request.form["email"],
-                                           phone_no=request.form["phone_no"],
-                                           address=request.form["address"],
-                                           final_deal=float(request.form["final_deal"]) + gst, gst=gst)
+                added_client = Client(client_name=request.form["client_name"], email=request.form["email"],
+                                      phone_no=request.form["phone_no"],
+                                      address=request.form["address"],
+                                      final_deal=float(request.form["final_deal"]) + gst, gst=gst)
 
-                db.session.add(added_customers)
+                db.session.add(added_client)
                 db.session.commit()
-                flash('Customer Added', category='success')
-                return redirect(url_for('all_customer_names'))
+                flash('client Added', category='success')
+                return redirect(url_for('all_client_names'))
         return render_template('add_client.html')
     return render_template('login.html')
 
 
-@app.route('/delete-client/<int:customer_id>')
-def delete_customer(customer_id):
+@app.route('/delete-client/<int:client_id>')
+def delete_client(client_id):
     if "username" in session:
-        customer_to_delete = Customer.query.filter_by(id=customer_id).first()
+        client_to_delete = Client.query.filter_by(id=client_id).first()
 
-        if Records.query.filter_by(customer_id=customer_id).first():
+        if Records.query.filter_by(client_id=client_id).first():
             flash("Client in use", category='error')
-            return redirect(url_for('all_customer_names'))
+            return redirect(url_for('all_client_names'))
 
         else:
-            db.session.delete(customer_to_delete)
+            db.session.delete(client_to_delete)
             db.session.commit()
             flash('Client Deleted', category='success')
-            return redirect(url_for('all_customer_names'))
+            return redirect(url_for('all_client_names'))
     return render_template('login.html')
 
 
-@app.route('/update-client/<int:customer_id>', methods=['GET', 'POST'])
-def update_customer(customer_id):
+@app.route('/update-client/<int:client_id>', methods=['GET', 'POST'])
+def update_client(client_id):
     if "username" in session:
-        customer_to_update = Customer.query.filter_by(id=customer_id).first()
-        get_customer = Customer.query.filter_by(id=customer_id).first()
-        old_final_deal = get_customer.final_deal
+        client_to_update = Client.query.filter_by(id=client_id).first()
+        get_client = Client.query.filter_by(id=client_id).first()
+        old_final_deal = get_client.final_deal
         if request.method == "POST":
             message = ''
-            if request.form["customer_name"].isnumeric():
+            if request.form["client_name"].isnumeric():
                 message = 'Name cannot contain numbers or any special symbol'
                 flash(message, category='error')
 
@@ -257,25 +247,25 @@ def update_customer(customer_id):
 
             if message:
                 flash('Record not added', category='error')
-                return render_template('update_customer.html', customer_to_update=customer_to_update)
+                return render_template('update_client.html', client_to_update=client_to_update)
             else:
-                customer_to_update.customer_name = request.form["customer_name"]
-                customer_to_update.email = request.form["email"]
-                customer_to_update.phone_no = request.form["phone_no"]
-                customer_to_update.address = request.form["address"]
+                client_to_update.client_name = request.form["client_name"]
+                client_to_update.email = request.form["email"]
+                client_to_update.phone_no = request.form["phone_no"]
+                client_to_update.address = request.form["address"]
                 if float(request.form["final_deal"]) == float(request.form["old_final_deal"]):
-                    gst = get_customer.gst
-                    customer_to_update.final_deal = float(request.form["old_final_deal"])
-                    customer_to_update.gst = gst
+                    gst = get_client.gst
+                    client_to_update.final_deal = float(request.form["old_final_deal"])
+                    client_to_update.gst = gst
                     print('if')
                 else:
                     gst = float((18 / 100) * float(request.form["final_deal"]))
-                    customer_to_update.final_deal = float(request.form["final_deal"]) + gst
-                    customer_to_update.gst = gst
+                    client_to_update.final_deal = float(request.form["final_deal"]) + gst
+                    client_to_update.gst = gst
                     print('else')
                 db.session.commit()
                 flash('Client Updated.', category='success')
-        return render_template("update_customer.html", customer_to_update=customer_to_update,
+        return render_template("update_client.html", client_to_update=client_to_update,
                                old_final_deal=old_final_deal)
     return render_template('login.html')
 
@@ -293,7 +283,7 @@ def dashboard():
 def add_record():
     if "username" in session:
         form = Form()
-        form.customer_name.choices = [(customer.id, customer.customer_name) for customer in Customer.query.all()]
+        form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
         form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
 
         if request.method == "POST":
@@ -302,7 +292,7 @@ def add_record():
             filename = 'Bill No' + '-' + request.form["bill"] + '-' + request.form["date_of_order"] + '.pdf'
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            record = Records(request.form["customer_name"], request.form["content_advt"], request.form["date_of_order"],
+            record = Records(request.form["client_name"], request.form["content_advt"], request.form["date_of_order"],
                              request.form["dop"], request.form["bill"], request.form["bill_date"],
                              status_id=request.form["status_name"],
                              filename=os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -337,21 +327,21 @@ def record_details(record_id):
         last_updated = date_now.strftime("%d/%b/%Y")
         last_updated_time = time_now.strftime("%I:%M %p")
         record_to_update = Records.query.filter_by(id=record_id).first()
-        customer = Customer.query.filter(Customer.id == record_to_update.customer_id).first()
+        client = Client.query.filter(Client.id == record_to_update.client_id).first()
         form = Form()
         form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
-        form.customer_name.choices = [(customer.id, customer.customer_name) for customer in Customer.query.all()]
+        form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
 
         if request.method == "POST":
 
-            get_customer = Customer.query.filter_by(id=request.form["customer_name"]).first()
-            print(get_customer)
+            get_client = Client.query.filter_by(id=request.form["client_name"]).first()
+            print(get_client)
 
-            customer.email = request.form["email"]
-            customer.phone_no = request.form["phone_no"]
-            customer.final_deal = request.form["final_deal"]
+            client.email = request.form["email"]
+            client.phone_no = request.form["phone_no"]
+            client.final_deal = request.form["final_deal"]
 
-            record_to_update.customer_id = request.form["customer_name"]
+            record_to_update.client_id = request.form["client_name"]
             record_to_update.content_advt = request.form["content_advt"]
             record_to_update.date_of_order = request.form["date_of_order"]
             record_to_update.dop = request.form["dop"]
@@ -367,12 +357,12 @@ def record_details(record_id):
             print('test')
             flash('Record Updated', category='success')
 
-        form.customer_name.default = record_to_update.customer_id
+        form.client_name.default = record_to_update.client_id
         form.status_name.default = record_to_update.status_id
         form.process()
 
         return render_template("record_details.html", record_to_update=record_to_update, form=form,
-                               last_updated=last_updated, customer=customer, last_updated_time=last_updated_time)
+                               last_updated=last_updated, client=client, last_updated_time=last_updated_time)
 
     return render_template('login.html')
 
@@ -381,7 +371,7 @@ def record_details(record_id):
 def set_receive(record_id):
     form = Form()
     record_to_update = Records.query.filter_by(id=record_id).first()
-    customer = Customer.query.filter(Customer.id == record_to_update.customer_id).first()
+    client = Client.query.filter(Client.id == record_to_update.client_id).first()
     print(record_to_update.id)
     date_now = datetime.date.today()
     time_now = datetime.datetime.now()
@@ -393,14 +383,14 @@ def set_receive(record_id):
     flash('Status Updated', category='success')
     # return redirect(url_for('record_details'))
     return render_template("record_details.html", record_to_update=record_to_update, form=form,
-                           last_updated=last_updated, customer=customer, last_updated_time=last_updated_time)
+                           last_updated=last_updated, client=client, last_updated_time=last_updated_time)
 
 
 @app.route('/set-cancel/<int:record_id>', methods=['GET', 'POST'])
 def set_cancel(record_id):
     form = Form()
     record_to_update = Records.query.filter_by(id=record_id).first()
-    customer = Customer.query.filter(Customer.id == record_to_update.customer_id).first()
+    client = Client.query.filter(Client.id == record_to_update.client_id).first()
     print(record_to_update.id)
     date_now = datetime.date.today()
     time_now = datetime.datetime.now()
@@ -412,7 +402,7 @@ def set_cancel(record_id):
     flash('Status Updated', category='success')
 
     return render_template("record_details.html", record_to_update=record_to_update, form=form,
-                           last_updated=last_updated, customer=customer, last_updated_time=last_updated_time)
+                           last_updated=last_updated, client=client, last_updated_time=last_updated_time)
 
 
 @app.route('/payment-status-list')
@@ -468,8 +458,8 @@ def pending_payment_list():
         records = Records.query.filter(Records.status_id == '1').all()
         total = 0
         for i in records:
-            customer = Customer.query.filter_by(id=i.customer_id).first()
-            total = float(customer.final_deal) + total
+            client = Client.query.filter_by(id=i.client_id).first()
+            total = float(client.final_deal) + total
 
         pending_list = Records.query.filter(Records.status_id == '1').order_by(desc(Records.id)).all()
         return render_template('pending_list.html', pending_list=pending_list, total=total)
@@ -483,8 +473,8 @@ def paid_payment_list():
         total_amount = Records.query.filter(Records.status_id == '2').all()
         total = 0
         for i in total_amount:
-            customer = Customer.query.filter_by(id=i.customer_id).first()
-            total = float(customer.final_deal) + total
+            client = Client.query.filter_by(id=i.client_id).first()
+            total = float(client.final_deal) + total
 
         paid_list = Records.query.filter(Records.status_id == '2').order_by(desc(Records.id)).all()
         return render_template('paid_list.html', paid_list=paid_list, total=total)
@@ -503,33 +493,30 @@ def download(filename):
 @app.route('/search', methods=['POST'])
 def search_records():
     if "username" in session:
-        all_records_for_search = Records.query.all()
+
         if request.method == 'POST':
             search = request.form['search'].lower()
-            # for i in all_records_for_search:
-            #     if search == i.customer_name.customer_name.lower() or search == i.content_advt.lower() \
-            #             or search == i.bill.lower() or search == i.status_name.status_name.lower():
-            #         rec = Records.query.filter(Records.customer_id == i.customer_id).all()
-            #         [print(i) for i in rec]
+
+            all_records = Records.query.filter(Records.client_name.like(f"%{search}%")).all()
+            # all_records = getattr(Records, 'client_name').like(f"%{search}%").all()
+
+            return render_template("dashboard.html", all_records=all_records)
+            # if not search.isdigit():
+            #     for i in all_records_for_search:
+            #         if search in i.client_name.client_name.lower():
+            #             rec = Records.query.filter(Records.client_id == i.client_id).all()
+            #             if rec:
+            #                 return render_template("search_dashboard.html", rec=rec)
+            #             flash(f'No Record Found with Name - {search}')
+            #             return redirect(url_for('dashboard'))
+            #     flash(f'No Matching Record Found with "{search}"')
+            #     return redirect(url_for('dashboard'))
+            # else:
+            #     rec = Records.query.filter(Records.bill == search).all()
+            #     if rec:
             #         return render_template("search_dashboard.html", rec=rec)
-            # flash(f'No Record Found with Name - {search}')
-            # return redirect(url_for('dashboard'))
-            if not search.isdigit():
-                for i in all_records_for_search:
-                    if search in i.customer_name.customer_name.lower():
-                        rec = Records.query.filter(Records.customer_id == i.customer_id).all()
-                        if rec:
-                            return render_template("search_dashboard.html", rec=rec)
-                        flash(f'No Record Found with Name - {search}')
-                        return redirect(url_for('dashboard'))
-                flash(f'No Matching Record Found with "{search}"')
-                return redirect(url_for('dashboard'))
-            else:
-                rec = Records.query.filter(Records.bill == search).all()
-                if rec:
-                    return render_template("search_dashboard.html", rec=rec)
-                flash(f'No Matching Record Found with "{search}"')
-                return redirect(url_for('dashboard'))
+            #     flash(f'No Matching Record Found with "{search}"')
+            #     return redirect(url_for('dashboard'))
         return redirect(url_for('dashboard'))
     return render_template('login.html')
 
@@ -537,23 +524,17 @@ def search_records():
 @app.route('/search-clients', methods=['POST'])
 def search_clients():
     if "username" in session:
-        all_clients_for_search = Customer.query.all()
         if request.method == 'POST':
             search = request.form['search'].lower()
-            count = 0
-            while count <= db.session.query(Customer).count():
-                for i in all_clients_for_search:
-                    if (search in i.customer_name.lower()) or (search in i.email.lower()) \
-                            or (search in str(i.phone_no)) or (search in i.address.lower()) or (
-                            search in str(i.final_deal)):
-                        rec = Customer.query.filter(Customer.id == i.id).all()
-                        [print(i) for i in rec]
+            clients = Client.query.filter(
+                Client.client_name.like(f"%{search}%") | Client.phone_no.like(f"%{search}%") | Client.address.like(
+                    f"%{search}%") | Client.email.like(f"%{search}%")).all()
+            if clients:
+                return render_template("client_list.html", clients=clients)
+            else:
+                flash('No Record Found')
+                return redirect(url_for('all_client_names'))
 
-                        return render_template("search_client.html", rec=rec)
-
-            flash(f'No Record Found with Name - {search}')
-            return redirect(url_for('all_customer_names'))
-        return redirect(url_for('all_customer_names'))
     return render_template('login.html')
 
 
@@ -611,14 +592,14 @@ def get_checked_boxes_for_client():
         record_ids = request.form['rec_ids']
         print(record_ids)
         for ids in record_ids.split(','):
-            delete = Customer.query.filter_by(id=ids).first()
-            if Records.query.filter_by(customer_id=delete.id).first():
+            delete = Client.query.filter_by(id=ids).first()
+            if Records.query.filter_by(client_id=delete.id).first():
                 flash("Client in use", category='error')
-                return redirect(url_for('all_customer_names'))
+                return redirect(url_for('all_client_names'))
             db.session.delete(delete)
             db.session.commit()
-        flash("Customer Deleted", category='success')
-        return redirect(url_for('all_customer_names'))
+        flash("client Deleted", category='success')
+        return redirect(url_for('all_client_names'))
 
     return render_template('login.html')
 
@@ -662,11 +643,11 @@ def csv_file_record_to_update():
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
                     print(record.bill, type(record.bill))
-                    customer = Customer.query.filter_by(id=Records.customer_id).first()
-                    final = [record.id, record.customer_id, record.content_advt, record.date_of_order,
+                    client = client.query.filter_by(id=Records.client_id).first()
+                    final = [record.id, record.client_id, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
-                             customer.final_deal, record.amount_received_date, record.status_name.status_name]
+                             client.final_deal, record.amount_received_date, record.status_name.status_name]
                     write_file.writerow(final)
         else:
             file_name = 'Record.csv'
@@ -678,12 +659,12 @@ def csv_file_record_to_update():
                      'Pending(Rs.)'])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
-                    customer = Customer.query.filter_by(id=Records.customer_id).first()
-                    print(customer)
-                    final = [record.customer_name.customer_name, record.content_advt, record.date_of_order,
+                    client = client.query.filter_by(id=Records.client_id).first()
+                    print(client)
+                    final = [record.client_name.client_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
-                             customer.final_deal, record.amount_received_date, record.status_name.status_name]
+                             client.final_deal, record.amount_received_date, record.status_name.status_name]
                     write_file.writerow(final)
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
@@ -708,7 +689,7 @@ def file_upload():
                 elif read_file.loc[count, 'Status'] == 'Cancel':
                     read_file.loc[count, 'Status'] = 3
                 if row.id == int(read_file.loc[count, 'Id']):
-                    row.customer_id = int(read_file.loc[count, 'Client'])
+                    row.client_id = int(read_file.loc[count, 'Client'])
                     row.content_advt = read_file.loc[count, 'AD/GP/Others']
                     row.date_of_order = read_file.loc[count, 'RO Date']
                     row.dop = read_file.loc[count, 'DoP']
@@ -729,7 +710,7 @@ def file_upload():
                     read_file.loc[count, 'Status'] = 2
                 elif read_file.loc[count, 'Status'] == 'Cancel':
                     read_file.loc[count, 'Status'] = 3
-                new_record = Records(customer_id=read_file.loc[count, 'Client'],
+                new_record = Records(client_id=read_file.loc[count, 'Client'],
                                      content_advt=read_file.loc[count, 'AD/GP/Others'],
                                      date_of_order=read_file.loc[count, 'RO Date'],
                                      dop=read_file.loc[count, 'DoP'], bill=read_file.loc[count, 'Bill No.'],

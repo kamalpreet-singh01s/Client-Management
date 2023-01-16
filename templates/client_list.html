@@ -40,7 +40,7 @@
                     Delete
                 </button>
                 <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
-                        onclick="location.href='{{url_for('all_customer_names')}}'">Close
+                        onclick="location.href='{{url_for('all_client_names')}}'">Close
                 </button>
             </div>
         </div>
@@ -55,7 +55,7 @@
         <div class="row" style="margin-left:2px">
         <div class="col-2 d-flex justify-content-end">
             <input type="text" class="form-control form-control-sm w-75" style="height:20px" name="search"
-                   placeholder="Search"/>
+                   placeholder="Search" value="{{request.form['search']}}"/>
         </div>
         <div class="col-2  justify-content-start">
             <button type="submit" class="btn btn-primary btn-sm"
@@ -78,9 +78,9 @@
         </div>
     </div>
 
-    <div class="row mb-1">
+    <div class="row mb-1 mt-2">
 
-        <div class="col-2 text-center bg-light" id="action_dropdown">
+        <div class="col-2 text-center" id="action_dropdown">
             <div class="btn-group btn-group-sm mt-2">
                 <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
@@ -119,7 +119,7 @@
             <thead>
             <tr>
                 <th>S.No.</th>
-                <th>Client Name</th>
+                <th>Name</th>
                 <th>Email</th>
                 <th>Phone No.</th>
                 <th>Address</th>
@@ -129,20 +129,20 @@
             </tr>
             </thead>
             <tbody>
-            {% for customer in customers %}
+            {% for client in clients %}
 
             <tr style="cursor:pointer">
                 <td>
                     <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
                            type="checkbox"
-                           value="{{ customer.id }}">
+                           value="{{ client.id }}">
                 </td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.customer_name }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.email }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.phone_no }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.address }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.final_deal }}</td>
-                <td onclick="location.href='{{url_for('update_customer', customer_id = customer.id)}}'">{{ customer.gst }}</td>
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.client_name }}</td>
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.email }}</td>
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.phone_no }}</td>
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.address }}</td>
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.final_deal }}</td>
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.gst }}</td>
 
             </tr>
             {% endfor %}

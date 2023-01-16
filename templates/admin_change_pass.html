@@ -6,7 +6,11 @@
     <div class="row text-center mt-5 mb-5">
         <h4>Change Password</h4>
     </div>
+
     <form method="POST" action="{{change_admin_pass}}">
+        <div class="col mb-2">
+            {% include 'alert.html' %}
+        </div>
         <div class="col">
             <label class="mb-2">Current Password <span style="color:red">*</span></label>
             <input class="form-control" type="password" name="current_password" required>

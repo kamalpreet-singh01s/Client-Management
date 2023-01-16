@@ -36,19 +36,19 @@ class Users(db.Model):
         self.password = password
 
 
-class Customer(db.Model):
-    __tablename__ = "customer"
+class Client(db.Model):
+    __tablename__ = "client"
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_name = db.Column(db.String(100))
+    client_name = db.Column(db.String(100))
     email = db.Column(db.String(100))
-    phone_no = db.Column(db.Numeric)
+    phone_no = db.Column(db.String(100))
     address = db.Column(db.String(500))
     final_deal = db.Column(db.Float)
     gst = db.Column(db.Float)
 
-    def __init__(self, customer_name, email, phone_no, address, final_deal, gst):
-        self.customer_name = customer_name
+    def __init__(self, client_name, email, phone_no, address, final_deal, gst):
+        self.client_name = client_name
         self.final_deal = final_deal
         self.email = email
         self.phone_no = phone_no
@@ -60,8 +60,8 @@ class Records(db.Model):
     __tablename__ = "records"
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
-    customer_name = db.relationship('Customer')
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    client_name = db.relationship('Client')
     content_advt = db.Column(db.String())
     date_of_order = db.Column(db.String(100))
     dop = db.Column(db.String(100))
@@ -75,9 +75,9 @@ class Records(db.Model):
 
     filename = db.Column(db.String())
 
-    def __init__(self, customer_id, content_advt, date_of_order, dop, bill, bill_date,
+    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date,
                  status_id, filename=None, data=None, amount_received_date=None):
-        self.customer_id = customer_id
+        self.client_id = client_id
         self.content_advt = content_advt
         self.date_of_order = date_of_order
         self.dop = dop

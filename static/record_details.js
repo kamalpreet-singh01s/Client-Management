@@ -78,4 +78,4 @@ console.log('status_name')
 
 
 
-$('.customer_name').prop('hidden', true);
+$('.client_name').prop('hidden', true);

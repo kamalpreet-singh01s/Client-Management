@@ -46,13 +46,13 @@
         <div class="row mb-2">
             <div class="col-1">
                 <input style="margin-left:30px" type="submit" value="Update" class="update_btn btn btn-success btn-sm"
-                       onclick="location.href='{{url_for('update_customer',customer_id = customer_to_update.id)}}'"
+                       onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
                        id="update_button" hidden/>
 
             </div>
             <div class="col-2">
                 <button type="button" class="btn btn-danger btn-sm"
-                        onclick="location.href='{{url_for('update_customer',customer_id = customer_to_update.id)}}'"
+                        onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
                         id="discard_button" hidden>
                     Discard
                 </button>
@@ -68,28 +68,28 @@
 
             <tbody>
             <tr>
-                <td>Customer Name: </td>
-                <td>{{customer_to_update.customer_name}}</td>
+                <td>client Name: </td>
+                <td>{{client_to_update.client_name}}</td>
             </tr>
             <tr>
                 <td>Email: </td>
-                <td>{{customer_to_update.email}}</td>
+                <td>{{client_to_update.email}}</td>
             </tr>
             <tr>
                 <td>Phone:  </td>
-                <td>{{customer_to_update.phone_no}}</td>
+                <td>{{client_to_update.phone_no}}</td>
             </tr>
             <tr>
                 <td>Address:  </td>
-                <td>{{customer_to_update.address}}</td>
+                <td>{{client_to_update.address}}</td>
             </tr>
             <tr>
                 <td>Final Deal:  </td>
-                <td>{{customer_to_update.final_deal}}</td>
+                <td>{{client_to_update.final_deal}}</td>
             </tr>
             <tr>
                 <td>GST(18%): </td>
-                <td>{{customer_to_update.gst}}</td>
+                <td>{{client_to_update.gst}}</td>
             </tr>
             </tbody>
 
@@ -99,11 +99,11 @@
         <div class="bg-light col">
             <div class="row">
                 <div class="row">
-                    <div class="col display-11 mb-2 form_editable customer_name"
-                      id="customer_name" hidden>
-                    <label>Customer Name</label>
-                    <input class="form-control" type="text" name="customer_name"
-                               value="{{customer_to_update.customer_name}}">
+                    <div class="col display-11 mb-2 form_editable client_name"
+                      id="client_name" hidden>
+                    <label>client Name</label>
+                    <input class="form-control" type="text" name="client_name"
+                               value="{{client_to_update.client_name}}">
                 </div>
                 </div>
 
@@ -112,7 +112,7 @@
                     <div class="col form_editable" hidden>
                         <label>Email</label>
                         <input class="form-control" type="text" name="email"
-                               value="{{customer_to_update.email}}">
+                               value="{{client_to_update.email}}">
                     </div>
                 </div>
                 <div class="row display-11">
@@ -120,7 +120,7 @@
                     <div class="col form_editable" hidden>
                         <label>Phone</label>
                         <input class="form-control" type="text" name="phone_no"
-                               value="{{customer_to_update.phone_no}}">
+                               value="{{client_to_update.phone_no}}">
                     </div>
 
                 </div>
@@ -129,7 +129,7 @@
                     <div class="col form_editable" hidden>
                         <label>Address</label>
                         <input class="form-control" type="text" name="address"
-                               value="{{customer_to_update.address}}">
+                               value="{{client_to_update.address}}">
                     </div>
 
                 </div>
@@ -138,7 +138,7 @@
                     <div class="col form_editable mb-2" hidden>
                         <label>Final Deal</label>
                         <input class="form-control" type="text" name="final_deal"
-                               value="{{customer_to_update.final_deal}}">
+                               value="{{client_to_update.final_deal}}">
                     </div>
                 </div>
 
