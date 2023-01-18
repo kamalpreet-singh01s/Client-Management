@@ -25,6 +25,18 @@ document.getElementById('upload_file').hidden = false;
 
 }
 
+
+if (!(document.getElementById('no_attachment'))){
+    //pass
+}
+else{
+document.getElementById('no_attachment').hidden = true;
+
+}
+
+
+
+
 action_buttons = document.getElementById("action_buttons")
 action_buttons.style.backgroundColor = "#141619";
 //document.body.style.backgroundColor = "#141619";
@@ -81,12 +93,12 @@ var form_editable = document.getElementsByClassName('form_editable');
 //}
 //
 //
-//status_name = document.getElementById('status')
-//if (status_name.innerHTML == "Received" || status_name.innerHTML == "Cancelled"){
-//console.log('status_name')
-//    edit_button = document.getElementById('edit_button');
-//    edit_button.parentNode.removeChild(edit_button);
-//}
+status_name = document.getElementById('status')
+if (status_name.innerHTML == "Received" || status_name.innerHTML == "Cancelled"){
+console.log('status_name')
+    edit_button = document.getElementById('edit_button');
+    edit_button.parentNode.removeChild(edit_button);
+}
 
 
 

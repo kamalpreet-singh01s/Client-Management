@@ -641,6 +641,9 @@ def csv_file_record_to_update():
                      ])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
+                    record.date_of_order = pd.to_datetime(str(record.date_of_order)).date().strftime("%Y-%m-%d")
+                    record.dop = pd.to_datetime(str(record.dop)).date().strftime("%Y-%m-%d")
+                    record.bill_date = pd.to_datetime(str(record.bill_date)).date().strftime("%Y-%m-%d")
 
                     client = Client.query.filter_by(id=Records.client_id).first()
                     final = [record.id, record.client_id, record.content_advt, record.date_of_order,
@@ -658,7 +661,9 @@ def csv_file_record_to_update():
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
                     client = Client.query.filter_by(id=Records.client_id).first()
-
+                    record.date_of_order = pd.to_datetime(str(record.date_of_order)).date().strftime("%Y-%m-%d")
+                    record.dop = pd.to_datetime(str(record.dop)).date().strftime("%Y-%m-%d")
+                    record.bill_date = pd.to_datetime(str(record.bill_date)).date().strftime("%Y-%m-%d")
                     final = [record.client_name.client_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
@@ -742,7 +747,7 @@ def file_upload():
                     if count >= len(read_file):
                         break
                     else:
-                        print('else', count)
+
                         if read_file.loc[count, 'Status'] == 'Pending':
                             read_file.loc[count, 'Status'] = 1
                         elif read_file.loc[count, 'Status'] == 'Received':
@@ -760,6 +765,7 @@ def file_upload():
                                 flash(f"Bill no {get_record_id.bill} already exists in the Database! \n"
                                       f"Duplicate Bill No. at Row No. {count + 2}.")
                                 return redirect(url_for('file_upload'))
+
                             new_record = Records(client_id=get_client_id.id,
                                                  content_advt=read_file.loc[count, 'AD/GP/Others'],
                                                  date_of_order=read_file.loc[count, 'RO Date'],

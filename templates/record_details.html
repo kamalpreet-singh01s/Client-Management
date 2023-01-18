@@ -223,7 +223,7 @@ body{
              style="height:200px; border-left: 2px solid lightgrey; background-color:rgba(248,249,250); margin-top:10rem; margin-left:5rem; margin-bottom:5rem">
 
         </div>
-        <div class="col bg-light" id="hide_table2">
+        <div class="col-6 bg-light" id="hide_table2">
             <div class="row bg-light mt-3">
                 <div class="col d-flex justify-content-end mt-5" style="font-size:small">
                     Last Updated: {{last_updated}} ({{last_updated_time}})
@@ -310,11 +310,11 @@ body{
     </div>
 
     <div class="row bg-light">
+
+        {% if record_to_update.filename %}
         <div class="col-8 text-end" style="margin-left:86px; font-size:x-large">
             Attachment:
         </div>
-
-        {% if record_to_update.filename %}
         <div class="col text-start" id="current_file">
             <a class="" style="text-decoration:none; font-size:x-large"
                href="{{url_for('download',filename = record_to_update.filename, record_id = record_to_update.id)}}">{{client.client_name}}/{{record_to_update.bill}}</a>
@@ -330,7 +330,12 @@ body{
 
         </div>
         {% else %}
-
+        <div class="col-8 text-end" style="margin-left:86px; font-size:x-large">
+            Attachment:
+        </div>
+        <div class="col" style="font-size:x-large" id="no_attachment">
+            No Attachment
+        </div>
         <div class="col text-start" id="upload_file" hidden>
             <label for="file1-upload" class="custom-file-upload">
                 <i class="fa fa-cloud-upload"></i>Upload Attachment
