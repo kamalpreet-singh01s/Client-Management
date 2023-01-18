@@ -83,3 +83,54 @@ $(document).ready(function() {
         });
 
 });
+
+
+
+
+  $("#checkAll").change(function() {
+    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+//    var selectAll = document.getElementById("select_all");
+    for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = !checkboxes[i].checked;
+        if(checkboxes[i].checked){
+            cli_values.push(checkboxes[i].getAttribute("value"));
+            $("#add").hide();
+             $("#check_rec_ids_btn").show();
+             $update_check = $("#update_check").show();
+             $update_label = $("#update_label").show();
+             $("#action_dropdown").show()
+            document.getElementById("rec_ids").value = cli_values
+            document.getElementById("check_rec_ids").value = cli_values
+        }else{
+
+            var index = cli_values.indexOf(checkboxes[i].getAttribute("value"));
+            if (index > -1) {
+                cli_values.splice(index, 1);
+                $("#add").show();
+                $("#check_rec_ids_btn").hide();
+                $update_check = $("#update_check").hide();
+                $update_label = $("#update_label").hide();
+                $("#action_dropdown").hide()
+            }
+        }
+    }
+    console.log(cli_values);
+
+});
+
+
+$(document).ready(function() {
+  // Get all rows in the table
+  var rows = $("#table-count tr");
+
+  // Iterate through each row
+  rows.each(function(index) {
+    // Get the specified column
+    var column = $(this).find("td:nth-child(2)"); // assumes the 2nd column is the one to be numbered
+    // Check if the column exists
+    if (column.length) {
+      // Add the current index as the column number
+      column.text(index);
+    }
+  });
+});

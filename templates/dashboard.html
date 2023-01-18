@@ -3,21 +3,18 @@
 {% block content %}
 
 <style>
+<!--table {-->
+<!--    counter-reset: rowNumber;-->
+<!--}-->
 
-        table {
-            counter-reset: 1;
-        }
+<!--tbody tr {-->
+<!--    counter-increment: rowNumber;-->
+<!--}-->
 
-        table tr {
-            counter-increment: rowNumber;
-        }
+<!--tbody tr td:first-child::before {-->
+<!--    content: counter(rowNumber);-->
 
-        table tr td:first-child::before {
-            content: counter(rowNumber);
-
-        }
-
-
+<!--}-->
 
 
 
@@ -52,36 +49,37 @@
 <br>
 
 
-<form method="POST" action="{{ url_for('search_records') }}">
+<form method="GET" action="{{ url_for('search_records') }}">
     <div class="row" style="margin-left:2px">
         <div class="col-2 d-flex justify-content-end">
             <input type="text" class="form-control form-control-sm w-75" style="height:20px" name="search"
-                   placeholder="Search" value="{{request.form['search']}}"/>
+                   placeholder="Search" value="{{request.args['search']}}"/>
         </div>
         <div class="col-2  justify-content-start">
             <button type="submit" class="btn btn-primary btn-sm"
-                    onclick="location.href='{{ url_for('search_records') }}'">Search
+            >Search
             </button>
         </div>
         <div class="col text-start">
             <h4 class="mb-2" style="margin-left:10rem">Data Sheet</h4>
         </div>
+<!--        <div class="col-2 text-start" style="margin-right:102px; margin-top:38px">-->
+<!--            <a class="add_button"-->
+<!--               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"-->
+<!--               href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>-->
+
+
+<!--        </div>-->
     </div>
 </form>
-<br>
+
 
 <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
-    <div class="d-block" style="position:fixed;top:9rem; left:70rem;">
-        <div class="mb-1">
-            <a class="add_button"
-               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"
-               href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
-        </div>
-    </div>
+
 
     <div class="row mt-2">
 
-        <div class="col-2 text-center" id="action_dropdown">
+        <div class="col-2 text-center" style="margin-top:32px" id="action_dropdown">
             <div class="btn-group btn-group-sm mt-2">
                 <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
@@ -98,7 +96,7 @@
         <div class="col text-end ">
             <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
 
-                <div class="mt-2">
+                <div class="mt-3">
                     <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
                     <button type="submit" class="btn btn-primary btn-sm" id="check_rec_ids_btn">Generate Custom Report
                     </button>
@@ -112,28 +110,36 @@
         </div>
     </div>
 
-    <div class="row">
+
+    <form action="" method="post">
+        <div class="col text-end mb-3">
+            <a class="add_button"
+               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
+               href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+        </div>
+        <div class="row">
         <div class="col">
             {% include 'alert.html' %}
         </div>
     </div>
-    <form action="" method="post">
-        <table class="table table-hover table-sortable" id="table-sortable">
+
+        <table class="table table-hover table-sortable" id="table-count">
 
             <thead>
             <tr class="text-center">
-                <th title="Serial Number">S.No.</th>
+                <th><input type="checkbox" id="checkAll"  class=""></th>
+                <th title="Serial Number" width="56px">S.No.</th>
                 <th title="Bill No.">Bill No.</th>
                 <th title='Bill Date'>Bill Date</th>
                 <th title="Client Name">Client</th>
                 <th title="Shows Current Status of Payment">Status</th>
-
-
             </tr>
             </thead>
 
             <tbody>
+
             {% for record in all_records %}
+
             <tr class="text-center">
 
                 <td>
@@ -141,6 +147,7 @@
                            type="checkbox"
                            value="{{ record.id }}">
                 </td>
+                <td class="numbered"></td>
                 <td style="cursor: pointer;"
                     onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill }}
                 </td>

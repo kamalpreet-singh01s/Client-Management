@@ -16,7 +16,7 @@ import webbrowser
 app = create_app()
 migrate = Migrate(app, db, render_as_batch=True)
 
-UPLOAD_FOLDER = r'W:\work\flask new\client management\Uploaded_Bills'
+UPLOAD_FOLDER = r'W:\work\flask new\client management\data\uploadedBills'
 ALLOWED_EXTENSIONS = {'pdf'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -160,7 +160,7 @@ def change_admin_pass(admin_id):
     return render_template('login.html')
 
 
-@app.route('/client-names')
+@app.route('/client-list')
 def all_client_names():
     if "username" in session:
         clients = Client.query.order_by(desc(Client.id))
@@ -288,19 +288,31 @@ def add_record():
 
         if request.method == "POST":
             file = request.files['file']
+            if file:
+                filename = 'Bill No' + '-' + request.form["bill"] + '-' + request.form["date_of_order"] + '.pdf'
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            filename = 'Bill No' + '-' + request.form["bill"] + '-' + request.form["date_of_order"] + '.pdf'
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                record = Records(request.form["client_name"], request.form["content_advt"],
+                                 request.form["date_of_order"],
+                                 request.form["dop"], request.form["bill"], request.form["bill_date"],
+                                 status_id=request.form["status_name"],
+                                 filename=os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-            record = Records(request.form["client_name"], request.form["content_advt"], request.form["date_of_order"],
-                             request.form["dop"], request.form["bill"], request.form["bill_date"],
-                             status_id=request.form["status_name"],
-                             filename=os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                db.session.add(record)
+                db.session.commit()
+                flash('Record Added', category='success')
+                return redirect(url_for('dashboard'))
+            else:
+                record = Records(request.form["client_name"], request.form["content_advt"],
+                                 request.form["date_of_order"],
+                                 request.form["dop"], request.form["bill"], request.form["bill_date"],
+                                 status_id=request.form["status_name"],
+                                 filename=None)
 
-            db.session.add(record)
-            db.session.commit()
-            flash('Record Added', category='success')
-            return redirect(url_for('dashboard'))
+                db.session.add(record)
+                db.session.commit()
+                flash('Record Added', category='success')
+                return redirect(url_for('dashboard'))
         form.status_name.default = 1
         form.process()
         return render_template("add_record.html", form=form)
@@ -334,8 +346,7 @@ def record_details(record_id):
 
         if request.method == "POST":
 
-            get_client = Client.query.filter_by(id=request.form["client_name"]).first()
-
+            # get_client = Client.query.filter_by(id=request.form["client_name"]).first()
 
             client.email = request.form["email"]
             client.phone_no = request.form["phone_no"]
@@ -482,21 +493,21 @@ def paid_payment_list():
     return render_template('login.html')
 
 
-@app.route('/download/<path:filename>')
-def download(filename):
+@app.route('/download/<path:filename>/<int:record_id>')
+def download(filename, record_id):
     if "username" in session:
-        uploads = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        uploads = os.path.join(UPLOAD_FOLDER, filename)
         webbrowser.open_new_tab(uploads)
+        return redirect(url_for('record_details', record_id=record_id))
     return render_template('login.html')
 
 
 # Search records
-@app.route('/search', methods=['POST'])
+@app.route('/search', methods=['POST', 'GET'])
 def search_records():
     if "username" in session:
-
-        if request.method == 'POST':
-            search = request.form['search'].lower()
+        if request.method == 'GET':
+            search = request.args['search'].lower()
             clients = Client.query.filter(Client.client_name.ilike(f"%{search}%")).all()
             client_ids = [client.id for client in clients]
             all_records = Records.query.filter(
@@ -510,18 +521,16 @@ def search_records():
     return render_template('login.html')
 
 
-@app.route('/search-clients', methods=['POST'])
+@app.route('/clients', methods=['POST', 'GET'])
 def search_clients():
     if "username" in session:
         total_results = []
-        if request.method == 'POST':
-            search = request.form['search'].lower()
+        if request.method == 'GET':
+            search = request.args['search'].lower()
             clients = Client.query.filter(
                 Client.client_name.ilike(f"%{search}%") | Client.phone_no.ilike(f"%{search}%") | Client.address.ilike(
                     f"%{search}%") | Client.email.ilike(f"%{search}%")).all()
-
             if clients:
-
                 return render_template("client_list.html", clients=clients)
             else:
                 flash('No Record Found')
@@ -612,9 +621,9 @@ def get_checked_boxes_for_admin():
     return render_template('login.html')
 
 
-Report_Generated_File = os.path.join(os.curdir, 'Report_Generated')
+Report_Generated_File = os.path.join(os.curdir, 'data/reportGenerated')
 
-app.config['Report_Generated'] = Report_Generated_File
+app.config['reportGenerated'] = Report_Generated_File
 
 
 @app.route('/csv_file_record_to_update', methods=['POST', 'GET'])
@@ -633,7 +642,7 @@ def csv_file_record_to_update():
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
 
-                    client = client.query.filter_by(id=Records.client_id).first()
+                    client = Client.query.filter_by(id=Records.client_id).first()
                     final = [record.id, record.client_id, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
@@ -645,11 +654,10 @@ def csv_file_record_to_update():
                 write_file = csv.writer(file)
                 write_file.writerow(
                     ['Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
-                     'Amount Received Date', 'Status',
-                     'Pending(Rs.)'])
+                     'Amount Received Date', 'Status'])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
-                    client = client.query.filter_by(id=Records.client_id).first()
+                    client = Client.query.filter_by(id=Records.client_id).first()
 
                     final = [record.client_name.client_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
@@ -659,7 +667,7 @@ def csv_file_record_to_update():
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
 
-Client_List_File = os.path.join(os.curdir, 'ClientList')
+Client_List_File = os.path.join(os.curdir, 'data/ClientList')
 
 app.config['Client_List_File'] = Client_List_File
 
@@ -668,7 +676,7 @@ app.config['Client_List_File'] = Client_List_File
 def csv_for_client():
     client_ids = request.form["check_rec_ids"]
     file_name = 'Clients.csv'
-    with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
+    with open(Client_List_File + '\\' + file_name, mode='w', newline='') as file:
         write_file = csv.writer(file)
         write_file.writerow(
             ['Name', 'Email', 'Phone No.', 'Address', 'Final Deal', 'GST'])
@@ -692,64 +700,81 @@ def file_upload():
         record = Records.query.all()
         count = 0
         while count != len(read_file):
-            if count >= len(read_file):
-                break
 
-            for row in record:
-                if read_file.loc[count, 'Status'] == 'Pending':
-                    read_file.loc[count, 'Status'] = 1
-                elif read_file.loc[count, 'Status'] == 'Received':
-                    read_file.loc[count, 'Status'] = 2
-                elif read_file.loc[count, 'Status'] == 'Cancel':
-                    read_file.loc[count, 'Status'] = 3
-                if row.id == int(read_file.loc[count, 'Id']):
-                    row.client_id = int(read_file.loc[count, 'Client'])
-                    row.content_advt = read_file.loc[count, 'AD/GP/Others']
-                    row.date_of_order = read_file.loc[count, 'RO Date']
-                    row.dop = read_file.loc[count, 'DoP']
-                    row.bill = int(read_file.loc[count, 'Bill No.'])
-                    row.bill_date = read_file.loc[count, 'Bill Date']
-                    # row.amount = float(read_file.loc[count, 'Amount(Rs.)'])
-                    row.amount_received_date = read_file.loc[count, 'Amount Received Date']
-                    row.status_id = read_file.loc[count, 'Status']
-                    db.session.commit()
-                    count += 1
-            if count >= len(read_file):
-                break
+            if 'Id' in read_file.columns:
+                if count >= len(read_file):
+                    break
+                else:
+
+                    for row in record:
+                        if count >= len(read_file):
+                            break
+                        if read_file.loc[count, 'Status'] == 'Pending':
+                            read_file.loc[count, 'Status'] = 1
+                        elif read_file.loc[count, 'Status'] == 'Received':
+                            read_file.loc[count, 'Status'] = 2
+                        elif read_file.loc[count, 'Status'] == 'Cancelled':
+                            read_file.loc[count, 'Status'] = 3
+                        if row.id == int(read_file.loc[count, 'Id']):
+                            row.client_id = int(read_file.loc[count, 'Client'])
+                            row.content_advt = read_file.loc[count, 'AD/GP/Others']
+                            row.date_of_order = read_file.loc[count, 'RO Date']
+                            row.dop = read_file.loc[count, 'DoP']
+
+                            row.bill_date = read_file.loc[count, 'Bill Date']
+                            row.status_id = read_file.loc[count, 'Status']
+                            row.amount_received_date = read_file.loc[count, 'Amount Received Date']
+                            db.session.commit()
+                            count += 1
             else:
-                print('else', count)
-                if read_file.loc[count, 'Status'] == 'Pending':
-                    read_file.loc[count, 'Status'] = 1
-                elif read_file.loc[count, 'Status'] == 'Received':
-                    read_file.loc[count, 'Status'] = 2
-                elif read_file.loc[count, 'Status'] == 'Cancel':
-                    read_file.loc[count, 'Status'] = 3
-                new_record = Records(client_id=read_file.loc[count, 'Client'],
-                                     content_advt=read_file.loc[count, 'AD/GP/Others'],
-                                     date_of_order=read_file.loc[count, 'RO Date'],
-                                     dop=read_file.loc[count, 'DoP'], bill=read_file.loc[count, 'Bill No.'],
-                                     bill_date=read_file.loc[count, 'Bill Date'],
+                exists = db.session.query(db.exists().where(
+                    Client.client_name == read_file.loc[count, 'Client'])).scalar()
+                get_client_id = Client.query.filter_by(client_name=read_file.loc[count, 'Client']).first()
 
-                                     amount_received_date=read_file.loc[count, 'Amount Received Date'],
+                print(exists)
+                if not exists:
+                    new_client = Client(client_name=read_file.loc[count, 'Client'], email=None, phone_no=None,
+                                        address=None, final_deal=0, gst=0)
+                    db.session.add(new_client)
+                    db.session.commit()
 
-                                     status_id=read_file.loc[count, 'Status'])
-                db.session.add(new_record)
-                db.session.commit()
-            count += 1
+                else:
+                    if count >= len(read_file):
+                        break
+                    else:
+                        print('else', count)
+                        if read_file.loc[count, 'Status'] == 'Pending':
+                            read_file.loc[count, 'Status'] = 1
+                        elif read_file.loc[count, 'Status'] == 'Received':
+                            read_file.loc[count, 'Status'] = 2
+                        elif read_file.loc[count, 'Status'] == 'Cancel':
+                            read_file.loc[count, 'Status'] = 3
 
-        # from tqdm.gui import tqdm_gui
-        # from time import sleep
-        # file_name = 'Custom_Record.csv'
-        # with open(Report_Generated_File + '\\' + file_name, 'r') as csvFile:
-        #     lines = [line for line in csvFile]
-        #     currentRow = 1
-        #
-        #     for row in tqdm_gui(csv.reader(lines), total=len(lines)):
-        #         print(row)
-        #         currentRow += 1
-        #         sleep(1)
+                        bill_no_exists = db.session.query(db.exists().where(
+                            str(Records.bill) == read_file.loc[count, 'Bill No.']))
+                        print(bill_no_exists)
+                        if bill_no_exists:
+                            get_record_id = Records.query.filter_by(
+                                bill=str(read_file.loc[count, 'Bill No.'])).first()
+                            if get_record_id:
+                                flash(f"Bill no {get_record_id.bill} already exists in the Database! \n"
+                                      f"Duplicate Bill No. at Row No. {count + 2}.")
+                                return redirect(url_for('file_upload'))
+                            new_record = Records(client_id=get_client_id.id,
+                                                 content_advt=read_file.loc[count, 'AD/GP/Others'],
+                                                 date_of_order=read_file.loc[count, 'RO Date'],
+                                                 dop=read_file.loc[count, 'DoP'],
+                                                 bill=int(read_file.loc[count, 'Bill No.']),
+                                                 bill_date=read_file.loc[count, 'Bill Date'],
+
+                                                 amount_received_date=read_file.loc[count, 'Amount Received Date'],
+
+                                                 status_id=read_file.loc[count, 'Status'])
+                            db.session.add(new_record)
+                            db.session.commit()
+                            count += 1
+        flash(f"{count} Record added", category="success")
     return render_template('file_upload.html')
-
 
 
 if __name__ == "__main__":

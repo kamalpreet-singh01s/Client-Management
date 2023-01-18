@@ -76,7 +76,7 @@ class Records(db.Model):
     filename = db.Column(db.String())
 
     def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date,
-                 status_id, filename=None, data=None, amount_received_date=None):
+                 status_id, filename=None, amount_received_date=None):
         self.client_id = client_id
         self.content_advt = content_advt
         self.date_of_order = date_of_order
@@ -87,7 +87,7 @@ class Records(db.Model):
         self.status_id = status_id
 
         self.filename = filename
-        self.data = data
+
 
 
 class Status(db.Model):

@@ -4,24 +4,45 @@
 {% include 'alert.html' %}
 
 <style>
-    .image-upload>input {
-  display: none;
+
+
+
+
+
+input[type="file"] {
+    display: none;
 }
-#pdf_upload {
-            width: 300px;
-            height: 300px;
-            overflow: hidden;
-            margin: 0 auto;
-        }
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #0dcaf070;
+}
 
-        #pdf_upload img {
-            width: 100%;
-            transition: 0.5s all ease-in-out;
-        }
 
-        #pdf_upload:hover img {
-            transform: scale(1.1);
-        }
+
+
+
+
+body{
+    background-color: #f8f9fa;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </style>
 
@@ -77,6 +98,33 @@
         function client_unchanged(){
     document.getElementById('alert_client').hidden = false;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     </script>
 
@@ -257,74 +305,43 @@
     <div class="row bg-light">
         <div class="row">
             <hr class="mx-auto"
-                style="width:50%; border-left: 2px solid lightgrey; background-color:rgba(248,249,250)"/>
+                style="border-left: 2px solid lightgrey; background-color:rgba(248,249,250)"/>
         </div>
     </div>
-    <div class="row bg-light mb-5">
-        <div class="col d-flex justify-content-center" style="margin-left:5rem">
-            <div class="row">
-                <div class="row d-flex justify-content-center" style="font-size:x-large">
-                    <u>Attachment</u>
-                </div>
-                <div class="row">
-                    <div class="row mt-3">
-                        <div class="col d-flex justify-content-center">
-                            <a class="" target="_blank" style="text-decoration:none; font-size:small"
-                               href="{{url_for('download',filename = record_to_update.filename)}}"><img
-                                    src="{{url_for('static', filename='pdf_image.png')}}" id="current_pdf"
-                                    width="150px" height="190px"></a>
-                        </div>
-                        <div class="col form_editable">
-                            <button type="button" class="btn btn-success btn-sm" onclick="remove_pdf_file()"
-                                    id="add_file" hidden>
-                                Update+
-                            </button>
-                        </div>
-                    </div>
-                    <div class="row">
 
-                        <div class="row d-flex justify-content-end">
-                            <div class="col image-upload" id="pdf_upload" hidden>
-                                <label for='file-input' class="mt-3" style="cursor:pointer" id="upload">
-                                    <img src="https://via.placeholder.com/300x300.png?text=UPLOAD" width="300px"
-                                         height="200px">
-                                </label>
-                                <input id="file-input" type="file" name="file" onchange="readURL(this)">
-                            </div>
-                            <div class="col">
-                                <div class="row" style="font-size:small" hidden id="x">
-                                    <div class="col d-flex justify-content-end">
-                                        <button type="button" class="btn btn-danger" onclick="remove_selected_file()">X
-                                        </button>
-                                    </div>
-                                </div>
+    <div class="row bg-light">
+        <div class="col-8 text-end" style="margin-left:86px; font-size:x-large">
+            Attachment:
+        </div>
 
-                                <div class="row" id="selected_pdf">
-                                    <div class="col">
-                                        <img src="{{url_for('static', filename='pdf_image.png')}}" id="pdf_image"
-                                             width="150px" height="190px" hidden>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
-            <div>
-
-
-            </div>
-
+        {% if record_to_update.filename %}
+        <div class="col text-start" id="current_file">
+            <a class="" style="text-decoration:none; font-size:x-large"
+               href="{{url_for('download',filename = record_to_update.filename, record_id = record_to_update.id)}}">{{client.client_name}}/{{record_to_update.bill}}</a>
+        </div>
+        <div class="col" id="update_btn_file" hidden>
+            <button type="button" class="btn btn-success btn-sm" onclick="new_file_upload()">Update</button>
+        </div>
+        <div class="col text-start" id="update_file" hidden>
+            <label for="file-upload" class="custom-file-upload">
+                <i class="fa fa-cloud-upload"></i>Upload Attachment
+            </label>
+            <input id="file-upload" name='file' type="file" accept="application/pdf" style="display:none;">
 
         </div>
-        {{form.client_name (class="client_name")}}
+        {% else %}
 
+        <div class="col text-start" id="upload_file" hidden>
+            <label for="file1-upload" class="custom-file-upload">
+                <i class="fa fa-cloud-upload"></i>Upload Attachment
+            </label>
+            <input id="file1-upload" name='file' type="file" accept="application/pdf" style="display:none;">
+
+        </div>
+        {% endif %}
     </div>
+
+    {{form.client_name (class="client_name")}}
 </form>
 
 <script src="{{url_for('static', filename='record_details.js')}}"></script>

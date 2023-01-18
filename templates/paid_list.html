@@ -28,6 +28,9 @@
             content: counter(rowNumber);
 
         }
+
+
+
 </style>
 
 <h4 style="text-align:center">Receipts</h4>
@@ -47,6 +50,7 @@
                 <th>DoP</th>
                 <th>AD/GP/Others.</th>
                 <th>Deal (Rs.)</th>
+                <th>GST (18%)</th>
                 <th>Status</th>
             </tr>
             </thead>
@@ -55,24 +59,40 @@
             <tr>
                 <td></td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.client_name.client_name }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{
+                    paid.client_name.client_name }}
+                </td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.bill }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.bill }}
+                </td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.bill_date }}</td>
-                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.date_of_order }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.bill_date }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.date_of_order
+                    }}
+                </td>
 
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.dop }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.dop }}
+                </td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.content_advt }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.content_advt
+                    }}
+                </td>
 
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{ paid.client_name.final_deal }}</td>
-
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{
+                    paid.client_name.final_deal }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{
+                    paid.client_name.gst }}
+                </td>
                 <td style="color:green; font-weight:600; cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'" class="status">{{ paid.status_name.status_name }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'" class="status">{{
+                    paid.status_name.status_name }}
+                </td>
 
             </tr>
             {% endfor %}

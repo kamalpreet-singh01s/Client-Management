@@ -10,13 +10,25 @@ document.getElementById('cancelled_button').hidden = false;
 
 document.getElementById('client_details').hidden = false;
 document.getElementById('bill_details').hidden = false;
+if (!(document.getElementById('update_btn_file'))){
+    //pass
+}
+else{
+document.getElementById('update_btn_file').hidden = false;
+}
 
+if (!(document.getElementById('upload_file'))){
+    //pass
+}
+else{
+document.getElementById('upload_file').hidden = false;
+
+}
 
 action_buttons = document.getElementById("action_buttons")
 action_buttons.style.backgroundColor = "#141619";
-document.body.style.backgroundColor = "#141619";
+//document.body.style.backgroundColor = "#141619";
 
-document.getElementById('add_file').hidden = false;
 
 
 hide_table = document.getElementById('hide_table');
@@ -38,43 +50,66 @@ var form_editable = document.getElementsByClassName('form_editable');
 
 
 
+//
+//function remove_pdf_file(){
+//
+//
+//document.getElementById('current_pdf').hidden = true;
+//
+//
+//document.getElementById('add_file').hidden=true;
+//
+//
+//document.getElementById('pdf_upload').hidden = false;
+//}
+//
+//
+////preview_file
+// function readURL(input) {
+//        document.getElementById('pdf_image').hidden = false;
+//        document.getElementById('x').hidden = false;
+//
+//document.getElementById('upload').hidden = true;
+//        }
+//
+//function remove_selected_file(){
+//    selected_pdf = document.getElementById('selected_pdf');
+//selected_pdf.parentNode.removeChild(selected_pdf);
+//document.getElementById('x').hidden = true;
+//document.getElementById('upload').hidden = false;
+//
+//}
+//
+//
+//status_name = document.getElementById('status')
+//if (status_name.innerHTML == "Received" || status_name.innerHTML == "Cancelled"){
+//console.log('status_name')
+//    edit_button = document.getElementById('edit_button');
+//    edit_button.parentNode.removeChild(edit_button);
+//}
 
-function remove_pdf_file(){
 
 
-document.getElementById('current_pdf').hidden = true;
+//file upload
+$('#file-upload').change(function() {
+  var i = $(this).prev('label').clone();
+  var file = $('#file-upload')[0].files[0].name;
+  $(this).prev('label').text(file);
+});
+
+$('#file1-upload').change(function() {
+  var i = $(this).prev('label').clone();
+  var file = $('#file1-upload')[0].files[0].name;
+  $(this).prev('label').text(file);
+});
 
 
-document.getElementById('add_file').hidden=true;
-
-
-document.getElementById('pdf_upload').hidden = false;
+function new_file_upload(){
+document.getElementById("update_file").hidden = false
+document.getElementById("current_file").hidden = true
+document.getElementById("update_btn_file").hidden = true
 }
 
-
-//preview_file
- function readURL(input) {
-        document.getElementById('pdf_image').hidden = false;
-        document.getElementById('x').hidden = false;
-
-document.getElementById('upload').hidden = true;
-        }
-
-function remove_selected_file(){
-    selected_pdf = document.getElementById('selected_pdf');
-selected_pdf.parentNode.removeChild(selected_pdf);
-document.getElementById('x').hidden = true;
-document.getElementById('upload').hidden = false;
-
-}
-
-
-status_name = document.getElementById('status')
-if (status_name.innerHTML == "Received" || status_name.innerHTML == "Cancelled"){
-console.log('status_name')
-    edit_button = document.getElementById('edit_button');
-    edit_button.parentNode.removeChild(edit_button);
-}
 
 
 

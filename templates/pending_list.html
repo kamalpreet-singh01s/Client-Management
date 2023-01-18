@@ -26,6 +26,9 @@
             content: counter(rowNumber);
 
         }
+
+
+
 </style>
 
 <br>
@@ -35,7 +38,7 @@
 <br>
 
 
-<div  style="margin:auto" class="d-grid gap-2 col-11 mx-auto">
+<div style="margin:auto" class="d-grid gap-2 col-11 mx-auto">
     <div style="overflow-y:scroll; height:200px; margin-left:10px">
         <table class="table table-hover table-sortable">
             <thead>
@@ -48,6 +51,7 @@
                 <th>DoP</th>
                 <th>AD/GP/Others.</th>
                 <th>Deal (Rs.)</th>
+                <th>GST (18%)</th>
                 <th>Status</th>
             </tr>
             </thead>
@@ -56,25 +60,42 @@
             <tr>
                 <td></td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.client_name.client_name }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{
+                    pending.client_name.client_name }}
+                </td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.bill }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.bill }}
+                </td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.bill_date }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{
+                    pending.bill_date }}
+                </td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.date_of_order }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{
+                    pending.date_of_order }}
+                </td>
 
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.dop }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.dop }}
+                </td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.content_advt }}</td>
-                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.client_name.final_deal }}</td>
-
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{
+                    pending.content_advt }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{
+                    pending.client_name.final_deal }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{
+                    pending.client_name.gst }}
+                </td>
 
 
                 <td style="color:red; font-weight:600; cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'" class="status">{{ pending.status_name.status_name }}</td>
+                    onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'" class="status">{{
+                    pending.status_name.status_name }}
+                </td>
 
             </tr>
             {% endfor %}
