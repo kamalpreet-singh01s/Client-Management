@@ -112,6 +112,10 @@ document.getElementById("update_btn_file").hidden = true
 }
 
 
+function client_unchanged(){
+    document.getElementById('alert_client').hidden = false;
+}
+
 
 
 $('.client_name').prop('hidden', true);

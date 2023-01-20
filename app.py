@@ -20,7 +20,7 @@ migrate = Migrate(app, db, render_as_batch=True)
 
 UPLOAD_FOLDER = r'W:\work\flask new\client management\data\uploadedBills'
 ALLOWED_EXTENSIONS = {'pdf'}
-Client_List_File = os.path.join(os.curdir, 'data/ClientList')
+Client_List_File = os.path.join(os.curdir, 'data/clientList')
 Report_Generated_File = os.path.join(os.curdir, 'data/reportGenerated')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['Client_List_File'] = Client_List_File
