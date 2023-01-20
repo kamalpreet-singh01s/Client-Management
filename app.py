@@ -2,7 +2,9 @@ import csv
 import datetime
 import os
 import re
+import webbrowser
 from datetime import timedelta
+
 import pandas as pd
 from flask import render_template, request, url_for, flash, redirect, session, send_from_directory
 from flask_migrate import Migrate
@@ -11,17 +13,21 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from form import Form
 from models import db, create_app, Client, Records, Status, Users
-import webbrowser
+from templates import Templates
 
 app = create_app()
 migrate = Migrate(app, db, render_as_batch=True)
 
 UPLOAD_FOLDER = r'W:\work\flask new\client management\data\uploadedBills'
 ALLOWED_EXTENSIONS = {'pdf'}
-
+Client_List_File = os.path.join(os.curdir, 'data/ClientList')
+Report_Generated_File = os.path.join(os.curdir, 'data/reportGenerated')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['Client_List_File'] = Client_List_File
+app.config['reportGenerated'] = Report_Generated_File
 
 
+# Admin Login
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if 'username' in session:
@@ -37,9 +43,10 @@ def login():
                 return redirect(url_for('dashboard'))
 
         flash('Username or password is incorrect', category='error')
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# create new admin
 @app.route('/add-user', methods=['GET', 'POST'])
 def add_user():
     if 'username' in session:
@@ -50,16 +57,16 @@ def add_user():
             email_regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
             if not request.form["first_name"].isalpha():
                 flash("Only Alphabets allowed in First name", category='error')
-                return render_template('register.html')
+                return render_template(Templates.register)
             elif not request.form["last_name"].isalpha():
                 flash("Only Alphabets allowed in Last name", category='error')
-                return render_template('register.html')
+                return render_template(Templates.register)
             elif not re.match(email_regex, request.form["email"]):
                 flash("Invalid Email", category='error')
-                return render_template('register.html')
+                return render_template(Templates.register)
             elif not request.form["phone_no"].isdigit():
                 flash("Only Digits allowed in Phone No.", category='error')
-                return render_template('register.html')
+                return render_template(Templates.register)
 
             add_new_user = Users(username=request.form["username"], firstname=request.form["first_name"],
                                  last_name=request.form["last_name"], email=request.form["email"],
@@ -69,34 +76,37 @@ def add_user():
                 Users.username == request.form["username"])).scalar()
             if exists:
                 flash("User with same username already exists", category='error')
-                return render_template('register.html')
+                return render_template(Templates.register)
             if userpass != confirm_userpass:
                 flash("Password does not match", category='error')
-                return render_template('register.html')
+                return render_template(Templates.register)
             else:
                 db.session.add(add_new_user)
                 db.session.commit()
                 flash('User Created', category='success')
                 return redirect(url_for('manage_users'))
-        return render_template('register.html')
+        return render_template(Templates.register)
 
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# logout
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
 
+# list of admins
 @app.route('/users', methods=['GET', 'POST'])
 def manage_users():
     if 'username' in session:
         users = Users.query.all()
-        return render_template('admin_list.html', users=users)
-    return render_template('login.html')
+        return render_template(Templates.admin_list, users=users)
+    return render_template(Templates.login)
 
 
+# show/update admin
 @app.route('/admin-details/<int:admin_id>', methods=['GET', 'POST'])
 def admin_details(admin_id):
     if 'username' in session:
@@ -119,7 +129,7 @@ def admin_details(admin_id):
                     continue
                 flash("Email already in use", category='error')
 
-                return render_template('admin_details.html', admin_to_update=admin_to_update)
+                return render_template(Templates.admin_details, admin_to_update=admin_to_update)
 
             for res in same_username:
 
@@ -128,14 +138,15 @@ def admin_details(admin_id):
 
                 flash("Username Already Taken", category='error')
 
-                return render_template('admin_details.html', admin_to_update=admin_to_update)
+                return render_template(Templates.admin_details, admin_to_update=admin_to_update)
             db.session.commit()
             flash('User Updated', category='success')
             return redirect(url_for('manage_users'))
-        return render_template('admin_details.html', admin_to_update=admin_to_update)
-    return render_template('login.html')
+        return render_template(Templates.admin_details, admin_to_update=admin_to_update)
+    return render_template(Templates.login)
 
 
+# update admin password
 @app.route('/change-admin-pass/<int:admin_id>', methods=['GET', 'POST'])
 def change_admin_pass(admin_id):
     admin = Users.query.filter_by(id=admin_id).first()
@@ -147,27 +158,29 @@ def change_admin_pass(admin_id):
 
             if not check_password_hash(admin.password, current_password):
                 flash("Current Password is Not Correct", category='error')
-                return render_template("admin_change_pass.html")
+                return render_template(Templates.change_admin_pass)
             elif new_password != confirm_password:
                 flash("Password doesn't match", category='error')
-                return render_template("admin_change_pass.html")
+                return render_template(Templates.change_admin_pass)
             else:
                 admin.password = generate_password_hash(new_password)
                 db.session.commit()
                 flash("Password Changed Successfully", category='success')
                 return redirect(url_for('manage_users'))
-        return render_template("admin_change_pass.html")
-    return render_template('login.html')
+        return render_template(Templates.change_admin_pass)
+    return render_template(Templates.login)
 
 
+# list of clients
 @app.route('/client-list')
 def all_client_names():
     if "username" in session:
         clients = Client.query.order_by(desc(Client.id))
-        return render_template("client_list.html", clients=clients)
-    return render_template('login.html')
+        return render_template(Templates.client_list, clients=clients)
+    return render_template(Templates.login)
 
 
+# create a new client
 @app.route("/new-client", methods=['GET', 'POST'])
 def add_client():
     if "username" in session:
@@ -175,24 +188,20 @@ def add_client():
             message = ''
             if request.form["client_name"].isnumeric():
                 message = 'Name cannot contain numbers or any special symbol'
-                # flash(message, category='error')
 
             if request.form["phone_no"].isalpha():
                 message = 'Phone number cannot contain Alphabets or any special symbol'
-                # flash(message, category='error')
 
             email_reg = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
             if not re.fullmatch(email_reg, request.form['email']):
                 message = "Enter a Valid Email"
-                # flash(message, category='error')
 
             if request.form["final_deal"].isalpha():
                 message = 'Final deal amount cannot contain Alphabets or any special symbol'
-                # flash(message, category='error')
 
             if message:
                 flash(message, category='error')
-                return render_template('add_client.html')
+                return render_template(Templates.add_client)
             else:
                 gst = round((18 / 100) * float(request.form['final_deal']), 2)
 
@@ -205,10 +214,11 @@ def add_client():
                 db.session.commit()
                 flash('client Added', category='success')
                 return redirect(url_for('all_client_names'))
-        return render_template('add_client.html')
-    return render_template('login.html')
+        return render_template(Templates.add_client)
+    return render_template(Templates.login)
 
 
+# delete client
 @app.route('/delete-client/<int:client_id>')
 def delete_client(client_id):
     if "username" in session:
@@ -223,9 +233,10 @@ def delete_client(client_id):
             db.session.commit()
             flash('Client Deleted', category='success')
             return redirect(url_for('all_client_names'))
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# update client
 @app.route('/update-client/<int:client_id>', methods=['GET', 'POST'])
 def update_client(client_id):
     if "username" in session:
@@ -247,7 +258,7 @@ def update_client(client_id):
 
             if message:
                 flash('Record not added', category='error')
-                return render_template('update_client.html', client_to_update=client_to_update)
+                return render_template(Templates.update_client, client_to_update=client_to_update)
             else:
                 client_to_update.client_name = request.form["client_name"]
                 client_to_update.email = request.form["email"]
@@ -265,20 +276,22 @@ def update_client(client_id):
 
                 db.session.commit()
                 flash('Client Updated.', category='success')
-        return render_template("update_client.html", client_to_update=client_to_update,
+        return render_template(Templates.update_client, client_to_update=client_to_update,
                                old_final_deal=old_final_deal)
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# list of records created
 @app.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     if "username" in session:
         all_records = Records.query.order_by(Records.bill.desc())
 
-        return render_template("dashboard.html", all_records=all_records)
-    return render_template('login.html')
+        return render_template(Templates.dashboard, all_records=all_records)
+    return render_template(Templates.login)
 
 
+# create a new record
 @app.route('/add-record', methods=['GET', 'POST'])
 def add_record():
     if "username" in session:
@@ -315,10 +328,11 @@ def add_record():
                 return redirect(url_for('dashboard'))
         form.status_name.default = 1
         form.process()
-        return render_template("add_record.html", form=form)
-    return render_template('login.html')
+        return render_template(Templates.add_record, form=form)
+    return render_template(Templates.login)
 
 
+# delete a record
 @app.route('/delete-record/<int:record_id>')
 def delete_record(record_id):
     if "username" in session:
@@ -328,9 +342,10 @@ def delete_record(record_id):
             db.session.commit()
             flash(f'Record of {record_to_delete} Deleted', category='success')
             return redirect(url_for('dashboard'))
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# show/update record details
 @app.route('/record-details/<int:record_id>', methods=['GET', 'POST'])
 def record_details(record_id):
     if "username" in session:
@@ -345,8 +360,6 @@ def record_details(record_id):
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
 
         if request.method == "POST":
-
-            # get_client = Client.query.filter_by(id=request.form["client_name"]).first()
 
             client.email = request.form["email"]
             client.phone_no = request.form["phone_no"]
@@ -372,12 +385,13 @@ def record_details(record_id):
         form.status_name.default = record_to_update.status_id
         form.process()
 
-        return render_template("record_details.html", record_to_update=record_to_update, form=form,
+        return render_template(Templates.record_details, record_to_update=record_to_update, form=form,
                                last_updated=last_updated, client=client, last_updated_time=last_updated_time)
 
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# set record payment status to received
 @app.route('/set-receive/<int:record_id>', methods=['GET', 'POST'])
 def set_receive(record_id):
     form = Form()
@@ -392,11 +406,11 @@ def set_receive(record_id):
     record_to_update.amount_received_date = date_now
     db.session.commit()
     flash('Status Updated', category='success')
-    # return redirect(url_for('record_details'))
-    return render_template("record_details.html", record_to_update=record_to_update, form=form,
+    return render_template(Templates.record_details, record_to_update=record_to_update, form=form,
                            last_updated=last_updated, client=client, last_updated_time=last_updated_time)
 
 
+# set record payment status to cancelled
 @app.route('/set-cancel/<int:record_id>', methods=['GET', 'POST'])
 def set_cancel(record_id):
     form = Form()
@@ -412,17 +426,19 @@ def set_cancel(record_id):
     db.session.commit()
     flash('Status Updated', category='success')
 
-    return render_template("record_details.html", record_to_update=record_to_update, form=form,
+    return render_template(Templates.record_details, record_to_update=record_to_update, form=form,
                            last_updated=last_updated, client=client, last_updated_time=last_updated_time)
 
 
+# list of payment status
 @app.route('/payment-status-list')
 def show_all_payment_status():
     if "username" in session:
-        return render_template('pen_rec.html', all_status=Status.query.all())
-    return render_template('login.html')
+        return render_template(Templates.payment_status, all_status=Status.query.all())
+    return render_template(Templates.login)
 
 
+# add new payment status
 @app.route('/payment-status', methods=['GET', 'POST'])
 def payment_status():
     if "username" in session:
@@ -431,10 +447,11 @@ def payment_status():
             db.session.add(add_status)
             db.session.commit()
             return redirect(url_for('show_all_payment_status'))
-        return render_template("pen_rec.html")
-    return render_template('login.html')
+        return render_template(Templates.payment_status)
+    return render_template(Templates.login)
 
 
+# delete payment status
 @app.route('/delete-payment-status/<int:status_id>')
 def delete_payment_status(status_id):
     if "username" in session:
@@ -444,9 +461,10 @@ def delete_payment_status(status_id):
             db.session.commit()
             flash('Record Deleted', category='success')
             return redirect(url_for('show_all_payment_status'))
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# update payment status
 @app.route('/update-payment-status/<int:status_id>', methods=['GET', 'POST'])
 def update_payment_status(status_id):
     if "username" in session:
@@ -458,10 +476,11 @@ def update_payment_status(status_id):
             db.session.commit()
             flash('Record Updated', category='success')
             return redirect(url_for('show_all_payment_status'))
-        return render_template("update_status.html", status_to_update=status_to_update)
-    return render_template('login.html')
+        return render_template(Templates.update_status, status_to_update=status_to_update)
+    return render_template(Templates.login)
 
 
+# list of records with pending payment status
 @app.route('/pending-payment-list')
 def pending_payment_list():
     if "username" in session:
@@ -473,10 +492,11 @@ def pending_payment_list():
             total = round(float(client.final_deal) + total, 2)
 
         pending_list = Records.query.filter(Records.status_id == '1').order_by(desc(Records.id)).all()
-        return render_template('pending_list.html', pending_list=pending_list, total=total)
-    return render_template('login.html')
+        return render_template(Templates.pending_list, pending_list=pending_list, total=total)
+    return render_template(Templates.login)
 
 
+# list of records with received payment status
 @app.route('/paid-payment-list')
 def paid_payment_list():
     if "username" in session:
@@ -489,20 +509,21 @@ def paid_payment_list():
             total = round(float(client.final_deal) + total, 2)
 
         paid_list = Records.query.filter(Records.status_id == '2').order_by(desc(Records.id)).all()
-        return render_template('paid_list.html', paid_list=paid_list, total=total)
-    return render_template('login.html')
+        return render_template(Templates.paid_list, paid_list=paid_list, total=total)
+    return render_template(Templates.login)
 
 
+# opens attachment linked to a record
 @app.route('/download/<path:filename>/<int:record_id>')
 def download(filename, record_id):
     if "username" in session:
         uploads = os.path.join(UPLOAD_FOLDER, filename)
         webbrowser.open_new_tab(uploads)
         return redirect(url_for('record_details', record_id=record_id))
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
-# Search records
+# Search specific keyword in list of records
 @app.route('/search', methods=['POST', 'GET'])
 def search_records():
     if "username" in session:
@@ -514,31 +535,32 @@ def search_records():
                 Records.client_id.in_(client_ids) | Records.bill.ilike(f"%{search}%")).all()
             if all_records:
                 print(all_records)
-                return render_template("dashboard.html", all_records=all_records)
+                return render_template(Templates.dashboard, all_records=all_records)
             flash('No Record Found')
             return redirect(url_for('dashboard'))
         return redirect(url_for('dashboard'))
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# Search specific keyword in list of clients
 @app.route('/clients', methods=['POST', 'GET'])
 def search_clients():
     if "username" in session:
-        total_results = []
         if request.method == 'GET':
             search = request.args['search'].lower()
             clients = Client.query.filter(
                 Client.client_name.ilike(f"%{search}%") | Client.phone_no.ilike(f"%{search}%") | Client.address.ilike(
                     f"%{search}%") | Client.email.ilike(f"%{search}%")).all()
             if clients:
-                return render_template("client_list.html", clients=clients)
+                return render_template(Templates.client_list, clients=clients)
             else:
                 flash('No Record Found')
                 return redirect(url_for('all_client_names'))
 
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# delete multiple records using checkbox
 @app.route('/get_checked_boxes', methods=['GET', 'POST'])
 def get_checked_boxes():
     if 'username' in session and request.method == "POST":
@@ -550,9 +572,10 @@ def get_checked_boxes():
         flash("record_deleted", category='success')
         return redirect(url_for('dashboard'))
 
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# send id's of multiple records using checkbox for payment status update
 @app.route('/send_rec_id', methods=['GET', 'POST'])
 def send_rec_id():
     form = Form()
@@ -566,10 +589,11 @@ def send_rec_id():
                 flash("Please Uncheck Records with status Received/Cancelled", category='error')
                 return redirect(url_for('dashboard', form=form))
 
-        return render_template('update_check_status.html', stu_ids=send_rec_ids, form=form)
-    return render_template('login.html')
+        return render_template(Templates.update_multi_record_status, stu_ids=send_rec_ids, form=form)
+    return render_template(Templates.login)
 
 
+# update status of multiple records using checkbox
 @app.route('/update_class', methods=['GET', 'POST'])
 def update_class():
     form = Form()
@@ -582,9 +606,10 @@ def update_class():
             db.session.commit()
         flash("record_updated", category='success')
         return redirect(url_for('dashboard', form=form))
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# delete multiple clients using checkbox
 @app.route('/get_checked_boxes_for_client', methods=['GET', 'POST'])
 def get_checked_boxes_for_client():
     if 'username' in session and request.method == "POST":
@@ -600,9 +625,10 @@ def get_checked_boxes_for_client():
         flash("client Deleted", category='success')
         return redirect(url_for('all_client_names'))
 
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
+# delete multiple admins using checkbox
 @app.route('/get_checked_boxes_for_admin', methods=['GET', 'POST'])
 def get_checked_boxes_for_admin():
     if 'username' in session and request.method == "POST":
@@ -618,19 +644,15 @@ def get_checked_boxes_for_admin():
         flash("User Deleted", category='success')
         return redirect(url_for('manage_users'))
 
-    return render_template('login.html')
+    return render_template(Templates.login)
 
 
-Report_Generated_File = os.path.join(os.curdir, 'data/reportGenerated')
-
-app.config['reportGenerated'] = Report_Generated_File
-
-
+# generate csv report for list of records selected
 @app.route('/csv_file_record_to_update', methods=['POST', 'GET'])
 def csv_file_record_to_update():
     if 'username' in session and request.method == "POST":
         rec_ids = request.form["check_rec_ids"]
-
+        # if update_record checkbox is checked, id's of clients and record is included in the csv file else excluded
         if request.form.get("update_check"):
             file_name = 'Update_Record.csv'
             with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
@@ -672,11 +694,7 @@ def csv_file_record_to_update():
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
 
-Client_List_File = os.path.join(os.curdir, 'data/ClientList')
-
-app.config['Client_List_File'] = Client_List_File
-
-
+# generate csv report for list of clients selected
 @app.route('/csv-for-client', methods=['POST', 'GET'])
 def csv_for_client():
     client_ids = request.form["check_rec_ids"]
@@ -696,6 +714,7 @@ def csv_for_client():
     return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
 
+# add/update new records using a csv file
 @app.route('/file_upload', methods=['POST', 'GET'])
 def file_upload():
     if 'username' in session and request.method == "POST":
@@ -780,7 +799,7 @@ def file_upload():
                             db.session.commit()
                             count += 1
         flash(f"{count} Record added", category="success")
-    return render_template('file_upload.html')
+    return render_template(Templates.file_upload)
 
 
 if __name__ == "__main__":

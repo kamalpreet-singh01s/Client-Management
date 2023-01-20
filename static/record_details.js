@@ -82,39 +82,6 @@ $(document).ready(function(){
 })
 
 
-
-
-//
-//function remove_pdf_file(){
-//
-//
-//document.getElementById('current_pdf').hidden = true;
-//
-//
-//document.getElementById('add_file').hidden=true;
-//
-//
-//document.getElementById('pdf_upload').hidden = false;
-//}
-//
-//
-////preview_file
-// function readURL(input) {
-//        document.getElementById('pdf_image').hidden = false;
-//        document.getElementById('x').hidden = false;
-//
-//document.getElementById('upload').hidden = true;
-//        }
-//
-//function remove_selected_file(){
-//    selected_pdf = document.getElementById('selected_pdf');
-//selected_pdf.parentNode.removeChild(selected_pdf);
-//document.getElementById('x').hidden = true;
-//document.getElementById('upload').hidden = false;
-//
-//}
-//
-//
 status_name = document.getElementById('status')
 if (status_name.innerHTML == "Received" || status_name.innerHTML == "Cancelled"){
 console.log('status_name')
