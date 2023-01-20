@@ -21,7 +21,7 @@
                     <div class="form-outline">
                         <label class="form-label">AD/GP/Others.<span style="color:red">*</span></label>
                         <textarea id="form3Example2" class="form-control"
-                               name="content_advt">{{request.form['content_advt']}}</textarea>
+                                  name="content_advt">{{request.form['content_advt']}}</textarea>
                     </div>
                 </div>
             </div>
@@ -60,45 +60,35 @@
 
             </div>
 
-            <div class="row mb-3">
-
-                <div class="row mb-3" style="border-radius:15px" id="client_bg">
 
 
-                    <div class="col" hidden>
-                        <label class="form-label">Status (Pending, Received or Cancel)<span style="color:red">*</span></label>
-                        {{form.status_name(class="form-select form-select-lg mb-3 bg-info text-light")}}
-                    </div>
 
-
-                </div>
                 <div class="row mb-3">
 
-                    <!--                    <div class="col">-->
-                    <!--                        <label class="form-label">Pending Rs.</label>-->
-                    <!--                        <input type="text" placeholder="Pending Amount" class="form-control"-->
-                    <!--                               value="{{request.form['pending_amount']}}" name="pending_amount">-->
-                    <!--                    </div>-->
                     <div class="col">
                         <label class="form-label">Bill Copy</label>
                         <input type="file" accept="application/pdf" class="form-control" name="file">
                     </div>
 
-
-
                 </div>
-                <div class="row mb-3">
-
+                <div class="row ">
+                    <div class="col mt-3 text-center">
+                        <button type="submit" class="btn btn-primary w-25" data-toggle="modal"
+                                data-target=".bd-example-modal-lg">Add
+                            Record
+                        </button>
+                    </div>
                 </div>
 
-            </div>
-            <div class="d-grid gap-2 col-4 mx-auto">
-                <button type="submit" class="btn btn-primary" data-toggle="modal"
-                        data-target=".bd-example-modal-lg">Add
-                    Record
-                </button>
-            </div>
+
+
         </fieldset>
+
+        <div class="col" hidden>
+            <label class="form-label">Status (Pending, Received or Cancel)<span
+                    style="color:red">*</span></label>
+            {{form.status_name(class="form-select form-select-lg mb-3 bg-info text-light")}}
+        </div>
     </form>
 </div>
 

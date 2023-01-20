@@ -31,7 +31,7 @@ def login():
         password = request.form["password"]
         for i in Users.query.all():
             if i.username == username and check_password_hash(i.password, password):
-                session["username"] = i.username
+                session["username"] = i.first_name + ' ' + i.last_name
                 session.permanent = True
                 app.permanent_session_lifetime = timedelta(minutes=5)
                 return redirect(url_for('dashboard'))
@@ -175,24 +175,24 @@ def add_client():
             message = ''
             if request.form["client_name"].isnumeric():
                 message = 'Name cannot contain numbers or any special symbol'
-                flash(message, category='error')
+                # flash(message, category='error')
 
             if request.form["phone_no"].isalpha():
                 message = 'Phone number cannot contain Alphabets or any special symbol'
-                flash(message, category='error')
+                # flash(message, category='error')
 
             email_reg = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
             if not re.fullmatch(email_reg, request.form['email']):
                 message = "Enter a Valid Email"
-                flash(message, category='error')
+                # flash(message, category='error')
 
             if request.form["final_deal"].isalpha():
                 message = 'Final deal amount cannot contain Alphabets or any special symbol'
-                flash(message, category='error')
+                # flash(message, category='error')
 
             if message:
-                flash('Record not added', category='error')
-                return redirect('add_client')
+                flash(message, category='error')
+                return render_template('add_client.html')
             else:
                 gst = round((18 / 100) * float(request.form['final_deal']), 2)
 

@@ -44,6 +44,8 @@ body{
 
 
 
+
+
 </style>
 
 <form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
@@ -126,6 +128,8 @@ body{
 
 
 
+
+
     </script>
 
     <div class="w-100 row bg-light form-group">
@@ -169,6 +173,8 @@ body{
         function client_unchanged(){
     document.getElementById('alert_client').hidden = false;
 }
+
+
 
 
             </script>
@@ -253,7 +259,8 @@ body{
                     </tr>
                     <tr>
                         <td>Payment Status:</td>
-                        <td><p class="status display-11" id="status">{{record_to_update.status_name.status_name}}</p>
+                        <td><p style="border-radius:20px; width: 90px; text-align: center;height: 27px;"
+                               class="status display-11" id="status">{{record_to_update.status_name.status_name}}</p>
                         </td>
                     </tr>
 

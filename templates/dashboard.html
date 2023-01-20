@@ -3,18 +3,11 @@
 {% block content %}
 
 <style>
-<!--table {-->
-<!--    counter-reset: rowNumber;-->
-<!--}-->
+.check-box{
 
-<!--tbody tr {-->
-<!--    counter-increment: rowNumber;-->
-<!--}-->
+        background-color:#yellow;
 
-<!--tbody tr td:first-child::before {-->
-<!--    content: counter(rowNumber);-->
-
-<!--}-->
+}
 
 
 
@@ -50,7 +43,7 @@
 
 
 <form method="GET" action="{{ url_for('search_records') }}">
-    <div class="row" style="margin-left:2px">
+    <div class="row w-100">
         <div class="col-2 d-flex justify-content-end">
             <input type="text" class="form-control form-control-sm w-75" style="height:20px" name="search"
                    placeholder="Search" value="{{request.args['search']}}"/>
@@ -61,15 +54,15 @@
             </button>
         </div>
         <div class="col text-start">
-            <h4 class="mb-2" style="margin-left:10rem">Data Sheet</h4>
+            <h4 class="mb-2" style="margin-left:13rem">Data Sheet</h4>
         </div>
-<!--        <div class="col-2 text-start" style="margin-right:102px; margin-top:38px">-->
-<!--            <a class="add_button"-->
-<!--               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"-->
-<!--               href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>-->
+        <!--        <div class="col-2 text-start" style="margin-right:102px; margin-top:38px">-->
+        <!--            <a class="add_button"-->
+        <!--               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold"-->
+        <!--               href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>-->
 
 
-<!--        </div>-->
+        <!--        </div>-->
     </div>
 </form>
 
@@ -118,16 +111,16 @@
                href="{{ url_for('add_record') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
         <div class="row">
-        <div class="col">
-            {% include 'alert.html' %}
+            <div class="col">
+                {% include 'alert.html' %}
+            </div>
         </div>
-    </div>
 
         <table class="table table-hover table-sortable" id="table-count">
 
-            <thead>
+            <thead id="table-head">
             <tr class="text-center">
-                <th><input type="checkbox" id="checkAll"  class=""></th>
+                <th><input type="checkbox" id="check-All" class="" ></th>
                 <th title="Serial Number" width="56px">S.No.</th>
                 <th title="Bill No.">Bill No.</th>
                 <th title='Bill Date'>Bill Date</th>
@@ -143,7 +136,7 @@
             <tr class="text-center">
 
                 <td>
-                    <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
+                    <input onchange="check_box();" class="form-check-input check-box" name="check-box" id="check"
                            type="checkbox"
                            value="{{ record.id }}">
                 </td>
@@ -161,7 +154,7 @@
                     {{ record.client_name.client_name }}
                 </td>
 
-                <td style="cursor: pointer"
+                <td style="cursor: pointer; border-radius:20px"
                     onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"
                     class="status">
                     {{ record.status_name.status_name }}

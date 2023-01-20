@@ -89,7 +89,7 @@
                     onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'">{{
                     paid.client_name.gst }}
                 </td>
-                <td style="color:green; font-weight:600; cursor: pointer;"
+                <td style="color:green; font-weight:600; cursor: pointer;border-radius:20px; text-align:center"
                     onclick="location.href='{{ url_for('record_details', record_id = paid.id) }}'" class="status">{{
                     paid.status_name.status_name }}
                 </td>
@@ -107,4 +107,6 @@
 
 </div>
 
+
+<script src="{{url_for('static', filename = 'script.js')}}"></script>
 {%endblock%}

@@ -119,14 +119,41 @@ $(document).ready(function() {
 
 
 
-  $("#checkAll").change(function() {
+var status = document.querySelectorAll("status").innerText;
+
+
+$(document).ready(function(){
+    $( ".status:contains('Pending')" ).css( "color", "white" );
+    $( ".status:contains('Pending')" ).css( "background-color", "#8e8df4" );
+    $( ".status:contains('Pending')" ).css( "font-weight" , "bold" );
+})
+
+$(document).ready(function(){
+    $( ".status:contains('Cancel')" ).css( "color", "white" );
+    $( ".status:contains('Cancel')" ).css( "background-color", "red" );
+    $( ".status:contains('Cancel')" ).css( "font-weight" , "bold" );
+})
+
+$(document).ready(function(){
+    $( ".status:contains('Received')" ).css( "color", "white" );
+    $( ".status:contains('Received')" ).css( "background-color", "green" );
+    $( ".status:contains('Received')" ).css( "font-weight" , "bold" );
+})
+
+
+
+
+
+
+
+  $("#check-All").change(function() {
     var checkboxes = document.querySelectorAll('input[type="checkbox"]');
 //    var selectAll = document.getElementById("select_all");
     for (var i = 0; i < checkboxes.length; i++) {
         checkboxes[i].checked = !checkboxes[i].checked;
         if(checkboxes[i].checked){
             values.push(checkboxes[i].getAttribute("value"));
-            $("#add").hide();
+             $("#add").hide();
              $("#check_rec_ids_btn").show();
              $update_check = $("#update_check").show();
              $update_label = $("#update_label").show();
@@ -134,6 +161,8 @@ $(document).ready(function() {
              document.getElementById("rec_ids").value = values
              document.getElementById("send_rec_ids").value = values
              document.getElementById("check_rec_ids").value = values
+             var element = document.getElementById("check-All");
+             element.checked = true;
 
         }else{
 
@@ -145,6 +174,8 @@ $(document).ready(function() {
                 $update_check = $("#update_check").hide();
                 $update_label = $("#update_label").hide();
                 $("#action_dropdown").hide()
+                var element = document.getElementById("check-All");
+                element.checked = false;
             }
         }
     }
@@ -168,4 +199,29 @@ $(document).ready(function() {
     }
   });
 });
+
+
+
+//$('.check-box').click(function () {
+//     var backgroundColor = $(this).is(":checked") ? "#cfecec;" : "";
+//     $(this).closest('tr').attr('style', 'background-color: '+ backgroundColor +'');
+//});
+
+
+
+//function check_all(element) {
+//    var rows = document.getElementById("table-count").getElementsByTagName("td");
+//    console.log(element.checked)
+//    if (element.checked){
+//            for (var i = 0; i < rows.length; i++) {
+//            rows[i].style.backgroundColor = "#cfecec";
+//}
+//    }
+//    else{
+//             for (var i = 0; i < rows.length; i++) {
+//            rows[i].style.backgroundColor = "white";
+//
+//}
+//    }
+//}
 

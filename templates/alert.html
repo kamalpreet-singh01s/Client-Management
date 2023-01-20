@@ -16,4 +16,25 @@
 
 {%- endfor %}
 
+<script>
 
+    if (document.getElementById('alert-success')){
+    setTimeout(() => {
+    document.getElementById('alert-success').style.display = 'none';
+    }, 2000);
+    }
+    else{
+    alert_error=document.getElementById('alert-error');
+    setTimeout(() => {
+
+        alert_error.style.display = 'none';
+    }, 2000);
+    }
+
+
+
+
+
+
+
+</script>
