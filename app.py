@@ -12,7 +12,7 @@ from sqlalchemy import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from form import Form
-from models import db, create_app, Client, Records, Status, Users
+from models import db, create_app, Client, Records, RecordStatus, PaymentStatus, Users
 from templates import Templates
 
 app = create_app()
@@ -25,10 +25,6 @@ Report_Generated_File = os.path.join(os.curdir, 'data/reportGenerated')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['Client_List_File'] = Client_List_File
 app.config['reportGenerated'] = Report_Generated_File
-
-# status
-for status in Status:
-    print(status.value)
 
 
 # Admin Login
@@ -301,8 +297,8 @@ def add_record():
     if "username" in session:
         form = Form()
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
-        form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
-
+        # form.record_status_name.choices = [(status.id, status.status_name) for status in RecordStatus.query.all()]
+        print(RecordStatus.pending.value)
         if request.method == "POST":
             file = request.files['file']
             if file:
@@ -323,14 +319,14 @@ def add_record():
                 record = Records(request.form["client_name"], request.form["content_advt"],
                                  request.form["date_of_order"],
                                  request.form["dop"], request.form["bill"], request.form["bill_date"],
-                                 status_id=request.form["status_name"],
+                                 status=RecordStatus.pending,
                                  filename=None)
 
                 db.session.add(record)
                 db.session.commit()
                 flash('Record Added', category='success')
                 return redirect(url_for('dashboard'))
-        form.status_name.default = 1
+        form.record_status_name.default = RecordStatus.pending.value
         form.process()
         return render_template(Templates.add_record, form=form)
     return render_template(Templates.login)

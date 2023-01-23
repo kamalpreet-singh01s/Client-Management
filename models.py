@@ -18,6 +18,26 @@ def create_app():
     return app
 
 
+class PaymentStatus(enum.Enum):
+    draft = "Draft"
+    approved = "Approved"
+    cancelled = "Cancelled"
+
+    @staticmethod
+    def fetch_names():
+        return [c.value for c in PaymentStatus]
+
+
+class RecordStatus(enum.Enum):
+    pending = "Pending"
+    received = "Received"
+    cancelled = "Cancelled"
+
+    @staticmethod
+    def fetch_names():
+        return [c.value for c in RecordStatus]
+
+
 class Users(db.Model):
     __tablename__ = "users"
 
@@ -48,24 +68,16 @@ class Client(db.Model):
     address = db.Column(db.String(500))
     final_deal = db.Column(db.Float)
     gst = db.Column(db.Float)
+    credit_amount = db.Column(db.Float, default=0.0)
 
-    def __init__(self, client_name, email, phone_no, address, final_deal, gst):
+    def __init__(self, client_name, email, phone_no, address, final_deal, gst, credit_amount):
         self.client_name = client_name
         self.final_deal = final_deal
         self.email = email
         self.phone_no = phone_no
         self.address = address
         self.gst = gst
-
-
-class Status(enum.Enum):
-    draft = "Draft"
-    received = "Received"
-    cancelled = "Cancelled"
-
-    @staticmethod
-    def fetch_names():
-        return [c.value for c in Status]
+        self.credit_amount = credit_amount
 
 
 class Records(db.Model):
@@ -85,7 +97,7 @@ class Records(db.Model):
     # status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
     # status_name = db.relationship('Status')
     status = db.Column(
-        db.Enum(Status, values_callable=lambda x: [str(stat.value) for stat in Status]))
+        db.Enum(RecordStatus, values_callable=lambda x: [str(stat.value) for stat in RecordStatus]))
 
     filename = db.Column(db.String())
 
