@@ -27,7 +27,21 @@
 
         }
 
+.cell-4 {
+  width: 200px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
+.status {
+  width: 85px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 </style>
 
@@ -38,7 +52,7 @@
 <br>
 
 
-<div style="margin:auto" class="d-grid gap-2 col-11 mx-auto">
+<div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
     <div style="overflow-y:scroll; height:200px; margin-left:10px">
         <table class="table table-hover table-sortable">
             <thead>
@@ -78,7 +92,7 @@
                 <td style="cursor: pointer;"
                     onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{ pending.dop }}
                 </td>
-                <td style="cursor: pointer;"
+                <td class="cell-4" style="cursor: pointer;"
                     onclick="location.href='{{ url_for('record_details', record_id = pending.id) }}'">{{
                     pending.content_advt }}
                 </td>
@@ -103,8 +117,21 @@
         </table>
     </div>
     <hr>
-    <div class="d-flex justify-content-end" style="margin-right:50px">
-        <h6>Pending Total: Rs. {{total}}</h6>
+    <div class="row">
+        <div class="col text-end">
+            <h6 style="margin-right:166px">Deal Total: {{deal_total}}</h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-end">
+            <h6 style="margin-right:169px">GST Total: {{total_gst}}</h6>
+        </div>
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col text-end">
+            <h6 style="margin-right:95px; font-weight:bold">Total Pending: Rs. {{total}}</h6>
+        </div>
     </div>
 
 </div>

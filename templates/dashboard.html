@@ -44,7 +44,7 @@
 
 <form method="GET" action="{{ url_for('search_records') }}">
     <div class="row w-100">
-        <div class="col-2 d-flex justify-content-end">
+        <div class="col-2" style="margin-left:206px;margin-right: -77px;">
             <input type="text" class="form-control form-control-sm w-75" style="height:20px" name="search"
                    placeholder="Search" value="{{request.args['search']}}"/>
         </div>
@@ -54,7 +54,7 @@
             </button>
         </div>
         <div class="col text-start">
-            <h4 class="mb-2" style="margin-left:13rem">Data Sheet</h4>
+            <h5 class="mb-2" style="margin-left:2rem">Data Sheet</h5>
         </div>
 
     </div>
@@ -148,7 +148,7 @@
                     {{ record.client_name.client_name }}
                 </td>
 
-                <td style="cursor: pointer; border-radius:20px"
+                <td style="cursor: pointer; border-radius:20px; width:115px"
                     onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"
                     class="status">
                     {{ record.status_name.status_name }}

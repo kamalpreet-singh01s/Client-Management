@@ -17,11 +17,19 @@
 {%- endfor %}
 
 <script>
-
-    if (document.getElementById('alert-success')){
+    if (!(document.getElementById('alert-success'))){
+    //pass
+}
+    else {
+    document.getElementById('alert-success')
     setTimeout(() => {
     document.getElementById('alert-success').style.display = 'none';
     }, 2000);
+    }
+
+
+    if(!(document.getElementById('alert-error'))){
+    //pass
     }
     else{
     alert_error=document.getElementById('alert-error');
@@ -30,11 +38,5 @@
         alert_error.style.display = 'none';
     }, 2000);
     }
-
-
-
-
-
-
 
 </script>

@@ -15,16 +15,6 @@ $(".form-check-input").click(function(){
 
     });
 
-//$(document).ready(function() {
-//
-//    var $submit = $("#stu_ids_submit").hide(),
-//        $cbs = $('input[name="check-box"]').click(function() {
-//            $submit.toggle( $cbs.is(":checked") );
-//        });
-//
-//});
-
-
 
 var get_check_for_csv=[];
 

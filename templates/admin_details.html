@@ -6,9 +6,9 @@
 <form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
     <div class="w-100" id="action_buttons" style="display:block; position:fixed;">
 
-        <div class="row mb-2">
+        <div class="row w-50 mx-auto">
             <div class="col-2">
-                <button style="margin-left:30px" type="button" class="btn btn-success btn-sm edit_button mt-2"
+                <button style="margin-left:-11px" type="button" class="btn btn-success btn-sm edit_button mt-2"
                         onclick="editClient()"
                         id="edit_button">
                     Edit
@@ -16,14 +16,14 @@
             </div>
         </div>
 
-        <div class="row mb-2">
-            <div class="col-1">
-                <input style="margin-left:30px" type="submit" value="Update" class="update_btn btn btn-success btn-sm"
+        <div class="row w-50 mx-auto mb-2 mt-2">
+            <div class="col text-start">
+                <input type="submit" value="Update" class="update_btn btn btn-success btn-sm"
                        onclick="location.href='{{url_for('admin_details',admin_id = admin_to_update.id)}}'; check_error();"
                        id="update_button" hidden/>
 
             </div>
-            <div class="col-2">
+            <div class="col text-end">
                 <button type="button" class="btn btn-danger btn-sm"
                         onclick="location.href='{{url_for('admin_details',admin_id = admin_to_update.id)}}'"
                         id="discard_button" hidden>

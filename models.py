@@ -1,3 +1,5 @@
+import enum
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -56,6 +58,16 @@ class Client(db.Model):
         self.gst = gst
 
 
+class Status(enum.Enum):
+    draft = "Draft"
+    received = "Received"
+    cancelled = "Cancelled"
+
+    @staticmethod
+    def fetch_names():
+        return [c.value for c in Status]
+
+
 class Records(db.Model):
     __tablename__ = "records"
 
@@ -70,13 +82,15 @@ class Records(db.Model):
 
     amount_received_date = db.Column(db.String(100))
 
-    status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
-    status_name = db.relationship('Status')
+    # status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
+    # status_name = db.relationship('Status')
+    status = db.Column(
+        db.Enum(Status, values_callable=lambda x: [str(stat.value) for stat in Status]))
 
     filename = db.Column(db.String())
 
     def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date,
-                 status_id, filename=None, amount_received_date=None):
+                 status=status, filename=None, amount_received_date=None):
         self.client_id = client_id
         self.content_advt = content_advt
         self.date_of_order = date_of_order
@@ -84,16 +98,15 @@ class Records(db.Model):
         self.bill = bill
         self.bill_date = bill_date
         self.amount_received_date = amount_received_date
-        self.status_id = status_id
+        # self.status_id = status_id
+        self.status = status
 
         self.filename = filename
 
-
-
-class Status(db.Model):
-    __tablename__ = "status"
-    id = db.Column(db.Integer, primary_key=True)
-    status_name = db.Column(db.String(100))
-
-    def __init__(self, status_name):
-        self.status_name = status_name
+# class Status(db.Model):
+#     __tablename__ = "status"
+#     id = db.Column(db.Integer, primary_key=True)
+#     status_name = db.Column(db.String(100))
+#
+#     def __init__(self, status_name):
+#         self.status_name = status_name

@@ -51,24 +51,6 @@ $(".form-check-input").click(function(){
     });
 
 
-//$(document).ready(function() {
-//
-//    var $submit = $("#stu_ids_submit").hide(),
-//        $cbs = $('input[name="check-box"]').click(function() {
-//            $submit.toggle( $cbs.is(":checked") );
-//        });
-//
-//});
-//
-//$(document).ready(function() {
-//
-//    var $submit = $("#class_ids_submit").hide(),
-//        $cbs = $('input[name="check-box"]').click(function() {
-//            $submit.toggle( $cbs.is(":checked") );
-//        });
-//
-//});
-
 $(document).ready(function() {
 
     var $submit = $("#check_rec_ids_btn").hide(), $update_check = $("#update_check").hide(), $update_label = $("#update_label").hide(),

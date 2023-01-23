@@ -26,6 +26,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['Client_List_File'] = Client_List_File
 app.config['reportGenerated'] = Report_Generated_File
 
+# status
+for status in Status:
+    print(status.value)
+
 
 # Admin Login
 @app.route('/', methods=['GET', 'POST'])
@@ -308,7 +312,7 @@ def add_record():
                 record = Records(request.form["client_name"], request.form["content_advt"],
                                  request.form["date_of_order"],
                                  request.form["dop"], request.form["bill"], request.form["bill_date"],
-                                 status_id=request.form["status_name"],
+                                 status=request.form["status_name"],
                                  filename=os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 db.session.add(record)
@@ -487,12 +491,17 @@ def pending_payment_list():
 
         records = Records.query.filter(Records.status_id == '1').all()
         total = 0
+        total_gst = 0
+        deal_total = 0
         for i in records:
             client = Client.query.filter_by(id=i.client_id).first()
             total = round(float(client.final_deal) + total, 2)
+            total_gst = round(float(client.gst) + total_gst, 2)
+            deal_total = total - total_gst
 
         pending_list = Records.query.filter(Records.status_id == '1').order_by(desc(Records.id)).all()
-        return render_template(Templates.pending_list, pending_list=pending_list, total=total)
+        return render_template(Templates.pending_list, pending_list=pending_list, total=total, deal_total=deal_total,
+                               total_gst=total_gst)
     return render_template(Templates.login)
 
 
@@ -504,12 +513,17 @@ def paid_payment_list():
         total_amount = Records.query.filter(Records.status_id == '2').all()
 
         total = 0
+        total_gst = 0
+        deal_total = 0
         for i in total_amount:
             client = Client.query.filter_by(id=i.client_id).first()
             total = round(float(client.final_deal) + total, 2)
-
+            total_gst = round(float(client.gst) + total_gst, 2)
+            deal_total = total - total_gst
+        print(deal_total)
         paid_list = Records.query.filter(Records.status_id == '2').order_by(desc(Records.id)).all()
-        return render_template(Templates.paid_list, paid_list=paid_list, total=total)
+        return render_template(Templates.paid_list, paid_list=paid_list, total=total, deal_total=deal_total,
+                               total_gst=total_gst)
     return render_template(Templates.login)
 
 
