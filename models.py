@@ -89,20 +89,19 @@ class Records(db.Model):
     content_advt = db.Column(db.String())
     date_of_order = db.Column(db.String(100))
     dop = db.Column(db.String(100))
-    bill = db.Column(db.String())
+    bill = db.Column(db.String(100))
     bill_date = db.Column(db.String(100))
 
     amount_received_date = db.Column(db.String(100))
 
-    # status_id = db.Column(db.Integer, db.ForeignKey('status.id'))
-    # status_name = db.relationship('Status')
     status = db.Column(
-        db.Enum(RecordStatus, values_callable=lambda x: [str(stat.value) for stat in RecordStatus]))
+        db.Enum(RecordStatus, values_callable=lambda x: [str(stat.value) for stat in RecordStatus]),
+        default=RecordStatus.pending.value)
 
     filename = db.Column(db.String())
 
     def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date,
-                 status=status, filename=None, amount_received_date=None):
+                 filename=None, amount_received_date=None):
         self.client_id = client_id
         self.content_advt = content_advt
         self.date_of_order = date_of_order
@@ -110,15 +109,26 @@ class Records(db.Model):
         self.bill = bill
         self.bill_date = bill_date
         self.amount_received_date = amount_received_date
-        # self.status_id = status_id
-        self.status = status
-
         self.filename = filename
 
-# class Status(db.Model):
-#     __tablename__ = "status"
-#     id = db.Column(db.Integer, primary_key=True)
-#     status_name = db.Column(db.String(100))
-#
-#     def __init__(self, status_name):
-#         self.status_name = status_name
+
+class PaymentVoucher(db.Model):
+    __tablename__ = "payment_voucher"
+    id = db.Column(db.Integer, primary_key=True)
+    payment_date = db.Column(db.String())
+    approval_date = db.Column(db.String())
+    record_id = db.Column(db.Integer, db.ForeignKey('records.id'))
+    bill_no = db.relationship('Records')
+    client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
+    client_name = db.relationship('Client')
+    amount = db.Column(db.Float)
+    status = db.Column(
+        db.Enum(PaymentStatus, values_callable=lambda x: [str(stat.value) for stat in PaymentStatus]),
+        default=PaymentStatus.draft.value)
+
+    def __init__(self, payment_date, record_id, amount, client_id, approval_date=None):
+        self.payment_date = payment_date
+        self.amount = amount
+        self.record_id = record_id
+        self.client_id = client_id
+        self.approval_date = approval_date

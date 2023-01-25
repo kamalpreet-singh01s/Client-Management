@@ -1,0 +1,78 @@
+{%extends "index.html"%}
+
+{%block content%}
+<div class="d-grid gap-2 col-5 mx-auto" style="margin-top:40px">
+     <div class="row">
+            <div class="col text-start">
+                <button type="button" class="btn btn-success btn-sm">Approve</button>
+            </div>
+            <div class="col text-end">
+                <button type="button" class="btn btn-danger btn-sm">Cancel</button>
+            </div>
+        </div>
+    <form action="{{request.path}}" method="post" enctype="multipart/form-data">
+
+        <fieldset>
+
+
+            <div class="row mb-3 mt-5">
+                <div class="col-6">
+                    <div class="form-outline">
+                        <label class="form-label">Payment Date<span style="color:red">*</span></label>
+                        <input type="date" class="form-control" name="payment_date" value="{{date_today}}" disabled>
+
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">Approval Date<span style="color:red">*</span></label>
+                        <input type="date" class="form-control" name="approval_date" value="{{date_today}}" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">Client Name<span style="color:red">*</span></label>
+                        <input type="text" class="form-control" name="date_of_order"
+                               value="{{record.client_name.client_name}}" required disabled/>
+
+                    </div>
+                </div>
+                <div class="col">
+
+                    <div class="col">
+                    <div class="form-outline">
+                        <label class="form-label">Bill No.<span style="color:red">*</span></label>
+                        <input type="number" class="form-control" name="bill" value="{{record.bill}}"
+                              disabled/>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                 <div class="form-outline">
+                        <label class="form-label">Amount<span style="color:red">*</span></label>
+                        <input type="number" class="form-control" name="amount"
+                               value="request.form['amount']"
+                               placeholder="Amount" required/>
+                    </div>
+            </div>
+            <div class="row ">
+                    <div class="col mt-3 text-center">
+                        <button type="submit" class="btn btn-primary w-25" data-toggle="modal"
+                                data-target=".bd-example-modal-lg">Create Voucher
+                        </button>
+                    </div>
+                </div>
+
+        </fieldset>
+
+
+    </form>
+</div>
+
+<br>
+<br>
+<br>
+{%endblock%}

@@ -49,9 +49,16 @@ body{
                     Edit
                 </button>
             </div>
+            <div class="col-7 text-center">
+                 <button type="button" class="btn btn-info btn-sm mt-2"
+                        onclick="location.href='{{url_for('transaction_details', record_id = record_to_update.id)}}'"
+                        id="transaction_list_button">
+                    Payment Voucher
+                </button>
+            </div>
         </div>
 
-        <div class="row mb-2">
+         <div class="row mb-2">
             <div class="col-1">
                 <input style="margin-left:30px" type="submit" value="Update" class="update_btn btn btn-success btn-sm"
                        onclick="location.href='{{url_for('record_details',record_id = record_to_update.id)}}'"
@@ -84,6 +91,7 @@ body{
                 </div>
             </div>
         </div>
+
 
     </div>
     <script>
@@ -213,7 +221,7 @@ body{
                     <tr>
                         <td class="bold">Payment Status:</td>
                         <td><p style="border-radius:20px; width: 90px; text-align: center;height: 27px;"
-                               class="status display-11" id="status">{{record_to_update.status_name.status_name}}</p>
+                               class="status display-11" id="status">{{record_to_update.status.value}}</p>
                         </td>
                     </tr>
 
@@ -307,6 +315,7 @@ body{
     </div>
 
     {{form.client_name (class="client_name")}}
+
 </form>
 
 <script src="{{url_for('static', filename='record_details.js')}}"></script>

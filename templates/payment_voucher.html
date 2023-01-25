@@ -1,0 +1,117 @@
+{%extends "index.html"%}
+
+{%block content%}
+
+
+<br>
+
+<style>
+           table {
+            counter-reset: 1;
+        }
+
+        table tr {
+            counter-increment: rowNumber;
+        }
+
+        table tr td:first-child::before {
+            content: counter(rowNumber);
+
+        }
+
+
+
+
+.cell-4 {
+  width: 200px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.status {
+  width: 85px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+
+
+
+
+</style>
+
+<h4 style="text-align:center"></h4>
+<br>
+
+<form>
+
+    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
+
+        <div style="overflow-y:scroll; height:700px; margin-left:10px">
+            <div class="col text-end mb-3">
+                <a class="add_button"
+                   style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
+                   href="{{ url_for('create_payment_voucher', record_id = record.id) }}" id="add">Create <i
+                        class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+            <table class="table table-hover table-sortable">
+                <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>Payment Date</th>
+                    <th>Approval Date</th>
+                    <th>Client Name</th>
+                    <th>Bill No.</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for voucher in total_vouchers %}
+                <tr>
+                    <td></td>
+                    <td style="cursor: pointer;"
+                        >{{
+                        voucher.payment_date }}
+                    </td>
+                    {% if voucher.approval_date %}
+                        <td style="cursor: pointer;"
+                            >{{ voucher.approved_date }}
+                        </td>
+                    {%else%}
+                        <td style="cursor: pointer;"
+                            >Not Yet Approved
+                        </td>
+                    {% endif %}
+                    <td style="cursor: pointer;"
+                       >{{ voucher.client_name.client_name
+                        }}
+                    </td>
+                    <td style="cursor: pointer;"
+                       >{{
+                        voucher.bill_no.bill
+                        }}
+                    </td>
+
+                    <td style="cursor: pointer;"
+                        >{{ voucher.amount }}
+                    </td>
+
+                    <td style="cursor: pointer;"
+                        >{{ voucher.status.value }}
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</form>
+{%endblock%}

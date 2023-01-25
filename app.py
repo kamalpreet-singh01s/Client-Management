@@ -12,7 +12,7 @@ from sqlalchemy import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from form import Form
-from models import db, create_app, Client, Records, RecordStatus, PaymentStatus, Users
+from models import db, create_app, Client, Records, RecordStatus, Users, PaymentVoucher
 from templates import Templates
 
 app = create_app()
@@ -308,7 +308,7 @@ def add_record():
                 record = Records(request.form["client_name"], request.form["content_advt"],
                                  request.form["date_of_order"],
                                  request.form["dop"], request.form["bill"], request.form["bill_date"],
-                                 status=request.form["status_name"],
+
                                  filename=os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 db.session.add(record)
@@ -319,15 +319,13 @@ def add_record():
                 record = Records(request.form["client_name"], request.form["content_advt"],
                                  request.form["date_of_order"],
                                  request.form["dop"], request.form["bill"], request.form["bill_date"],
-                                 status=RecordStatus.pending,
+
                                  filename=None)
 
                 db.session.add(record)
                 db.session.commit()
                 flash('Record Added', category='success')
                 return redirect(url_for('dashboard'))
-        form.record_status_name.default = RecordStatus.pending.value
-        form.process()
         return render_template(Templates.add_record, form=form)
     return render_template(Templates.login)
 
@@ -356,7 +354,7 @@ def record_details(record_id):
         record_to_update = Records.query.filter_by(id=record_id).first()
         client = Client.query.filter(Client.id == record_to_update.client_id).first()
         form = Form()
-        form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
+
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
 
         if request.method == "POST":
@@ -382,7 +380,7 @@ def record_details(record_id):
             flash('Record Updated', category='success')
 
         form.client_name.default = record_to_update.client_id
-        form.status_name.default = record_to_update.status_id
+        # form.record_status_name.default = record_to_update.status_id
         form.process()
 
         return render_template(Templates.record_details, record_to_update=record_to_update, form=form,
@@ -402,7 +400,8 @@ def set_receive(record_id):
     time_now = datetime.datetime.now()
     last_updated = date_now.strftime("%d/%b/%Y")
     last_updated_time = time_now.strftime("%I:%M %p")
-    record_to_update.status_id = 2
+    record_to_update.status = RecordStatus.received.value
+
     record_to_update.amount_received_date = date_now
     db.session.commit()
     flash('Status Updated', category='success')
@@ -421,7 +420,7 @@ def set_cancel(record_id):
     time_now = datetime.datetime.now()
     last_updated = date_now.strftime("%d/%b/%Y")
     last_updated_time = time_now.strftime("%I:%M %p")
-    record_to_update.status_id = 3
+    record_to_update.status = RecordStatus.cancelled.value
     record_to_update.amount_received_date = date_now
     db.session.commit()
     flash('Status Updated', category='success')
@@ -430,53 +429,28 @@ def set_cancel(record_id):
                            last_updated=last_updated, client=client, last_updated_time=last_updated_time)
 
 
-# list of payment status
-@app.route('/payment-status-list')
-def show_all_payment_status():
-    if "username" in session:
-        return render_template(Templates.payment_status, all_status=Status.query.all())
-    return render_template(Templates.login)
+@app.route('/transaction-details/<int:record_id>', methods=['GET', 'POST'])
+def transaction_details(record_id):
+    record = Records.query.filter_by(id=record_id).first()
+    total_vouchers = PaymentVoucher.query.all()
+    return render_template('payment_voucher.html', total_vouchers=total_vouchers, record=record)
 
 
-# add new payment status
-@app.route('/payment-status', methods=['GET', 'POST'])
-def payment_status():
+@app.route('/create-payment-voucher/<int:record_id>', methods=['GET', 'POST'])
+def create_payment_voucher(record_id):
     if "username" in session:
+        record = Records.query.filter_by(id=record_id).first()
+        date_today = datetime.date.today()
         if request.method == "POST":
-            add_status = Status(request.form["status_name"])
-            db.session.add(add_status)
+
+            voucher = PaymentVoucher(payment_date=date_today,
+                                     amount=request.form["amount"], record_id=record.id,
+                                     client_id=record.client_id)
+            db.session.add(voucher)
             db.session.commit()
-            return redirect(url_for('show_all_payment_status'))
-        return render_template(Templates.payment_status)
-    return render_template(Templates.login)
-
-
-# delete payment status
-@app.route('/delete-payment-status/<int:status_id>')
-def delete_payment_status(status_id):
-    if "username" in session:
-        status_to_delete = Status.query.filter_by(id=status_id).first()
-        if status_to_delete:
-            db.session.delete(status_to_delete)
-            db.session.commit()
-            flash('Record Deleted', category='success')
-            return redirect(url_for('show_all_payment_status'))
-    return render_template(Templates.login)
-
-
-# update payment status
-@app.route('/update-payment-status/<int:status_id>', methods=['GET', 'POST'])
-def update_payment_status(status_id):
-    if "username" in session:
-        status_to_update = Status.query.filter_by(id=status_id).first()
-
-        if request.method == "POST":
-            status_to_update.status_name = request.form["status_name"]
-
-            db.session.commit()
-            flash('Record Updated', category='success')
-            return redirect(url_for('show_all_payment_status'))
-        return render_template(Templates.update_status, status_to_update=status_to_update)
+            flash('Voucher created', category='success')
+            return redirect(url_for('transaction_details', record_id=record.id))
+        return render_template('create_payment_voucher.html', record=record, date_today=date_today)
     return render_template(Templates.login)
 
 
@@ -485,7 +459,7 @@ def update_payment_status(status_id):
 def pending_payment_list():
     if "username" in session:
 
-        records = Records.query.filter(Records.status_id == '1').all()
+        records = Records.query.filter(Records.status == RecordStatus.pending.value).all()
         total = 0
         total_gst = 0
         deal_total = 0
@@ -495,7 +469,8 @@ def pending_payment_list():
             total_gst = round(float(client.gst) + total_gst, 2)
             deal_total = total - total_gst
 
-        pending_list = Records.query.filter(Records.status_id == '1').order_by(desc(Records.id)).all()
+        pending_list = Records.query.filter(Records.status == RecordStatus.pending.value).order_by(
+            desc(Records.id)).all()
         return render_template(Templates.pending_list, pending_list=pending_list, total=total, deal_total=deal_total,
                                total_gst=total_gst)
     return render_template(Templates.login)
@@ -506,7 +481,7 @@ def pending_payment_list():
 def paid_payment_list():
     if "username" in session:
 
-        total_amount = Records.query.filter(Records.status_id == '2').all()
+        total_amount = Records.query.filter(Records.status == RecordStatus.received.value).all()
 
         total = 0
         total_gst = 0
@@ -515,9 +490,9 @@ def paid_payment_list():
             client = Client.query.filter_by(id=i.client_id).first()
             total = round(float(client.final_deal) + total, 2)
             total_gst = round(float(client.gst) + total_gst, 2)
-            deal_total = total - total_gst
+            deal_total = round(float(total - total_gst), 2)
         print(deal_total)
-        paid_list = Records.query.filter(Records.status_id == '2').order_by(desc(Records.id)).all()
+        paid_list = Records.query.filter(Records.status == RecordStatus.received.value).order_by(desc(Records.id)).all()
         return render_template(Templates.paid_list, paid_list=paid_list, total=total, deal_total=deal_total,
                                total_gst=total_gst)
     return render_template(Templates.login)

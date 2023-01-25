@@ -7,6 +7,7 @@ document.getElementById('update_button').hidden = false;
 document.getElementById('discard_button').hidden = false;
 document.getElementById('received_button').hidden = false;
 document.getElementById('cancelled_button').hidden = false;
+document.getElementById('transaction_list_button').hidden = true;
 
 document.getElementById('client_details').hidden = false;
 document.getElementById('bill_details').hidden = false;
