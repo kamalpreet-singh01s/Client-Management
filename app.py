@@ -168,8 +168,8 @@ def change_admin_pass(admin_id):
                 admin.password = generate_password_hash(new_password)
                 db.session.commit()
                 flash("Password Changed Successfully", category='success')
-                return redirect(url_for('manage_users'))
-        return render_template(Templates.change_admin_pass)
+                return redirect(url_for('admin_details', admin_id=admin_id))
+        return render_template(Templates.change_admin_pass, admin_id=admin_id)
     return render_template(Templates.login)
 
 
@@ -255,6 +255,10 @@ def update_client(client_id):
                 message = 'Name cannot contain numbers or any special symbol'
                 flash(message, category='error')
 
+            email_reg = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+            if not re.fullmatch(email_reg, request.form['email']):
+                message = "Enter a Valid Email"
+
             if request.form["phone_no"].isalpha():
                 message = 'Phone number cannot contain Alphabets or any special symbol'
                 flash(message, category='error')
@@ -263,8 +267,8 @@ def update_client(client_id):
                 flash(message, category='error')
 
             if message:
-                flash('Record not added', category='error')
-                return render_template(Templates.update_client, client_to_update=client_to_update)
+                flash(message + 'Record not updated.', category='error')
+                return render_template(Templates.update_client, client_to_update=client_to_update, old_final_deal=old_final_deal)
             else:
                 client_to_update.client_name = request.form["client_name"]
                 client_to_update.email = request.form["email"]
@@ -373,9 +377,21 @@ def record_details(record_id):
         if request.method == "POST":
 
             client.email = request.form["email"]
+            email_reg = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+            if not re.fullmatch(email_reg, request.form['email']):
+                message = "Enter a Valid Email"
+                flash(message + 'Record Not Updated', category='danger')
+                return redirect(url_for('record_details', record_id=record_id))
             client.phone_no = request.form["phone_no"]
             client.final_deal = request.form["final_deal"]
-
+            if request.form["phone_no"].isalpha():
+                message = 'Phone number cannot contain Alphabets or any special symbol. Record Not Updated'
+                flash(message, category='error')
+                return redirect(url_for('record_details', record_id=record_id))
+            if request.form["final_deal"].isalpha():
+                message = 'Final deal amount cannot contain Alphabets or any special symbol. Record Not Updated'
+                flash(message, category='error')
+                return redirect(url_for('record_details', record_id=record_id))
             record_to_update.client_id = request.form["client_name"]
             record_to_update.content_advt = request.form["content_advt"]
             record_to_update.date_of_order = request.form["date_of_order"]

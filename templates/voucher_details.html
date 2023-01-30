@@ -15,7 +15,7 @@
 
             {% if voucher.status.value == PaymentStatus.approved.value or voucher.status.value == PaymentStatus.cancelled.value%}
             <div class="col text-start" id="see_all_for_approved">
-                <button type="button" class="btn btn-info btn-sm"
+                <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
                         onclick="location.href='{{ url_for('voucher_list', record_id = voucher.record_id) }}'">
                     &#8592 See All
                 </button>
@@ -61,7 +61,7 @@
                 {% if voucher.status.value == PaymentStatus.approved.value or voucher.status.value == PaymentStatus.cancelled.value%}
                 <div class="row" id="see_all_for_not_approved" style="display:none">
                     <div class="col text-start">
-                        <button type="button" class="btn btn-info btn-sm"
+                        <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
                                 onclick="location.href='{{ url_for('voucher_list', record_id = voucher.record_id) }}'">
                             &#8592 See All
                         </button>

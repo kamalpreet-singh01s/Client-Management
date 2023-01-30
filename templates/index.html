@@ -23,7 +23,7 @@
         }
 
         #navbarNav ul li a:hover{
-            color:yellow;
+            color:cyan;
             text-decoration: overline;
             transition : 1s;
 
@@ -35,13 +35,12 @@
         }
 
         .navbar-brand:hover{
-            color:yellow;
+            color:cyan;
             transition : 1s;
         }
 a{
     text-decoration:none
 }
-
 
 .logout:hover{
     color:white;
@@ -144,7 +143,7 @@ background: white;
                 <a class="dropdown-item" href="{{url_for('file_upload')}}">Import Records</a>
 
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item logout" href="{{url_for('logout')}}">Logout</a>
+                <div><a class="dropdown-item logout" href="{{url_for('logout')}}">Logout</a></div>
             </div>
         </div>
     </div>

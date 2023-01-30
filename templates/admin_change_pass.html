@@ -3,13 +3,19 @@
 {%block content%}
 
 <div class="row w-25 mx-auto">
-    <div class="row text-center mt-5 mb-5">
+    <div class="row text-center mt-5 mb-3">
         <h4>Change Password</h4>
     </div>
 
     <form method="POST" action="{{change_admin_pass}}">
         <div class="col mb-2">
             {% include 'alert.html' %}
+        </div>
+        <div class="col mb-3">
+            <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
+                    onclick="location.href='{{ url_for('admin_details', admin_id = admin_id) }}'">
+                &#8592 See Details
+            </button>
         </div>
         <div class="col">
             <label class="mb-2">Current Password <span style="color:red">*</span></label>

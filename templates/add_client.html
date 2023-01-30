@@ -4,6 +4,14 @@
 {% include 'alert.html' %}
 
 
+<style>
+    input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+</style>
+
 <div class="row w-50 mx-auto mt-3">
     <div class="col">
         <div class="col-8 mx-auto">
@@ -36,7 +44,7 @@
                 </div>
                 <div>
                     <label class="form-label">Amount Agreed Upon (In Rs.)<span style="color:red">*</span></label>
-                    <input type="number" step=".01" class="form-control" value="{{request.form['final_deal']}}" placeholder="Final Deal Amount" name="final_deal"
+                    <input type="number" class="form-control" value="{{request.form['final_deal']}}" placeholder="Final Deal Amount" name="final_deal"
                            required>
                     <br>
                 </div>

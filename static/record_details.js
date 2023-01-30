@@ -128,20 +128,22 @@ $(window).scroll(function(){
               $('#voucher_book').css('color','white');
               $('#voucher_book_action_button').css('color','white');
               $('#edit_button').css('margin-left','185px');
-              $('#cancelled_button_before').css('margin-right','45px');
+              $('#cancelled_button_before').css('margin-right','140px');
               $('#cancelled_button').css('margin-right','169px');
               $('#voucher_book_action_button_image').css('margin-left','223px');
               $('#total_vouchers_after').css('margin-left','223px');
+              $('#btn-toolbar').css('margin-left','145px');
 //              $('#action_buttons').css('background-color','red');
         } else {
             $('#action_buttons').css('position','static').css('background-color','#F8F9FA').css('width','75%');
             $('#voucher_book').css('color','black');
             $('#voucher_book_action_button').css('color','black');
             $('#edit_button').css('margin-left','');
-            $('#cancelled_button_before').css('margin-left','');
+            $('#cancelled_button_before').css('margin-right','');
             $('#cancelled_button').css('margin-right','');
             $('#voucher_book_action_button_image').css('margin-left','162px');
             $('#total_vouchers_after').css('margin-left','162px');
+            $('#btn-toolbar').css('margin-left','');
 
         }
 });
