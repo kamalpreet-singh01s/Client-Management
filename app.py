@@ -268,7 +268,8 @@ def update_client(client_id):
 
             if message:
                 flash(message + 'Record not updated.', category='error')
-                return render_template(Templates.update_client, client_to_update=client_to_update, old_final_deal=old_final_deal)
+                return render_template(Templates.update_client, client_to_update=client_to_update,
+                                       old_final_deal=old_final_deal)
             else:
                 client_to_update.client_name = request.form["client_name"]
                 client_to_update.email = request.form["email"]
@@ -546,7 +547,6 @@ def approve_voucher(voucher_id):
 @app.route('/cancel-voucher/<int:voucher_id>', methods=['GET', 'POST'])
 def cancel_voucher(voucher_id):
     if "username" in session:
-
         voucher_to_update = PaymentVoucher.query.filter_by(id=voucher_id).first()
 
         voucher_to_update.status = PaymentStatus.cancelled.value
@@ -762,7 +762,7 @@ def csv_file_record_to_update():
         # if update_record checkbox is checked, id's of clients and record is included in the csv file else excluded
         if request.form.get("update_check"):
             file_name = 'Update_Record.csv'
-            with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
+            with open(os.path.join(Report_Generated_File + file_name), mode='w', newline='') as file:
                 write_file = csv.writer(file)
                 write_file.writerow(
                     ['Id', 'Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
@@ -785,7 +785,7 @@ def csv_file_record_to_update():
                     write_file.writerow(final)
         else:
             file_name = 'Record.csv'
-            with open(Report_Generated_File + '\\' + file_name, mode='w', newline='') as file:
+            with open(os.path.join(Report_Generated_File + file_name), mode='w', newline='') as file:
                 write_file = csv.writer(file)
                 write_file.writerow(
                     ['Client', 'AD/GP/Others', 'RO Date', 'DoP', 'Bill No.', 'Bill Date', 'Amount(Rs.)',
