@@ -12,8 +12,10 @@ from sqlalchemy import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from form import Form
-from models import db, create_app, Client, Records, RecordStatus, Users, PaymentVoucher
+from models import db, create_app, Client, Records, RecordStatus, Users, PaymentVoucher, PaymentStatus
 from templates import Templates
+import string
+import random
 
 app = create_app()
 migrate = Migrate(app, db, render_as_batch=True)
@@ -37,7 +39,7 @@ def login():
         password = request.form["password"]
         for i in Users.query.all():
             if i.username == username and check_password_hash(i.password, password):
-                session["username"] = i.first_name + ' ' + i.last_name
+                session["username"] = i.username
                 session.permanent = True
                 app.permanent_session_lifetime = timedelta(minutes=5)
                 return redirect(url_for('dashboard'))
@@ -239,6 +241,10 @@ def delete_client(client_id):
 # update client
 @app.route('/update-client/<int:client_id>', methods=['GET', 'POST'])
 def update_client(client_id):
+    date_now = datetime.date.today()
+    time_now = datetime.datetime.now()
+    last_updated = date_now.strftime("%d/%b/%Y")
+    last_updated_time = time_now.strftime("%I:%M %p")
     if "username" in session:
         client_to_update = Client.query.filter_by(id=client_id).first()
         get_client = Client.query.filter_by(id=client_id).first()
@@ -276,7 +282,8 @@ def update_client(client_id):
 
                 db.session.commit()
                 flash('Client Updated.', category='success')
-        return render_template(Templates.update_client, client_to_update=client_to_update,
+        return render_template(Templates.update_client, client_to_update=client_to_update, last_updated=last_updated,
+                               last_updated_time=last_updated_time,
                                old_final_deal=old_final_deal)
     return render_template(Templates.login)
 
@@ -297,7 +304,7 @@ def add_record():
     if "username" in session:
         form = Form()
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
-        # form.record_status_name.choices = [(status.id, status.status_name) for status in RecordStatus.query.all()]
+
         print(RecordStatus.pending.value)
         if request.method == "POST":
             file = request.files['file']
@@ -306,8 +313,11 @@ def add_record():
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 record = Records(request.form["client_name"], request.form["content_advt"],
-                                 request.form["date_of_order"],
-                                 request.form["dop"], request.form["bill"], request.form["bill_date"],
+                                 datetime.datetime.strptime(request.form["date_of_order"], "%d-%m-%Y").strftime(
+                                     "%Y-%m-%d")
+                                 , datetime.datetime.strptime(request.form["dop"], "%d-%m-%Y").strftime("%Y-%m-%d")
+                                 , request.form["bill"],
+                                 datetime.datetime.strptime(request.form["bill_date"], "%d-%m-%Y").strftime("%Y-%m-%d"),
 
                                  filename=os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
@@ -356,7 +366,10 @@ def record_details(record_id):
         form = Form()
 
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
-
+        total_vouchers_in_record = PaymentVoucher.query.filter_by(record_id=record_id).all()
+        total_vouchers = 0
+        for voucher in total_vouchers_in_record:
+            total_vouchers = total_vouchers + 1
         if request.method == "POST":
 
             client.email = request.form["email"]
@@ -380,11 +393,12 @@ def record_details(record_id):
             flash('Record Updated', category='success')
 
         form.client_name.default = record_to_update.client_id
-        # form.record_status_name.default = record_to_update.status_id
+
         form.process()
 
         return render_template(Templates.record_details, record_to_update=record_to_update, form=form,
-                               last_updated=last_updated, client=client, last_updated_time=last_updated_time)
+                               last_updated=last_updated, client=client, last_updated_time=last_updated_time,
+                               total_vouchers=total_vouchers, RecordStatus=RecordStatus)
 
     return render_template(Templates.login)
 
@@ -426,14 +440,28 @@ def set_cancel(record_id):
     flash('Status Updated', category='success')
 
     return render_template(Templates.record_details, record_to_update=record_to_update, form=form,
-                           last_updated=last_updated, client=client, last_updated_time=last_updated_time)
+                           last_updated=last_updated, client=client, last_updated_time=last_updated_time,
+                           RecordStatus=RecordStatus)
 
 
-@app.route('/transaction-details/<int:record_id>', methods=['GET', 'POST'])
-def transaction_details(record_id):
+@app.route('/voucher-list/<int:record_id>', methods=['GET', 'POST'])
+def voucher_list(record_id):
     record = Records.query.filter_by(id=record_id).first()
-    total_vouchers = PaymentVoucher.query.all()
-    return render_template('payment_voucher.html', total_vouchers=total_vouchers, record=record)
+    client = Client.query.filter(Client.id == record.client_id).first()
+    total_amount = 0
+    total_vouchers = PaymentVoucher.query.filter_by(record_id=record.id).all()
+    total_voucher_count = len(total_vouchers)
+    for voucher in total_vouchers:
+        if voucher.status.value == PaymentStatus.approved.value:
+            total_amount = total_amount + voucher.amount
+    if float(total_amount) >= client.final_deal:
+        record.status = RecordStatus.received.value
+        client.credit_amount = round(client.credit_amount + float(total_amount) - client.final_deal, 2)
+        db.session.commit()
+
+    return render_template('payment_voucher.html', total_vouchers=total_vouchers, record=record,
+                           total_amount=total_amount, client=client, RecordStatus=RecordStatus,
+                           total_voucher_count=total_voucher_count)
 
 
 @app.route('/create-payment-voucher/<int:record_id>', methods=['GET', 'POST'])
@@ -441,16 +469,104 @@ def create_payment_voucher(record_id):
     if "username" in session:
         record = Records.query.filter_by(id=record_id).first()
         date_today = datetime.date.today()
+        paymentVoucher_count = db.session.query(PaymentVoucher).count()
+
+        last_voucher_ref_no = db.session.query(PaymentVoucher).order_by(PaymentVoucher.id.desc()).first()
+
         if request.method == "POST":
 
-            voucher = PaymentVoucher(payment_date=date_today,
-                                     amount=request.form["amount"], record_id=record.id,
-                                     client_id=record.client_id)
-            db.session.add(voucher)
-            db.session.commit()
-            flash('Voucher created', category='success')
-            return redirect(url_for('transaction_details', record_id=record.id))
+            if paymentVoucher_count < 1:
+                voucher_no = 0
+                random_string = ''
+                for i in range(10):
+                    random_string += random.choice(string.ascii_lowercase + string.ascii_uppercase)
+                ref_no = f"{random_string}-{record.bill}-{voucher_no + 1}"
+                voucher = PaymentVoucher(reference_no=ref_no, payment_date=date_today,
+                                         amount=request.form["amount"], record_id=record.id,
+                                         client_id=record.client_id)
+                db.session.add(voucher)
+                db.session.commit()
+                flash('Voucher created', category='success')
+                return redirect(url_for('voucher_details', voucher_id=voucher.id))
+            else:
+                random_string = ''
+                for i in range(10):
+                    random_string += random.choice(string.ascii_lowercase + string.ascii_uppercase)
+                ref_no = f"{random_string}-{record.bill}-{int(last_voucher_ref_no.reference_no.split('-')[-1]) + 1}"
+
+                voucher = PaymentVoucher(reference_no=ref_no, payment_date=date_today,
+                                         amount=request.form["amount"], record_id=record.id,
+                                         client_id=record.client_id)
+                db.session.add(voucher)
+                db.session.commit()
+                flash('Voucher created', category='success')
+                return redirect(url_for('voucher_details', voucher_id=voucher.id))
         return render_template('create_payment_voucher.html', record=record, date_today=date_today)
+    return render_template(Templates.login)
+
+
+@app.route('/voucher-details/<int:voucher_id>', methods=['GET', 'POST'])
+def voucher_details(voucher_id):
+    if "username" in session:
+        voucher = PaymentVoucher.query.filter_by(id=voucher_id).first()
+        print(voucher.status.value)
+        return render_template('voucher_details.html', voucher=voucher, PaymentStatus=PaymentStatus)
+    return render_template(Templates.login)
+
+
+@app.route('/approve-voucher/<int:voucher_id>', methods=['GET', 'POST'])
+def approve_voucher(voucher_id):
+    if "username" in session:
+        date_today = datetime.date.today()
+        voucher_to_update = PaymentVoucher.query.filter_by(id=voucher_id).first()
+        voucher_to_update.approval_date = date_today
+        voucher_to_update.status = PaymentStatus.approved.value
+        db.session.commit()
+        flash('Voucher Updated', category='success')
+        return redirect(url_for('voucher_details', voucher_id=voucher_id))
+    return render_template(Templates.login)
+
+
+@app.route('/cancel-voucher/<int:voucher_id>', methods=['GET', 'POST'])
+def cancel_voucher(voucher_id):
+    if "username" in session:
+
+        voucher_to_update = PaymentVoucher.query.filter_by(id=voucher_id).first()
+
+        voucher_to_update.status = PaymentStatus.cancelled.value
+        db.session.commit()
+        flash('Voucher Updated', category='success')
+        return redirect(url_for('voucher_details', voucher_id=voucher_id))
+    return render_template(Templates.login)
+
+
+@app.route('/all-vouchers-list', methods=['GET', 'POST'])
+def all_vouchers_list():
+    if "username" in session:
+        all_vouchers = PaymentVoucher.query.order_by(desc(PaymentVoucher.id)).all()
+        return render_template('all_payment_vouchers_list.html', all_vouchers=all_vouchers)
+    return render_template(Templates.login)
+
+
+@app.route('/search-vouchers', methods=['POST', 'GET'])
+def search_vouchers():
+    if "username" in session:
+
+        if request.method == 'GET':
+            search = request.args['search'].lower()
+            records = Records.query.filter(Records.bill.ilike(f"%{search}%")).all()
+            clients = Client.query.filter(Client.client_name.ilike(f"%{search}%")).all()
+            record_ids = [record.id for record in records]
+            client_ids = [client.id for client in clients]
+            all_vouchers = PaymentVoucher.query.filter(PaymentVoucher.reference_no.ilike(f"%{search}%") |
+                                                       PaymentVoucher.record_id.in_(
+                                                           record_ids) | PaymentVoucher.client_id.in_(
+                client_ids)).all()
+            if all_vouchers:
+                return render_template('all_payment_vouchers_list.html', all_vouchers=all_vouchers)
+            flash('No Record Found')
+            return redirect(url_for('all_vouchers_list'))
+        return redirect(url_for('voucher_list'))
     return render_template(Templates.login)
 
 
@@ -519,7 +635,6 @@ def search_records():
             all_records = Records.query.filter(
                 Records.client_id.in_(client_ids) | Records.bill.ilike(f"%{search}%")).all()
             if all_records:
-                print(all_records)
                 return render_template(Templates.dashboard, all_records=all_records)
             flash('No Record Found')
             return redirect(url_for('dashboard'))
@@ -549,48 +664,20 @@ def search_clients():
 @app.route('/get_checked_boxes', methods=['GET', 'POST'])
 def get_checked_boxes():
     if 'username' in session and request.method == "POST":
+        all_vouchers = PaymentVoucher.query.all()
         rec_ids = request.form['rec_ids']
         for ids in rec_ids.split(','):
             delete_rec = Records.query.filter_by(id=ids).first()
+
+            for voucher in all_vouchers:
+                if voucher.bill_no.bill == delete_rec.bill:
+                    db.session.delete(voucher)
+
             db.session.delete(delete_rec)
             db.session.commit()
         flash("record_deleted", category='success')
         return redirect(url_for('dashboard'))
 
-    return render_template(Templates.login)
-
-
-# send id's of multiple records using checkbox for payment status update
-@app.route('/send_rec_id', methods=['GET', 'POST'])
-def send_rec_id():
-    form = Form()
-    form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
-    if 'username' in session and request.method == "POST":
-        send_rec_ids = request.form["send_rec_ids"]
-        for ids in send_rec_ids.split(','):
-
-            record_status_to_update = Records.query.filter_by(id=ids).first()
-            if record_status_to_update.status_id == 2 or record_status_to_update.status_id == 3:
-                flash("Please Uncheck Records with status Received/Cancelled", category='error')
-                return redirect(url_for('dashboard', form=form))
-
-        return render_template(Templates.update_multi_record_status, stu_ids=send_rec_ids, form=form)
-    return render_template(Templates.login)
-
-
-# update status of multiple records using checkbox
-@app.route('/update_class', methods=['GET', 'POST'])
-def update_class():
-    form = Form()
-    form.status_name.choices = [(status.id, status.status_name) for status in Status.query.all()]
-    if 'username' in session and request.method == "POST":
-        status_id = request.form["status_id"]
-        for ids in status_id.split(','):
-            record_status_to_update = Records.query.filter_by(id=ids).first()
-            record_status_to_update.status_id = request.form["status_name"]
-            db.session.commit()
-        flash("record_updated", category='success')
-        return redirect(url_for('dashboard', form=form))
     return render_template(Templates.login)
 
 
@@ -621,6 +708,7 @@ def get_checked_boxes_for_admin():
 
         for ids in record_ids.split(','):
             user_to_del = Users.query.filter_by(id=ids).first()
+
             if session["username"] == user_to_del.username:
                 flash('Cannot delete a user that is logged in', category='error')
                 return redirect(url_for('manage_users'))
@@ -629,6 +717,24 @@ def get_checked_boxes_for_admin():
         flash("User Deleted", category='success')
         return redirect(url_for('manage_users'))
 
+    return render_template(Templates.login)
+
+
+@app.route('/get_checked_boxes_for_payment_vouchers/<int:record_id>', methods=['GET', 'POST'])
+def get_checked_boxes_for_payment_vouchers(record_id):
+    if 'username' in session:
+        if request.method == "POST":
+            rec_ids = request.form['rec_ids']
+            for ids in rec_ids.split(','):
+                check_record_status = Records.query.filter_by(id=record_id).first()
+                if check_record_status.status.value == RecordStatus.received.value:
+                    flash("Cannot make changes to this record.", category='error')
+                    return redirect(url_for('voucher_list', record_id=record_id))
+                delete = PaymentVoucher.query.filter_by(id=ids).first()
+                db.session.delete(delete)
+                db.session.commit()
+            flash("record_deleted", category='success')
+            return redirect(url_for('voucher_list', record_id=record_id))
     return render_template(Templates.login)
 
 
@@ -648,15 +754,18 @@ def csv_file_record_to_update():
                      ])
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
-                    record.date_of_order = pd.to_datetime(str(record.date_of_order)).date().strftime("%Y-%m-%d")
-                    record.dop = pd.to_datetime(str(record.dop)).date().strftime("%Y-%m-%d")
-                    record.bill_date = pd.to_datetime(str(record.bill_date)).date().strftime("%Y-%m-%d")
+
+                    record.date_of_order = record.date_of_order
+
+                    record.dop = record.dop
+
+                    record.bill_date = record.bill_date
 
                     client = Client.query.filter_by(id=Records.client_id).first()
                     final = [record.id, record.client_id, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
-                             client.final_deal, record.amount_received_date, record.status_name.status_name]
+                             client.final_deal, record.amount_received_date, record.status.value]
                     write_file.writerow(final)
         else:
             file_name = 'Record.csv'
@@ -668,13 +777,13 @@ def csv_file_record_to_update():
                 for rec_id in rec_ids.split(','):
                     record = Records.query.filter_by(id=rec_id).first()
                     client = Client.query.filter_by(id=Records.client_id).first()
-                    record.date_of_order = pd.to_datetime(str(record.date_of_order)).date().strftime("%Y-%m-%d")
-                    record.dop = pd.to_datetime(str(record.dop)).date().strftime("%Y-%m-%d")
-                    record.bill_date = pd.to_datetime(str(record.bill_date)).date().strftime("%Y-%m-%d")
+                    record.date_of_order = record.date_of_order
+                    record.dop = record.dop
+                    record.bill_date = record.bill_date
                     final = [record.client_name.client_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
-                             client.final_deal, record.amount_received_date, record.status_name.status_name]
+                             client.final_deal, record.amount_received_date, record.status.value]
                     write_file.writerow(final)
         return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
 
@@ -687,16 +796,16 @@ def csv_for_client():
     with open(Client_List_File + '\\' + file_name, mode='w', newline='') as file:
         write_file = csv.writer(file)
         write_file.writerow(
-            ['Name', 'Email', 'Phone No.', 'Address', 'Final Deal', 'GST'])
+            ['Name', 'Email', 'Phone No.', 'Address', 'Final Deal', 'GST', 'Credit'])
         for cli_id in client_ids.split(','):
             client = Client.query.filter_by(id=cli_id).first()
-            # client = client.query.filter_by(id=Records.client_id).first()
             final = [client.client_name, client.email, client.phone_no,
                      client.address, client.final_deal,
-                     client.gst]
+                     client.gst, client.credit_amount]
+            print(final)
             write_file.writerow(final)
 
-    return send_from_directory(Report_Generated_File, file_name, as_attachment=True)
+    return send_from_directory(Client_List_File, file_name, as_attachment=True)
 
 
 # add/update new records using a csv file
@@ -718,20 +827,19 @@ def file_upload():
                     for row in record:
                         if count >= len(read_file):
                             break
-                        if read_file.loc[count, 'Status'] == 'Pending':
-                            read_file.loc[count, 'Status'] = 1
-                        elif read_file.loc[count, 'Status'] == 'Received':
-                            read_file.loc[count, 'Status'] = 2
-                        elif read_file.loc[count, 'Status'] == 'Cancelled':
-                            read_file.loc[count, 'Status'] = 3
+                        if read_file.loc[count, 'Status'] == RecordStatus.pending.value:
+                            read_file.loc[count, 'Status'] = RecordStatus.pending.value
+                        elif read_file.loc[count, 'Status'] == RecordStatus.received.value:
+                            read_file.loc[count, 'Status'] = RecordStatus.received.value
+                        elif read_file.loc[count, 'Status'] == RecordStatus.cancelled.value:
+                            read_file.loc[count, 'Status'] = RecordStatus.cancelled.value
                         if row.id == int(read_file.loc[count, 'Id']):
                             row.client_id = int(read_file.loc[count, 'Client'])
                             row.content_advt = read_file.loc[count, 'AD/GP/Others']
                             row.date_of_order = read_file.loc[count, 'RO Date']
                             row.dop = read_file.loc[count, 'DoP']
-
                             row.bill_date = read_file.loc[count, 'Bill Date']
-                            row.status_id = read_file.loc[count, 'Status']
+                            row.status = read_file.loc[count, 'Status']
                             row.amount_received_date = read_file.loc[count, 'Amount Received Date']
                             db.session.commit()
                             count += 1
@@ -752,12 +860,12 @@ def file_upload():
                         break
                     else:
 
-                        if read_file.loc[count, 'Status'] == 'Pending':
-                            read_file.loc[count, 'Status'] = 1
-                        elif read_file.loc[count, 'Status'] == 'Received':
-                            read_file.loc[count, 'Status'] = 2
-                        elif read_file.loc[count, 'Status'] == 'Cancel':
-                            read_file.loc[count, 'Status'] = 3
+                        if read_file.loc[count, 'Status'] == RecordStatus.pending.value:
+                            read_file.loc[count, 'Status'] = RecordStatus.pending.value
+                        elif read_file.loc[count, 'Status'] == RecordStatus.received.value:
+                            read_file.loc[count, 'Status'] = RecordStatus.received.value
+                        elif read_file.loc[count, 'Status'] == RecordStatus.cancelled.value:
+                            read_file.loc[count, 'Status'] = RecordStatus.cancelled.value
 
                         bill_no_exists = db.session.query(db.exists().where(
                             str(Records.bill) == read_file.loc[count, 'Bill No.']))
@@ -772,14 +880,15 @@ def file_upload():
 
                             new_record = Records(client_id=get_client_id.id,
                                                  content_advt=read_file.loc[count, 'AD/GP/Others'],
-                                                 date_of_order=read_file.loc[count, 'RO Date'],
-                                                 dop=read_file.loc[count, 'DoP'],
+                                                 date_of_order=datetime.datetime.strptime(
+                                                     read_file.loc[count, 'RO Date'], "%d-%m-%Y").strftime("%Y-%m-%d"),
+                                                 dop=datetime.datetime.strptime(read_file.loc[count, 'DoP'],
+                                                                                "%d-%m-%Y").strftime("%Y-%m-%d"),
                                                  bill=int(read_file.loc[count, 'Bill No.']),
-                                                 bill_date=read_file.loc[count, 'Bill Date'],
-
+                                                 bill_date=datetime.datetime.strptime(read_file.loc[count, 'Bill Date'],
+                                                                                      "%d-%m-%Y").strftime("%Y-%m-%d"),
                                                  amount_received_date=read_file.loc[count, 'Amount Received Date'],
-
-                                                 status_id=read_file.loc[count, 'Status'])
+                                                 )
                             db.session.add(new_record)
                             db.session.commit()
                             count += 1

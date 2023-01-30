@@ -1,13 +1,17 @@
 //remove disable form
 function hideDisable(){
-edit_btn = document.getElementById('edit_button');
-edit_btn.parentNode.removeChild(edit_btn);
 
-document.getElementById('update_button').hidden = false;
-document.getElementById('discard_button').hidden = false;
-document.getElementById('received_button').hidden = false;
-document.getElementById('cancelled_button').hidden = false;
-document.getElementById('transaction_list_button').hidden = true;
+document.querySelector('#edit_button').style.display = "none";
+
+//document.getElementById('update_discard_button').style.display = "block";
+document.getElementById('update_discard_button_for_bill_details').style.display = "block";
+document.getElementById('cancelled_button_before').style.display = "none";
+document.getElementById('cancelled_button_after').style.display = "block";
+//document.getElementById('discard_button').style.display = "block";
+//document.getElementById('cancelled_button').hidden = false;
+document.getElementById('voucher_book_action_button').hidden = false;
+document.getElementById('voucher_book').hidden = true;
+
 
 document.getElementById('client_details').hidden = false;
 document.getElementById('bill_details').hidden = false;
@@ -38,9 +42,9 @@ document.getElementById('no_attachment').hidden = true;
 
 
 
-action_buttons = document.getElementById("action_buttons")
-action_buttons.style.backgroundColor = "#141619";
-//document.body.style.backgroundColor = "#141619";
+//action_buttons = document.getElementById("action_buttons")
+//action_buttons.style.backgroundColor = "#141619";
+
 
 
 
@@ -83,13 +87,6 @@ $(document).ready(function(){
 })
 
 
-status_name = document.getElementById('status')
-if (status_name.innerHTML == "Received" || status_name.innerHTML == "Cancelled"){
-console.log('status_name')
-    edit_button = document.getElementById('edit_button');
-    edit_button.parentNode.removeChild(edit_button);
-}
-
 
 
 //file upload
@@ -120,3 +117,31 @@ function client_unchanged(){
 
 
 $('.client_name').prop('hidden', true);
+
+
+
+var elementPosition = $('#action_buttons').offset();
+
+$(window).scroll(function(){
+        if($(window).scrollTop() > elementPosition.top){
+              $('#action_buttons').css('position','fixed').css('top','0').css('background-color','#212529').css('width','100%');
+              $('#voucher_book').css('color','white');
+              $('#voucher_book_action_button').css('color','white');
+              $('#edit_button').css('margin-left','185px');
+              $('#cancelled_button_before').css('margin-right','45px');
+              $('#cancelled_button').css('margin-right','169px');
+              $('#voucher_book_action_button_image').css('margin-left','223px');
+              $('#total_vouchers_after').css('margin-left','223px');
+//              $('#action_buttons').css('background-color','red');
+        } else {
+            $('#action_buttons').css('position','static').css('background-color','#F8F9FA').css('width','75%');
+            $('#voucher_book').css('color','black');
+            $('#voucher_book_action_button').css('color','black');
+            $('#edit_button').css('margin-left','');
+            $('#cancelled_button_before').css('margin-left','');
+            $('#cancelled_button').css('margin-right','');
+            $('#voucher_book_action_button_image').css('margin-left','162px');
+            $('#total_vouchers_after').css('margin-left','162px');
+
+        }
+});

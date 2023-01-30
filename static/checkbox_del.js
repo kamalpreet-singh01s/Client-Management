@@ -51,15 +51,28 @@ $(".form-check-input").click(function(){
     });
 
 
-$(document).ready(function() {
+//$(document).ready(function() {
+//
+//    var $submit = $("#check_rec_ids_btn").hide(), $update_check = $("#update_check").hide(), $update_label = $("#update_label").hide(),
+//        $cbs = $('input[name="check-box"]').click(function() {
+//            $submit.toggle( $cbs.is(":checked") ) && $update_check.toggle( $cbs.is(":checked") ) && $update_label.toggle( $cbs.is(":checked") );
+//        });
+//
+//});
 
-    var $submit = $("#check_rec_ids_btn").hide(), $update_check = $("#update_check").hide(), $update_label = $("#update_label").hide(),
-        $cbs = $('input[name="check-box"]').click(function() {
-            $submit.toggle( $cbs.is(":checked") ) && $update_check.toggle( $cbs.is(":checked") ) && $update_label.toggle( $cbs.is(":checked") );
-        });
 
-});
-
+function toggleDelbox() {
+  var elems = document.querySelectorAll('.hidden');
+  var shouldShowList = false;
+  elems.forEach(function(elem) {
+    if (elem.checked) {
+      shouldShowList = true;
+    }
+  });
+  document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
+  document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
+  document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
+}
 
 
 
@@ -70,15 +83,15 @@ function del_rec(id) {
 }
 
 
-function check_box() {
-    if ($('.form-check-input').is(":checked"))
-        $("#add").hide();
-
-    else
-        $("#add").show();
-
-
-}
+//function check_box() {
+//    if ($('.form-check-input').is(":checked"))
+//        $("#add").hide();
+//
+//    else
+//        $("#add").show();
+//
+//
+//}
 
 function del_fun(){
         $('#stu_ids_submit').click()
@@ -88,15 +101,15 @@ function update_fun(){
     }
 
 
-
-$(document).ready(function() {
-
-    var $submit = $("#action_dropdown").hide(),
-        $cbs = $('input[name="check-box"]').click(function() {
-            $submit.toggle( $cbs.is(":checked") );
-        });
-
-});
+//
+//$(document).ready(function() {
+//
+//    var $submit = $("#action_dropdown").hide(),
+//        $cbs = $('input[name="check-box"]').click(function() {
+//            $submit.toggle( $cbs.is(":checked") );
+//        });
+//
+//});
 
 
 
@@ -135,11 +148,24 @@ $(document).ready(function(){
         checkboxes[i].checked = !checkboxes[i].checked;
         if(checkboxes[i].checked){
             values.push(checkboxes[i].getAttribute("value"));
-             $("#add").hide();
-             $("#check_rec_ids_btn").show();
-             $update_check = $("#update_check").show();
-             $update_label = $("#update_label").show();
-             $("#action_dropdown").show()
+//             $("#add").hide();
+//             $("#check_rec_ids_btn").show();
+//             $update_check = $("#update_check").show();
+//             $update_label = $("#update_label").show();
+//             $("#action_dropdown").show()
+            var elems = document.querySelectorAll('.hidden');
+              var shouldShowList = false;
+              elems.forEach(function(elem) {
+                if (elem.checked) {
+                  shouldShowList = true;
+                }
+              });
+              document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
+              document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
+              document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
+
+
+
              document.getElementById("rec_ids").value = values
              document.getElementById("send_rec_ids").value = values
              document.getElementById("check_rec_ids").value = values
@@ -151,11 +177,22 @@ $(document).ready(function(){
             var index = values.indexOf(checkboxes[i].getAttribute("value"));
             if (index > -1) {
                 values.splice(index, 1);
-                $("#add").show();
-                $("#check_rec_ids_btn").hide();
-                $update_check = $("#update_check").hide();
-                $update_label = $("#update_label").hide();
-                $("#action_dropdown").hide()
+//                $("#add").show();
+//                $("#check_rec_ids_btn").hide();
+//                $update_check = $("#update_check").hide();
+//                $update_label = $("#update_label").hide();
+//                $("#action_dropdown").hide()
+
+                var elems = document.querySelectorAll('.hidden');
+              var shouldShowList = false;
+              elems.forEach(function(elem) {
+                if (elem.checked) {
+                  shouldShowList = true;
+                }
+              });
+              document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
+              document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
+              document.querySelector('#add').style.display = shouldShowList ? '' : 'block';
                 var element = document.getElementById("check-All");
                 element.checked = false;
             }

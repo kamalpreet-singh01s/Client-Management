@@ -1,21 +1,29 @@
 {%extends "index.html"%}
 
 {%block content%}
+{% include 'alert.html' %}
+<style>
+    label{
+    font-weight:bold;
+}
+
+</style>
 <div class="d-grid gap-2 col-5 mx-auto" style="margin-top:40px">
-     <div class="row">
-            <div class="col text-start">
-                <button type="button" class="btn btn-success btn-sm">Approve</button>
-            </div>
-            <div class="col text-end">
-                <button type="button" class="btn btn-danger btn-sm">Cancel</button>
-            </div>
-        </div>
+
     <form action="{{request.path}}" method="post" enctype="multipart/form-data">
 
         <fieldset>
 
 
             <div class="row mb-3 mt-5">
+                <div class="row">
+                    <div class="col text-start mb-3">
+                        <button type="button" class="btn btn-info btn-sm"
+                                onclick="location.href='{{ url_for('voucher_list', record_id = record.id) }}'">
+                            &#8592 Back to Voucher List
+                        </button>
+                    </div>
+                </div>
                 <div class="col-6">
                     <div class="form-outline">
                         <label class="form-label">Payment Date<span style="color:red">*</span></label>
@@ -42,29 +50,29 @@
                 <div class="col">
 
                     <div class="col">
-                    <div class="form-outline">
-                        <label class="form-label">Bill No.<span style="color:red">*</span></label>
-                        <input type="number" class="form-control" name="bill" value="{{record.bill}}"
-                              disabled/>
+                        <div class="form-outline">
+                            <label class="form-label">Bill No.<span style="color:red">*</span></label>
+                            <input type="number" class="form-control" name="bill" value="{{record.bill}}"
+                                   disabled/>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
             <div class="row mb-3">
-                 <div class="form-outline">
-                        <label class="form-label">Amount<span style="color:red">*</span></label>
-                        <input type="number" class="form-control" name="amount"
-                               value="request.form['amount']"
-                               placeholder="Amount" required/>
-                    </div>
+                <div class="form-outline">
+                    <label class="form-label">Amount<span style="color:red">*</span></label>
+                    <input type="text" class="form-control" name="amount" id="amount"
+                           value="{{request.form['amount']}}"
+                           placeholder="Amount" required/>
+                </div>
             </div>
             <div class="row ">
-                    <div class="col mt-3 text-center">
-                        <button type="submit" class="btn btn-primary w-25" data-toggle="modal"
-                                data-target=".bd-example-modal-lg">Create Voucher
-                        </button>
-                    </div>
+                <div class="col mt-3 text-center">
+                    <button type="submit" class="btn btn-primary w-25" data-toggle="modal"
+                            data-target=".bd-example-modal-lg">Create Voucher
+                    </button>
                 </div>
+            </div>
 
         </fieldset>
 
@@ -75,4 +83,6 @@
 <br>
 <br>
 <br>
+
+<script src="{{url_for('static', filename='create_payment_voucher.js')}}"></script>
 {%endblock%}

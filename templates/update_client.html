@@ -3,103 +3,98 @@
 {% block content %}
 {% include 'alert.html' %}
 
+
 <style>
-    .image-upload>input {
-  display: none;
+    label{
+    font-weight:bold;
 }
-#pdf_upload {
-            width: 300px;
-            height: 300px;
-            overflow: hidden;
-            margin: 0 auto;
-        }
-
-        #pdf_upload img {
-            width: 100%;
-            transition: 0.5s all ease-in-out;
-        }
-
-        #pdf_upload:hover img {
-            transform: scale(1.1);
-        }
-
+.bold{
+font-weight:bold;
+}
 </style>
 
-<form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
-    <div class="w-100" id="action_buttons" style="display:block; position:fixed;">
 
+<form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
+    <!--    <div class="w-100" id="action_buttons" style="display:block; position:fixed;">-->
+
+
+    <!--        -->
+
+    <!--    </div>-->
+
+    <div class="w-50 mx-auto row form-group" style="margin-top:5rem; background-color: #eff4ff; border-radius: 20px;" >
         <div class="row mb-2">
-            <div class="col-2">
-                <button style="margin-left:30px" type="button" class="btn btn-success btn-sm edit_button mt-2"
+            <div class="col text-end">
+                <button style="padding:0.3rem 1.5rem" type="button" class="btn btn-success btn-sm edit_button mt-4"
                         onclick="editClient()"
                         id="edit_button">
                     Edit
                 </button>
             </div>
         </div>
+        <div class="row w-100">
+            <div class="col d-flex justify-content-end">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group me-2" role="group" aria-label="First group">
+                    <input type="submit" value="Update"
+                           class="update_btn btn btn-success btn-sm"
+                           onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
+                           id="update_button" hidden/>
 
-        <div class="row mb-2">
-            <div class="col-1">
-                <input style="margin-left:30px" type="submit" value="Update" class="update_btn btn btn-success btn-sm"
-                       onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
-                       id="update_button" hidden/>
+                </div>
+                <div class="btn-group me-2" role="group" aria-label="Second group">
+                    <button type="button" class="btn btn-danger btn-sm"
+                            onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
+                            id="discard_button" hidden>
+                        Discard
+                    </button>
+                </div>
 
             </div>
-            <div class="col-2">
-                <button type="button" class="btn btn-danger btn-sm"
-                        onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
-                        id="discard_button" hidden>
-                    Discard
-                </button>
             </div>
-
         </div>
-
-    </div>
-
-    <div class="w-50 mx-auto row bg-light form-group" style="margin-top:10rem">
         <div id="hide_table">
             <table class="table">
 
-            <tbody>
-            <tr>
-                <td>client Name: </td>
-                <td>{{client_to_update.client_name}}</td>
-            </tr>
-            <tr>
-                <td>Email: </td>
-                <td>{{client_to_update.email}}</td>
-            </tr>
-            <tr>
-                <td>Phone:  </td>
-                <td>{{client_to_update.phone_no}}</td>
-            </tr>
-            <tr>
-                <td>Address:  </td>
-                <td>{{client_to_update.address}}</td>
-            </tr>
-            <tr>
-                <td>Final Deal:  </td>
-                <td>{{client_to_update.final_deal}}</td>
-            </tr>
-            <tr>
-                <td>GST(18%): </td>
-                <td>{{client_to_update.gst}}</td>
-            </tr>
-            </tbody>
+                <tbody>
+                <tr>
+                    <td class="bold">Client Name:</td>
+                    <td>{{client_to_update.client_name}}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Email:</td>
+                    <td>{{client_to_update.email}}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Phone:</td>
+                    <td>{{client_to_update.phone_no}}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Address:</td>
+                    <td>{{client_to_update.address}}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Final Deal:</td>
+                    <td>{{client_to_update.final_deal}}</td>
+                </tr>
+                <tr>
+                    <td class="bold">GST(18%):</td>
+                    <td>{{client_to_update.gst}}</td>
+                </tr>
+                </tbody>
 
-        </table>
+            </table>
         </div>
 
-        <div class="bg-light col">
+        <div class="col">
             <div class="row">
                 <div class="row">
                     <div class="col display-11 mb-2 form_editable client_name"
-                      id="client_name" hidden>
-                    <label>client Name</label>
-                    <input class="form-control" type="text" name="client_name"
+                         id="client_name" hidden>
+                        <label>Client Name</label>
+                        <input class="form-control" type="text" name="client_name"
                                value="{{client_to_update.client_name}}">
-                </div>
+                    </div>
                 </div>
 
                 <div class="row display-11">
@@ -128,7 +123,7 @@
                     </div>
 
                 </div>
-                <div class="row display-11">
+                <div class="row display-11 mb-3">
 
                     <div class="col form_editable mb-2" hidden>
                         <label>Final Deal</label>

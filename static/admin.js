@@ -1,26 +1,31 @@
-function check_box() {
-    if ($('.form-check-input').is(":checked"))
-        $("#add").hide()
-    else
-        $("#add").show()
+//function check_box() {
+//    if ($('.form-check-input').is(":checked"))
+//        $("#add").hide()
+//    else
+//        $("#add").show()
+//}
+
+function toggleDelbox() {
+  var elems = document.querySelectorAll('.hidden');
+  var shouldShowList = false;
+  elems.forEach(function(elem) {
+    if (elem.checked) {
+      shouldShowList = true;
+    }
+  });
+  document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
+//  document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
+  document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
 }
 
-
-
-$(document).ready(function() {
-
-    var $submit = $("#action_dropdown").hide(),
-        $cbs = $('input[name="check-box"]').click(function() {
-            $submit.toggle( $cbs.is(":checked") );
-        });
-
-});
-
-function del_rec(id){
-    $('#exampleModalCenter'+id).modal('show');
-    $('#modal_del'+id).attr('href','')
-    $('#modal_del'+id).attr('href','/delete_customer/'+id)
- }
+//$(document).ready(function() {
+//
+//    var $submit = $("#action_dropdown").hide(),
+//        $cbs = $('input[name="check-box"]').click(function() {
+//            $submit.toggle( $cbs.is(":checked") );
+//        });
+//
+//});
 
 function del_fun(){
         $('#stu_ids_submit').click()

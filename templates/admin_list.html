@@ -18,11 +18,6 @@
         }
 
 
-
-
-
-
-
 </style>
 
 
@@ -52,12 +47,12 @@
     </div>
 </div>
 
-<h4 style="text-align:center; margin-top:5rem">Users List</h4>
+<h5 style="text-align:center; margin-top:5rem">Users List</h5>
 <br>
 
 <div class="row w-50 mx-auto">
     <div class="row mt-3 mb-2">
-        <div class="col-2 text-center" id="action_dropdown">
+        <div class="col-2 text-center" id="action_dropdown" style="display:none">
             <div class="btn-group btn-group-sm">
                 <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
@@ -72,7 +67,7 @@
         </div>
         <div class="col text-end">
             <button type="button" class="btn btn-success btn-sm" id="add"
-                    onclick="location.href='{{ url_for('add_user')}}'">Add
+                    onclick="location.href='{{ url_for('add_user')}}'" style="padding:0.3rem 1.5rem">Add
             </button>
         </div>
     </div>
@@ -98,7 +93,7 @@
                 {% for user in users %}
                 <tr>
                     <td>
-                        <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
+                        <input onchange="toggleDelbox()" class="form-check-input hidden" name="check-box" id="check"
                                type="checkbox"
                                value="{{ user.id }}">
                     </td>

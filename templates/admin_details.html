@@ -3,69 +3,81 @@
 {% block content %}
 {% include 'alert.html' %}
 
-<form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
-    <div class="w-100" id="action_buttons" style="display:block; position:fixed;">
+<style>
+    label{
+    font-weight:bold;
+}
+.bold{
+font-weight:bold;
+}
+</style>
 
-        <div class="row w-50 mx-auto">
-            <div class="col-2">
-                <button style="margin-left:-11px" type="button" class="btn btn-success btn-sm edit_button mt-2"
+<form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
+    <!--    <div class="w-100" id="action_buttons" style="display:block; position:fixed;">-->
+
+
+    <div class="w-50 mx-auto row form-group" style="margin-top:6rem; background-color: #eff4ff; border-radius: 20px;">
+
+        <div class="row">
+            <div class="col text-end">
+                <button style="padding:0.3rem 1.5rem" type="button" class="btn btn-success btn-sm edit_button mt-4"
                         onclick="editClient()"
                         id="edit_button">
                     Edit
                 </button>
             </div>
         </div>
+        <div class="row w-100 mt-3">
+            <div class="col d-flex justify-content-end">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group me-2" role="group" aria-label="First group">
+                        <input type="submit" value="Update"
+                               class="update_btn btn btn-success btn-sm"
+                               onclick="location.href='{{url_for('admin_details',admin_id = admin_to_update.id)}}'"
+                               id="update_button" hidden/>
 
-        <div class="row w-50 mx-auto mb-2 mt-2">
-            <div class="col text-start">
-                <input type="submit" value="Update" class="update_btn btn btn-success btn-sm"
-                       onclick="location.href='{{url_for('admin_details',admin_id = admin_to_update.id)}}'; check_error();"
-                       id="update_button" hidden/>
+                    </div>
+                    <div class="btn-group me-2" role="group" aria-label="Second group">
+                        <button type="button" class="btn btn-danger btn-sm"
+                                onclick="location.href='{{url_for('admin_details',admin_id = admin_to_update.id)}}'"
+                                id="discard_button" hidden>
+                            Discard
+                        </button>
+                    </div>
+                    <div class="btn-group me-2" role="group" aria-label="Second group">
+                        <button type="button" class="btn btn-info btn-sm text-white" id="change_password"
+                                onclick="location.href='{{url_for('change_admin_pass', admin_id = admin_to_update.id)}}'" hidden>
+                            Change
+                            Password
+                        </button>
+                    </div>
 
+                </div>
             </div>
-            <div class="col text-end">
-                <button type="button" class="btn btn-danger btn-sm"
-                        onclick="location.href='{{url_for('admin_details',admin_id = admin_to_update.id)}}'"
-                        id="discard_button" hidden>
-                    Discard
-                </button>
-            </div>
-
         </div>
 
-    </div>
-
-    <div class="w-50 mx-auto row bg-light form-group" style="margin-top:7rem">
-        <div class="row ">
-            <div class="col text-end mt-2">
-                <button type="button" class="btn btn-info btn-sm text-white"
-                        onclick="location.href='{{url_for('change_admin_pass', admin_id = admin_to_update.id)}}'">Change
-                    Password
-                </button>
-            </div>
-        </div>
         <div id="hide_table">
             <table class="table">
 
                 <tbody>
                 <tr>
-                    <td>Username:</td>
+                    <td class="bold">Username:</td>
                     <td>{{admin_to_update.username}}</td>
                 </tr>
                 <tr>
-                    <td>First Name:</td>
+                    <td class="bold">First Name:</td>
                     <td>{{admin_to_update.first_name}}</td>
                 </tr>
                 <tr>
-                    <td>Last Name:</td>
+                    <td class="bold">Last Name:</td>
                     <td>{{admin_to_update.last_name}}</td>
                 </tr>
                 <tr>
-                    <td>Email:</td>
+                    <td class="bold">Email:</td>
                     <td>{{admin_to_update.email}}</td>
                 </tr>
                 <tr>
-                    <td>Phone No.:</td>
+                    <td class="bold">Phone No.:</td>
                     <td>{{admin_to_update.phone_no}}</td>
                 </tr>
 
@@ -74,7 +86,7 @@
             </table>
         </div>
 
-        <div class="bg-light col mt-2 mb-2">
+        <div class="col mt-2 mb-2">
             <div class="row">
                 <div class="row">
                     <div class="col display-11 mb-2 form_editable"

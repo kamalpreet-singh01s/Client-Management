@@ -70,7 +70,7 @@ class Client(db.Model):
     gst = db.Column(db.Float)
     credit_amount = db.Column(db.Float, default=0.0)
 
-    def __init__(self, client_name, email, phone_no, address, final_deal, gst, credit_amount):
+    def __init__(self, client_name, email, phone_no, address, final_deal, gst, credit_amount=None):
         self.client_name = client_name
         self.final_deal = final_deal
         self.email = email
@@ -115,6 +115,7 @@ class Records(db.Model):
 class PaymentVoucher(db.Model):
     __tablename__ = "payment_voucher"
     id = db.Column(db.Integer, primary_key=True)
+    reference_no = db.Column(db.String())
     payment_date = db.Column(db.String())
     approval_date = db.Column(db.String())
     record_id = db.Column(db.Integer, db.ForeignKey('records.id'))
@@ -126,7 +127,8 @@ class PaymentVoucher(db.Model):
         db.Enum(PaymentStatus, values_callable=lambda x: [str(stat.value) for stat in PaymentStatus]),
         default=PaymentStatus.draft.value)
 
-    def __init__(self, payment_date, record_id, amount, client_id, approval_date=None):
+    def __init__(self, reference_no, payment_date, record_id, amount, client_id, approval_date=None):
+        self.reference_no = reference_no
         self.payment_date = payment_date
         self.amount = amount
         self.record_id = record_id

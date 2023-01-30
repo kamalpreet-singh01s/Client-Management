@@ -3,7 +3,6 @@
 {%block content%}
 
 
-
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -36,7 +35,7 @@
 
 <form method="GET" action="{{ url_for('search_clients') }}">
     <div class="row w-100">
-        <div class="col-2"  style="margin-left:206px;margin-right: -77px;">
+        <div class="col-2" style="margin-left:206px;margin-right: -77px;">
             <input type="text" class="form-control form-control-sm w-75" style="height:20px" name="search"
                    placeholder="Search" value="{{request.args['search']}}"/>
         </div>
@@ -46,7 +45,7 @@
             </button>
         </div>
         <div class="col text-start">
-            <h4 class="mb-2" style="margin-left:3rem">Client List</h4>
+            <h5 class="mb-2" style="margin-left:3rem">Client List</h5>
         </div>
 
     </div>
@@ -56,9 +55,10 @@
 
     <div class="row mb-1 ">
 
-        <div class="col-2 text-center" id="action_dropdown">
+        <div class="col-2 text-center" style="display:none" id="action_dropdown">
             <div class="btn-group btn-group-sm mt-2">
-                <button type="button" style="margin-right:33px;" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                <button type="button" style="margin-right:33px;" class="btn btn-danger dropdown-toggle"
+                        data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
                     Action
                 </button>
@@ -73,7 +73,7 @@
         <div class="col d-flex justify-content-end">
             <form action="{{ url_for('csv_for_client') }}" method="POST">
 
-                <div class="">
+                <div class="" style="display:none" id="generate_custom_report">
                     <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
                     <button type="submit" class="btn btn-primary btn-sm" id="check_rec_ids_btn">Generate Custom Report
                     </button>
@@ -91,15 +91,15 @@
                href="{{ url_for('add_client') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
         <div class="row">
-        <div class="col">
-            {% include 'alert.html' %}
+            <div class="col">
+                {% include 'alert.html' %}
+            </div>
         </div>
-    </div>
         <table class="table table-hover table-sortable text-center" id="table-count">
 
             <thead>
             <tr>
-                <th><input type="checkbox" id="check-All"  class=""></th>
+                <th><input type="checkbox" id="check-All" onclick="toggleDelbox()" class=""></th>
                 <th>S.No.</th>
                 <th>Name</th>
                 <th>Email</th>
@@ -107,6 +107,7 @@
                 <th>Address</th>
                 <th>Deal (In Rs.)</th>
                 <th>GST (18%)</th>
+                <th>Credit</th>
 
             </tr>
             </thead>
@@ -115,11 +116,11 @@
 
             <tr style="cursor:pointer">
                 <td>
-                    <input onchange="check_box()" class="form-check-input" name="check-box" id="check"
+                    <input onchange="toggleDelbox()" class="form-check-input hidden" name="check-box" id="check"
                            type="checkbox"
                            value="{{ client.id }}">
                 </td>
-                 <td class="numbered"></td>
+                <td class="numbered"></td>
                 <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.client_name
                     }}
                 </td>
@@ -134,6 +135,7 @@
                     }}
                 </td>
                 <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.gst }}</td>
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.credit_amount }}</td>
 
             </tr>
             {% endfor %}

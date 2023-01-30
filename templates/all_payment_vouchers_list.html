@@ -1,0 +1,134 @@
+{%extends "index.html"%}
+
+{%block content%}
+
+{% include 'alert.html' %}
+<br>
+
+<style>
+
+.cell-4 {
+  width: 200px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.status {
+  width: 85px;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+
+<h5 style="text-align:center">Voucher List</h5>
+<br>
+
+
+<!--    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">-->
+
+<div class="w-75 mx-auto" style="overflow-y:scroll; height:400px;overflow-x:hidden">
+    <form method="GET" action="{{ url_for('search_vouchers') }}">
+        <div class="row">
+            <div class="col">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group me-2" role="group" aria-label="First group">
+                        <input type="text" class="form-control form-control-sm" style="height:20px" name="search"
+                               placeholder="Search" value="{{request.args['search']}}"/>
+                    </div>
+                    <div class="btn-group me-2" role="group" aria-label="Second group">
+                        <button type="submit" class="btn btn-primary btn-sm"
+                        >Search
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+    <form>
+        <table class="table table-hover table-sortable">
+            <thead>
+            <tr>
+                <th>Ref.No.</th>
+                <th>Payment Date</th>
+                <th>Approval Date</th>
+                <th>Client Name</th>
+                <th>Bill No.</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for voucher in all_vouchers %}
+            <tr>
+
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{
+                    voucher.reference_no }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{
+                    voucher.payment_date }}
+                </td>
+                {% if voucher.approval_date %}
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{ voucher.approval_date }}
+                </td>
+                {%else%}
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >Not Yet Approved
+                </td>
+                {% endif %}
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{ voucher.client_name.client_name
+                    }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{
+                    voucher.bill_no.bill
+                    }}
+                </td>
+
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{ voucher.amount }}
+                </td>
+
+                <td style="cursor: pointer; border-radius:20px; text-align:center;width:100px" class="status"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{ voucher.status.value }}
+                </td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+</div>
+</form>
+<script src="{{url_for('static', filename='vouchers_list.js')}}"></script>
+{%endblock%}

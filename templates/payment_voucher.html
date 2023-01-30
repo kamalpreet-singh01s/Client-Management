@@ -2,25 +2,10 @@
 
 {%block content%}
 
-
+{% include 'alert.html' %}
 <br>
 
 <style>
-           table {
-            counter-reset: 1;
-        }
-
-        table tr {
-            counter-increment: rowNumber;
-        }
-
-        table tr td:first-child::before {
-            content: counter(rowNumber);
-
-        }
-
-
-
 
 .cell-4 {
   width: 200px;
@@ -39,79 +24,176 @@
 }
 
 
-
-
-
-
 </style>
 
-<h4 style="text-align:center"></h4>
-<br>
 
+<h5 style="text-align:center">List of Payments</h5>
+<br>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left">
+                Do you really want to delete this record?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm"
+                        onclick="del_fun()">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
+                        onclick="location.href='{{url_for('voucher_list', record_id=record.id)}}'">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 <form>
 
-    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
+    <!--    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">-->
 
-        <div style="overflow-y:scroll; height:700px; margin-left:10px">
+    <div class="w-75 mx-auto" style="overflow-y:scroll; height:400px;overflow-x:hidden">
+
+        <div class="row">
+            <div class="col text-start mb-3">
+                <button type="button" class="btn btn-info btn-sm"
+                        onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
+                    &#8592 Back to Details
+                </button>
+            </div>
+            <div class="col-2" id="action_dropdown" style="display:none">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                        Action
+                    </button>
+                    <div class="dropdown-menu">
+                        <button type="button" class="dropdown-item" id="del"
+                                data-target="#exampleModalCenter" data-toggle="modal">Delete Selected
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% if record.status.value == RecordStatus.received.value%}
+            <div class="col text-end mb-3 text-success">
+                <h6 style="font-weight:bold;margin-right:11px">Total Payment Received</h6>
+            </div>
+            {% endif %}
+            {% if total_amount >= client.final_deal or record.status.value == RecordStatus.received.value or
+            record.status.value ==
+            RecordStatus.cancelled.value %}
+            <div class="col text-end mb-3" hidden>
+                <a class="add_button"
+                   style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
+                   href="{{ url_for('create_payment_voucher', record_id = record.id) }}" id="add">Create <i
+                        class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+
+            {% else %}
             <div class="col text-end mb-3">
                 <a class="add_button"
                    style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
                    href="{{ url_for('create_payment_voucher', record_id = record.id) }}" id="add">Create <i
                         class="fa fa-plus" aria-hidden="true"></i></a>
             </div>
-            <table class="table table-hover table-sortable">
-                <thead>
-                <tr>
-                    <th>S.No.</th>
-                    <th>Payment Date</th>
-                    <th>Approval Date</th>
-                    <th>Client Name</th>
-                    <th>Bill No.</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for voucher in total_vouchers %}
-                <tr>
-                    <td></td>
-                    <td style="cursor: pointer;"
-                        >{{
-                        voucher.payment_date }}
-                    </td>
-                    {% if voucher.approval_date %}
-                        <td style="cursor: pointer;"
-                            >{{ voucher.approved_date }}
-                        </td>
-                    {%else%}
-                        <td style="cursor: pointer;"
-                            >Not Yet Approved
-                        </td>
-                    {% endif %}
-                    <td style="cursor: pointer;"
-                       >{{ voucher.client_name.client_name
-                        }}
-                    </td>
-                    <td style="cursor: pointer;"
-                       >{{
-                        voucher.bill_no.bill
-                        }}
-                    </td>
-
-                    <td style="cursor: pointer;"
-                        >{{ voucher.amount }}
-                    </td>
-
-                    <td style="cursor: pointer;"
-                        >{{ voucher.status.value }}
-                    </td>
-
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-
+            {% endif %}
         </div>
+
+        <table class="table table-hover table-sortable">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Ref.No.</th>
+                <th>Payment Date</th>
+                <th>Approval Date</th>
+                <th>Client Name</th>
+                <th>Bill No.</th>
+                <th>Amount</th>
+                <th>Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for voucher in total_vouchers %}
+            <tr>
+                <td>
+                    <input onchange="toggleDelbox()" class="form-check-input hidden" name="check-box" id="check"
+                           type="checkbox"
+                           value="{{ voucher.id }}">
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{
+                    voucher.reference_no }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{
+                    voucher.payment_date }}
+                </td>
+                {% if voucher.approval_date %}
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{ voucher.approval_date }}
+                </td>
+                {%else%}
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >Not Yet Approved
+                </td>
+                {% endif %}
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{ voucher.client_name.client_name
+                    }}
+                </td>
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{
+                    voucher.bill_no.bill
+                    }}
+                </td>
+
+                <td style="cursor: pointer;"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{ voucher.amount }}
+                </td>
+
+                <td style="cursor: pointer; border-radius:20px; text-align:center;width:100px" class="status"
+                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                >{{ voucher.status.value }}
+                </td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% if total_voucher_count == 0%}
+
+        <div>
+            <img style="display: block;margin-left: auto; margin-right: auto;"
+                 src="{{url_for('static', filename='empty.png')}}" alt="No Image" height="250px">
+        </div>
+
+        {% endif %}
     </div>
+
 </form>
+<div hidden>
+    <form method="POST" action="{{url_for('get_checked_boxes_for_payment_vouchers', record_id=record.id)}}">
+
+        <input type="text" id="rec_ids" name="rec_ids"/>
+        <button type="submit" id="stu_ids_submit">
+            Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+        </button>
+
+    </form>
+</div>
+<script src="{{url_for('static', filename='vouchers_list.js')}}"></script>
 {%endblock%}

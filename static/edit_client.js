@@ -6,8 +6,8 @@ edit_btn.parentNode.removeChild(edit_btn);
 document.getElementById('update_button').hidden = false;
 document.getElementById('discard_button').hidden = false;
 
-action_buttons = document.getElementById("action_buttons")
-action_buttons.style.backgroundColor = "#141619";
+//action_buttons = document.getElementById("action_buttons")
+//action_buttons.style.backgroundColor = "#141619";
 
 
 hide_table = document.getElementById('hide_table');
