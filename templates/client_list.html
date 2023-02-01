@@ -34,18 +34,28 @@
 
 
 <form method="GET" action="{{ url_for('search_clients') }}">
-    <div class="row w-100">
-        <div class="col-2" style="margin-left:206px;margin-right: -77px;">
-            <input type="text" class="form-control form-control-sm w-75" style="height:20px" name="search"
-                   placeholder="Search" value="{{request.args['search']}}"/>
+    <div class="row w-75 mx-auto">
+
+
+        <div class="col-5">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="btn-group me-2" role="group" aria-label="First group">
+                    <input type="text" class="form-control form-control-sm" style="height:20px" name="search"
+                           placeholder="Search" value="{{request.args['search']}}"/>
+
+                </div>
+                <div class="btn-group me-2" role="group" aria-label="Second group">
+                    <button type="submit" class="btn btn-info btn-sm"
+                    >Search
+                    </button>
+
+                </div>
+
+            </div>
         </div>
-        <div class="col-2  justify-content-start">
-            <button type="submit" class="btn btn-primary btn-sm"
-            >Search
-            </button>
-        </div>
-        <div class="col text-start">
-            <h5 class="mb-2" style="margin-left:3rem">Client List</h5>
+
+        <div class="col-7 text-start">
+            <h5 class="mb-2">List of Clients</h5>
         </div>
 
     </div>

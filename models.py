@@ -28,14 +28,14 @@ class PaymentStatus(enum.Enum):
         return [c.value for c in PaymentStatus]
 
 
-class RecordStatus(enum.Enum):
+class SalesOrderStatus(enum.Enum):
     pending = "Pending"
     received = "Received"
     cancelled = "Cancelled"
 
     @staticmethod
     def fetch_names():
-        return [c.value for c in RecordStatus]
+        return [c.value for c in SalesOrderStatus]
 
 
 class Users(db.Model):
@@ -80,8 +80,8 @@ class Client(db.Model):
         self.credit_amount = credit_amount
 
 
-class Records(db.Model):
-    __tablename__ = "records"
+class SalesOrder(db.Model):
+    __tablename__ = "sales_order"
 
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
@@ -95,8 +95,8 @@ class Records(db.Model):
     amount_received_date = db.Column(db.String(100))
 
     status = db.Column(
-        db.Enum(RecordStatus, values_callable=lambda x: [str(stat.value) for stat in RecordStatus]),
-        default=RecordStatus.pending.value)
+        db.Enum(SalesOrderStatus, values_callable=lambda x: [str(stat.value) for stat in SalesOrderStatus]),
+        default=SalesOrderStatus.pending.value)
 
     filename = db.Column(db.String())
 
@@ -118,8 +118,8 @@ class PaymentVoucher(db.Model):
     reference_no = db.Column(db.String())
     payment_date = db.Column(db.String())
     approval_date = db.Column(db.String())
-    record_id = db.Column(db.Integer, db.ForeignKey('records.id'))
-    bill_no = db.relationship('Records')
+    sales_order_id = db.Column(db.Integer, db.ForeignKey('sales_order.id'))
+    bill_no = db.relationship('SalesOrder')
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     client_name = db.relationship('Client')
     amount = db.Column(db.Float)
@@ -127,10 +127,10 @@ class PaymentVoucher(db.Model):
         db.Enum(PaymentStatus, values_callable=lambda x: [str(stat.value) for stat in PaymentStatus]),
         default=PaymentStatus.draft.value)
 
-    def __init__(self, reference_no, payment_date, record_id, amount, client_id, approval_date=None):
+    def __init__(self, reference_no, payment_date, sales_order_id, amount, client_id, approval_date=None):
         self.reference_no = reference_no
         self.payment_date = payment_date
         self.amount = amount
-        self.record_id = record_id
+        self.sales_order_id = sales_order_id
         self.client_id = client_id
         self.approval_date = approval_date

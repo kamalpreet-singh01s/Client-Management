@@ -7,6 +7,7 @@ document.querySelector('#edit_button').style.display = "none";
 document.getElementById('update_discard_button_for_bill_details').style.display = "block";
 document.getElementById('cancelled_button_before').style.display = "none";
 document.getElementById('cancelled_button_after').style.display = "block";
+document.getElementById('back_button').style.display = "none";
 //document.getElementById('discard_button').style.display = "block";
 //document.getElementById('cancelled_button').hidden = false;
 document.getElementById('voucher_book_action_button').hidden = false;

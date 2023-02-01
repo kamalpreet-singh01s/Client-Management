@@ -6,6 +6,8 @@ edit_btn.parentNode.removeChild(edit_btn);
 document.getElementById('update_button').hidden = false;
 document.getElementById('discard_button').hidden = false;
 document.getElementById('change_password').hidden = false;
+document.getElementById('back_button').style.display = "none";
+
 
 
 

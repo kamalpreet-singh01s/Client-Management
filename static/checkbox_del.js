@@ -72,6 +72,7 @@ function toggleDelbox() {
   document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
   document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
   document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
+  document.querySelector('#filter').style.display = shouldShowList ? 'none' : '';
 }
 
 
@@ -166,6 +167,7 @@ $(document).ready(function(){
               document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
               document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
               document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
+              document.querySelector('#filter').style.display = shouldShowList ? 'none' : '';
 
 
 
@@ -196,6 +198,8 @@ $(document).ready(function(){
               document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
               document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
               document.querySelector('#add').style.display = shouldShowList ? '' : 'block';
+              document.querySelector('#filter').style.display = shouldShowList ? 'none' : '';
+
                 var element = document.getElementById("check-All");
                 element.checked = false;
             }

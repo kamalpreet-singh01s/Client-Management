@@ -5,7 +5,7 @@ edit_btn.parentNode.removeChild(edit_btn);
 
 document.getElementById('update_button').hidden = false;
 document.getElementById('discard_button').hidden = false;
-
+document.getElementById('back_button').style.display = "none";
 //action_buttons = document.getElementById("action_buttons")
 //action_buttons.style.backgroundColor = "#141619";
 
@@ -18,3 +18,6 @@ var form_editable = document.getElementsByClassName('form_editable');
     form_editable[i].hidden = false;
 }
 }
+
+
+

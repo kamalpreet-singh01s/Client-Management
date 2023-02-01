@@ -14,11 +14,10 @@
     <script src="{{url_for('static', filename = 'jquery-3.2.1.js')}}"></script>
 
 
-
     <title>{%block title%}{% endblock %}</title>
 
     <style>
-     #navbarNav ul li a{
+   #navbarNav ul li a{
             font-size: 18px;
         }
 
@@ -29,18 +28,9 @@
 
         }
 
-        .navbar-brand{
-            font-size:30px;
-            margin-left:10px;
-        }
 
-        .navbar-brand:hover{
-            color:cyan;
-            transition : 1s;
-        }
-a{
-    text-decoration:none
-}
+
+
 
 .logout:hover{
     color:white;
@@ -98,39 +88,34 @@ background: white;
 }
 
 
-
     </style>
 </head>
 <body>
 
-
 <nav style="position:sticky; top:0; z-index:1; box-shadow: rgb(38, 57, 77) 0px 10px 20px -10px;" class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a href="{{url_for('dashboard')}}" class="navbar-brand"><img src="{{url_for('static', filename= 'logo.png')}}"
-                                                                 style="background-color: #ffffff; border-radius:50px; margin-left:194px"
+    <div class="container w-75">
+        <a href="{{url_for('dashboard')}}" class="navbar-brand"><img src="{{url_for('static', filename= 'logo.png')}}"
+                                                                 style="background-color: #ffffff; border-radius:50px; margin:auto;"
                                                                  height="40px" alt="LOGO" class="navbar-brand"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="collapse navbar-collapse " id="navbarNav">
         <ul class="navbar-nav mx-auto">
-            <li class="nav-item active" style="margin-left:-202px">
-                <a href="{{url_for('dashboard')}}" class="nav-link active">Home</a>
+
+            <li class="nav-item active " style="">
+                <a href="{{url_for('dashboard')}}" class="nav-link active">Sales Orders</a>
             </li>
-            <li class="nav-item active">
+            <li class="nav-item active ">
+                <a href="{{url_for('all_vouchers_list')}}" class="nav-link active">Payment Vouchers</a>
+            </li>
+            <li class="nav-item active ">
                 <a href="{{url_for('all_client_names')}}" class="nav-link active">Clients</a>
             </li>
-            <li class="nav-item">
-                <a href="{{url_for('pending_payment_list')}}" class="nav-link active">Pending Payments</a>
-            </li>
-            <li class="nav-item">
-                <a href="{{url_for('paid_payment_list')}}" class="nav-link active">Receipts</a>
-            </li>
-            <li class="nav-item">
-                <a href="{{url_for('all_vouchers_list')}}" class="nav-link active">Vouchers List</a>
-            </li>
+
         </ul>
-        <div class="dropdown show nav-item" style="margin-right: 215px">
+        <div class="dropdown show nav-item">
             <a class="btn btn-success btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false">
@@ -147,7 +132,7 @@ background: white;
             </div>
         </div>
     </div>
-
+    </div>
 </nav>
 
 {%block content%}{%endblock%}
@@ -159,9 +144,6 @@ background: white;
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-
-
-
 
 
 {%include 'footer.html'%}

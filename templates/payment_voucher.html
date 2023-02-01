@@ -64,7 +64,7 @@
             <div class="col text-start mb-3">
                 <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
                         onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
-                    &#8592 Back to Details
+                    &#8592 Back
                 </button>
             </div>
             <div class="col-2" id="action_dropdown" style="display:none">
@@ -81,14 +81,14 @@
                     </div>
                 </div>
             </div>
-            {% if record.status.value == RecordStatus.received.value%}
+            {% if record.status.value == SalesOrderStatus.received.value%}
             <div class="col text-end mb-3 text-success">
                 <h6 style="font-weight:bold;margin-right:11px">Total Payment Received</h6>
             </div>
             {% endif %}
-            {% if total_amount >= client.final_deal or record.status.value == RecordStatus.received.value or
+            {% if total_amount >= client.final_deal or record.status.value == SalesOrderStatus.received.value or
             record.status.value ==
-            RecordStatus.cancelled.value %}
+            SalesOrderStatus.cancelled.value %}
             <div class="col text-end mb-3" hidden>
                 <a class="add_button"
                    style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
@@ -106,10 +106,11 @@
             {% endif %}
         </div>
 
-        <table class="table table-hover table-sortable">
+        <table class="table table-hover table-sortable text-center" id="table-count">
             <thead>
             <tr>
                 <th></th>
+                <th>S.No.</th>
                 <th>Ref.No.</th>
                 <th>Payment Date</th>
                 <th>Approval Date</th>
@@ -127,6 +128,7 @@
                            type="checkbox"
                            value="{{ voucher.id }}">
                 </td>
+                <td class="numbered"></td>
                 <td style="cursor: pointer;"
                     onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
                 >{{

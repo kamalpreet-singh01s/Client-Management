@@ -36,16 +36,18 @@ body{
 }
 
 
+
+
 </style>
 
 <form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
     <div class="row mx-auto mt-2" id="action_buttons" style="z-index:1; width:75%">
 
         <!--        <div class="row mb-2">-->
-        {% if record_to_update.status.value == RecordStatus.received.value or record_to_update.status.value ==
-        RecordStatus.cancelled.value%}
+        {% if record_to_update.status.value == SalesOrderStatus.received.value or record_to_update.status.value ==
+        SalesOrderStatus.cancelled.value%}
         <div class="col-2">
-            <button style="display:none; padding:0.3rem 2.5rem" type="button"
+            <button style="display:none; padding:0.3rem 2.2rem" type="button"
                     class="btn btn-success btn-sm edit_button mt-2"
                     onclick="hideDisable()"
                     id="edit_button">
@@ -60,7 +62,7 @@ body{
         </div>
         {%else%}
         <div class="col-2">
-            <button style="display:block;padding:0.3rem 2.5rem" type="button"
+            <button style="display:block;padding:0.3rem 2.2rem" type="button"
                     class="btn btn-success btn-sm edit_button mt-2"
                     onclick="hideDisable()"
                     id="edit_button">
@@ -128,12 +130,20 @@ body{
     document.getElementById('alert_client').hidden = false;
 }
 
+
+
     </script>
     <div class="row w-75 mx-auto">
+        <div class="col mb-1" style="display:block" id="back_button">
+            <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem;"
+                    onclick="history.back()">
+                &#8592 Back
+            </button>
+        </div>
         <div class="col text-end"
-                         style="font-size:small;">
-                        Last Updated: {{last_updated}} ({{last_updated_time}})
-                    </div>
+             style="font-size:small;">
+            Last Updated: {{last_updated}} ({{last_updated_time}})
+        </div>
     </div>
     <div class="w-75 mx-auto row  form-group" style="background-color:#eff4ff; border-radius:20px">
         <div class=" col">

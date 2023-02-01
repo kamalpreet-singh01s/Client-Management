@@ -6,126 +6,139 @@
         label{
     font-weight:bold;
 }
+
+
+
+
+
+
 </style>
-<div class="d-grid gap-2 col-5 mx-auto" style="margin-top:40px">
+<div class="row w-75 mx-auto" style="margin-top:40px">
 
     <div class="row">
-        <div class="btn-toolbar" role="toolbar">
+
+        <div class="col-10 text-start mb-2" id="see_all_for_approved">
+            <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
+                    onclick="history.back()">
+                &#8592 Back
+            </button>
+        </div>
 
 
-            {% if voucher.status.value == PaymentStatus.approved.value or voucher.status.value == PaymentStatus.cancelled.value%}
-            <div class="col text-start" id="see_all_for_approved">
-                <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
-                        onclick="location.href='{{ url_for('voucher_list', record_id = voucher.record_id) }}'">
-                    &#8592 See All
-                </button>
-            </div>
-                <div class="btn-group me-2" role="group" aria-label="First group">
-                <div class="btn-group me-2" role="group" aria-label="First group" id="approve_button" style="display:none;">
-                    <button type="button" class="btn btn-success btn-sm"
-                            onclick="location.href='{{ url_for('approve_voucher', voucher_id = voucher.id) }}'" style="padding:0.3rem 1.5rem">Approve
-                    </button>
-                </div>
-            </div>
-            <div class="btn-group me-2" role="group" id="cancel_button" style="display:none;">
-                <button type="button" class="btn btn-danger btn-sm"
-                        onclick="location.href='{{ url_for('cancel_voucher', voucher_id = voucher.id) }}'" style="padding:0.3rem 1.5rem">Cancel
-                </button>
-            </div>
-            {% else %}
-                <div class="btn-group me-2" role="group" aria-label="First group">
-                <div class="btn-group me-2" role="group" aria-label="First group" id="approve_button" style="display:block;">
-                    <button type="button" class="btn btn-success btn-sm"
-                            onclick="location.href='{{ url_for('approve_voucher', voucher_id = voucher.id) }}'" style="padding:0.3rem 1.5rem">Approve
-                    </button>
-                </div>
-            </div>
-            <div class="btn-group me-2" role="group" id="cancel_button" style="display:block;">
-                <button type="button" class="btn btn-danger btn-sm"
-                        onclick="location.href='{{ url_for('cancel_voucher', voucher_id = voucher.id) }}'" style="padding:0.3rem 1.5rem">Cancel
-                </button>
-            </div>
-            {% endif %}
-            <div class="col text-end">
-                <h6 id="status">{{voucher.status.value}}</h6>
-            </div>
+        <div class="col-2 mb-2" style="border-radius:20px; background-color:#e9e9e9de;">
+            <h6 class="text-center" id="status" style=" margin-top:3px">{{voucher.status.value}}</h6>
         </div>
 
 
     </div>
-    <hr/>
+    <div class="row">
+        <div class="col">
+            <hr/>
+        </div>
+    </div>
     <form action="{{request.path}}" method="post" enctype="multipart/form-data">
 
         <fieldset>
-            <div class="row mb-3">
-                {% if voucher.status.value == PaymentStatus.approved.value or voucher.status.value == PaymentStatus.cancelled.value%}
-                <div class="row" id="see_all_for_not_approved" style="display:none">
-                    <div class="col text-start">
-                        <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
-                                onclick="location.href='{{ url_for('voucher_list', record_id = voucher.record_id) }}'">
-                            &#8592 See All
-                        </button>
-                    </div>
-                </div>
-                {% else %}
-                <div class="row" id="see_all_for_not_approved" style="display:block">
-                    <div class="col text-start">
-                        <button type="button" class="btn btn-info btn-sm"
-                                onclick="location.href='{{ url_for('voucher_list', record_id = voucher.record_id) }}'">
-                            &#8592 See All
-                        </button>
-                    </div>
-                </div>
-                {% endif %}
-                <div class="col-6">
-                    <div class="form-outline mt-2">
-                        <label class="form-label">Payment Date<span style="color:red">*</span></label>
-                        <input type="date" class="form-control" name="payment_date" value="{{voucher.payment_date}}"
-                               disabled>
-
-                    </div>
-                </div>
-                <div class="col">
-                    {% if voucher.approval_date %}
-                    <div class="form-outline">
-                        <label class="form-label">Approval Date<span style="color:red">*</span></label>
-                        <input type="date" class="form-control" name="approval_date" value="{{voucher.approval_date}}"
-                               disabled>
-                    </div>
-                    {% else %}
-                    <div class="form-outline">
-                        <label class="form-label">Approval Date<span style="color:red">*</span></label>
-                        <input type="text" class="form-control" name="approval_date" value="Not Yet Approved" disabled>
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <div class="form-outline">
-                        <label class="form-label">Client Name<span style="color:red">*</span></label>
-                        <input type="text" class="form-control" name="date_of_order"
-                               value="{{voucher.client_name.client_name}}" required disabled/>
-
-                    </div>
-                </div>
-                <div class="col">
-
-                    <div class="col">
-                        <div class="form-outline">
-                            <label class="form-label">Bill No.<span style="color:red">*</span></label>
-                            <input type="number" class="form-control" name="bill" value="{{voucher.bill_no.bill}}"
-                                   disabled/>
+            <div class="row">
+                <div class="row">
+                    <div class="col mb-3">
+                        <div class="btn-toolbar" role="toolbar">
+                            {% if voucher.status.value == PaymentStatus.approved.value or voucher.status.value ==
+                            PaymentStatus.cancelled.value %}
+                            <div class="btn-group me-2" role="group" aria-label="First group">
+                                <div class="btn-group me-2" role="group" aria-label="First group" id="approve_button"
+                                     style="display:none;">
+                                    <button type="button" class="btn btn-success btn-sm"
+                                            onclick="location.href='{{ url_for('approve_voucher', voucher_id = voucher.id) }}'"
+                                            style="padding:0.3rem 1.5rem">Approve
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="btn-group me-2" role="group" id="cancel_button" style="display:none;">
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="location.href='{{ url_for('cancel_voucher', voucher_id = voucher.id) }}'"
+                                        style="padding:0.3rem 1.5rem">Cancel
+                                </button>
+                            </div>
+                            {% else %}
+                            <div class="btn-group me-2" role="group" aria-label="First group">
+                                <div class="btn-group me-2" role="group" aria-label="First group" id="approve_button"
+                                     style="display:block;">
+                                    <button type="button" class="btn btn-success btn-sm"
+                                            onclick="location.href='{{ url_for('approve_voucher', voucher_id = voucher.id) }}'"
+                                            style="padding:0.3rem 1.5rem">Approve
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="btn-group me-2" role="group" id="cancel_button" style="display:block;">
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="location.href='{{ url_for('cancel_voucher', voucher_id = voucher.id) }}'"
+                                        style="padding:0.3rem 1.5rem">Cancel
+                                </button>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="form-outline">
-                    <label class="form-label">Amount<span style="color:red">*</span></label>
-                    <input type="text" class="form-control" name="amount" id="amount"
-                           value="{{voucher.amount}}"
-                           placeholder="Amount" disabled/>
+                <div class="row">
+                    <div class="row">
+                        <label>Reference No.</label>
+                        <div class="col mb-2 mt-2" style="font-weight:bold; font-size:large">
+                            {{voucher.reference_no}}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-outline mt-2">
+                            <label class="form-label">Payment Date<span style="color:red">*</span></label>
+                            <input type="date" class="form-control" name="payment_date" value="{{voucher.payment_date}}"
+                                   disabled>
+
+                        </div>
+                    </div>
+                    <div class="col">
+                        {% if voucher.approval_date %}
+                        <div class="form-outline">
+                            <label class="form-label">Approval Date<span style="color:red">*</span></label>
+                            <input type="date" class="form-control" name="approval_date"
+                                   value="{{voucher.approval_date}}"
+                                   disabled>
+                        </div>
+                        {% else %}
+                        <div class="form-outline">
+                            <label class="form-label">Approval Date<span style="color:red">*</span></label>
+                            <input type="text" class="form-control" name="approval_date" value="Not Yet Approved"
+                                   disabled>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label">Client Name<span style="color:red">*</span></label>
+                            <input type="text" class="form-control" name="date_of_order"
+                                   value="{{voucher.client_name.client_name}}" required disabled/>
+
+                        </div>
+                    </div>
+                    <div class="col">
+
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label">Bill No.<span style="color:red">*</span></label>
+                                <input type="number" class="form-control" name="bill" value="{{voucher.bill_no.bill}}"
+                                       disabled/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="form-outline">
+                        <label class="form-label">Amount<span style="color:red">*</span></label>
+                        <input type="text" class="form-control" name="amount" id="amount"
+                               value="{{voucher.amount}}"
+                               placeholder="Amount" disabled/>
+                    </div>
                 </div>
             </div>
 

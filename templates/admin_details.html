@@ -10,25 +10,28 @@
 .bold{
 font-weight:bold;
 }
+
+
+
 </style>
 
 <form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
     <!--    <div class="w-100" id="action_buttons" style="display:block; position:fixed;">-->
 
 
-    <div class="w-50 mx-auto row form-group" style="margin-top:6rem; background-color: #eff4ff; border-radius: 20px;">
+    <div class="w-75 mx-auto row form-group" style="margin-top:2rem;background-color: #eff4ff; border-radius: 20px;">
 
-        <div class="row">
-            <div class="col text-end">
-                <button style="padding:0.3rem 1.5rem" type="button" class="btn btn-success btn-sm edit_button mt-2"
+        <div class="row mb-1">
+            <div class="col text-start">
+                <button style="padding:0.3rem 2.2rem" type="button" class="btn btn-success btn-sm edit_button mt-2"
                         onclick="editClient()"
                         id="edit_button">
                     Edit
                 </button>
             </div>
         </div>
-        <div class="row w-100 mt-2">
-            <div class="col d-flex justify-content-end">
+        <div class="row w-100">
+            <div class="col d-flex justify-content-start mb-2 mt-2">
                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group me-2" role="group" aria-label="First group">
                         <input type="submit" value="Update"
@@ -45,14 +48,24 @@ font-weight:bold;
                         </button>
                     </div>
                     <div class="btn-group me-2" role="group" aria-label="Second group">
-                        <button type="button" class="btn btn-info btn-sm text-white" id="change_password" style="padding:0.3rem 1.5rem"
-                                onclick="location.href='{{url_for('change_admin_pass', admin_id = admin_to_update.id)}}'" hidden>
+                        <button type="button" class="btn btn-info btn-sm text-white" id="change_password"
+                                style="padding:0.3rem 1.5rem"
+                                onclick="location.href='{{url_for('change_admin_pass', admin_id = admin_to_update.id)}}'"
+                                hidden>
                             Change
                             Password
                         </button>
                     </div>
 
                 </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col text-start mt-2 mb-3" id="back_button" style="display:block">
+                <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
+                        onclick="history.back()">
+                    &#8592 Back
+                </button>
             </div>
         </div>
 

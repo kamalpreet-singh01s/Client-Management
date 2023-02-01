@@ -18,6 +18,9 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+
+
+
 </style>
 
 
@@ -29,36 +32,47 @@ input::-webkit-inner-spin-button {
 
     <!--    </div>-->
 
-    <div class="w-50 mx-auto row form-group" style="margin-top:5rem; background-color: #eff4ff; border-radius: 20px;" >
+    <div class="w-75 mx-auto row form-group" style="margin-top:2rem; background-color: #eff4ff; border-radius: 20px;">
+
         <div class="row mb-1">
-            <div class="col text-end">
-                <button style="padding:0.3rem 1.5rem" type="button" class="btn btn-success btn-sm edit_button mt-2"
+            <div class="col text-start">
+                <button style="padding:0.3rem 2.2rem" type="button" class="btn btn-success btn-sm edit_button mt-2"
                         onclick="editClient()"
                         id="edit_button">
                     Edit
                 </button>
             </div>
         </div>
+
         <div class="row w-100">
-            <div class="col d-flex justify-content-end mb-2 mt-2">
+            <div class="col d-flex justify-content-start mb-2 mt-2">
                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                <div class="btn-group me-2" role="group" aria-label="First group">
-                    <input type="submit" value="Update"
-                           class="update_btn btn btn-success btn-sm" style="padding:0.3rem 1.5rem"
-                           onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
-                           id="update_button" hidden/>
+                    <div class="btn-group me-2" role="group" aria-label="First group">
+                        <input type="submit" value="Update"
+                               class="update_btn btn btn-success btn-sm" style="padding:0.3rem 1.5rem"
+                               onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
+                               id="update_button" hidden/>
+
+                    </div>
+                    <div class="btn-group me-2" role="group" aria-label="Second group">
+                        <button type="button" class="btn btn-danger btn-sm" style="padding:0.3rem 1.5rem"
+                                onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
+                                id="discard_button" hidden>
+                            Discard
+                        </button>
+                    </div>
 
                 </div>
-                <div class="btn-group me-2" role="group" aria-label="Second group">
-                    <button type="button" class="btn btn-danger btn-sm" style="padding:0.3rem 1.5rem"
-                            onclick="location.href='{{url_for('update_client',client_id = client_to_update.id)}}'"
-                            id="discard_button" hidden>
-                        Discard
-                    </button>
-                </div>
+            </div>
 
-            </div>
-            </div>
+        </div>
+        <div class="row">
+            <div class="col text-start  mt-3 mb-3" id="back_button" style="display:block">
+            <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
+                    onclick="history.back()">
+                &#8592 Back
+            </button>
+        </div>
         </div>
         <div id="hide_table">
             <table class="table">

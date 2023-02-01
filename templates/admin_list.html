@@ -47,12 +47,13 @@
     </div>
 </div>
 
-<h5 style="text-align:center; margin-top:5rem">Users List</h5>
+<h5 style="text-align:center; margin-top:2rem">List of Users</h5>
 <br>
 
-<div class="row w-50 mx-auto">
-    <div class="row mt-3 mb-2">
-        <div class="col-2 text-center" id="action_dropdown" style="display:none">
+<div class="row w-75 mx-auto">
+    <div class="row mt-1 mb-2">
+
+        <div class="col-2 text-start" id="action_dropdown" style="display:none">
             <div class="btn-group btn-group-sm">
                 <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false">
@@ -66,9 +67,12 @@
             </div>
         </div>
         <div class="col text-end">
-            <button type="button" class="btn btn-success btn-sm" id="add"
-                    onclick="location.href='{{ url_for('add_user')}}'" style="padding:0.3rem 1.5rem">Add
-            </button>
+            <a class="add_button"
+                   style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
+                   href="{{ url_for('add_user') }}">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+<!--            <button type="button" class="btn btn-success btn-sm" id="add"-->
+<!--                    onclick="location.href='{{ url_for('add_user')}}'" style="padding:0.3rem 1.5rem">Add-->
+<!--            </button>-->
         </div>
     </div>
     <div class="row">
