@@ -13,11 +13,11 @@
 
 
 </style>
-<div class="row w-75 mx-auto" style="margin-top:40px">
+<div class="row w-75 mx-auto" style="margin-top:40px;background-color:#eff4ff; border-radius:20px">
 
     <div class="row">
 
-        <div class="col-10 text-start mb-2" id="see_all_for_approved">
+        <div class="col-10 text-start mb-2 mt-3" id="see_all_for_approved">
             <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
                     onclick="history.back()">
                 &#8592 Back
@@ -25,7 +25,7 @@
         </div>
 
 
-        <div class="col-2 mb-2" style="border-radius:20px; background-color:#e9e9e9de;">
+        <div class="col-2 mb-2 mt-3" style="border-radius:20px; background-color:#e9e9e9de;">
             <h6 class="text-center" id="status" style=" margin-top:3px">{{voucher.status.value}}</h6>
         </div>
 
@@ -133,7 +133,7 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="form-outline">
+                    <div class="form-outline mb-3">
                         <label class="form-label">Amount<span style="color:red">*</span></label>
                         <input type="text" class="form-control" name="amount" id="amount"
                                value="{{voucher.amount}}"

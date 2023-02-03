@@ -146,7 +146,7 @@ body{
         </div>
     </div>
     <div class="w-75 mx-auto row  form-group" style="background-color:#eff4ff; border-radius:20px">
-        <div class=" col">
+        <div class="col-6">
             <div class="row mt-2" id="hide_table">
                 <div class="col-6 mb-2" style="font-size:large; font-weight:bold" id="visible_client_name">
                     <u>{{client.client_name}}/{{record_to_update.bill}}</u>
@@ -173,18 +173,18 @@ body{
                     </tr>
                     <tr>
                         <td class="bold">Final Deal:</td>
-                        <td>{{client.final_deal}}</td>
+                        <td>&#8377 {{record_to_update.final_deal}}</td>
                     </tr>
                     <tr>
-                        <td class="bold">GST(18%):</td>
-                        <td>{{client.gst}} (Included)</td>
+                        <td class="bold">GST(%):</td>
+                        <td>{{record_to_update.gst}} (Included)</td>
                     </tr>
                     </tbody>
 
                 </table>
             </div>
 
-            <div class="w-100 mx-auto">
+            <div class="w-75">
                 <div class="row">
                     <div class="col mb-2" style="font-size:large; font-weight:bold" id="client_details" hidden>
                         <u>Client Details</u>
@@ -227,12 +227,21 @@ body{
                 </div>
 
 
-                <div class="row display-11">
+                <div class="row  mt-2">
 
                     <div class="col form_editable mb-5" hidden>
                         <label>Final Deal</label>
-                        <input class="form-control" type="text" name="final_deal"
-                               value="{{record_to_update.client_name.final_deal}}">
+                        <input class="form-control" type="text" name="final_deal" id="amount_by_user"
+                               value="{{record_to_update.final_deal}}">
+                    </div>
+                    <div class="col form_editable mb-5" hidden>
+                        <label>GST(%)</label>
+                        {{form.gst(class="form-select form-select-lg")}}
+                    </div>
+                    <div class="col form_editable mb-5" hidden>
+                        <label class="form-label">Total (Inc. GST)</label>
+                    <input type="text" class="form-control" id="final_deal_including_gst" name="final_deal_including_gst" value="{{request.form['final_deal_including_gst']}}"
+                           placeholder="Total Including GST" readonly>
                     </div>
                 </div>
 
@@ -242,10 +251,10 @@ body{
         <div class="col-1">
 
         </div>
-        <div class="col" id="hide_table2">
+        <div class="col-5" id="hide_table2">
             <div class="row w-100">
                 <div class="row">
-                    <div class="col mt-2 mb-2" style="font-size:large; font-weight:bold">
+                    <div class="col mt-3 mb-2" style="font-size:large; font-weight:bold">
                         <u>Bill Details</u>
                     </div>
 
@@ -280,7 +289,7 @@ body{
                 </table>
             </div>
         </div>
-        <div class="row w-50">
+        <div class="col-5">
             <div class="row" style="font-size:large; font-weight:bold" id="bill_details" hidden>
                 <div class="col mb-2">
                     <u>Bill Details</u>
@@ -372,6 +381,7 @@ body{
 </form>
 
 <script src="{{url_for('static', filename='record_details.js')}}"></script>
+<script src="{{url_for('static', filename='add_record.js')}}"></script>
 
 {% include 'footer.html' %}
 {% endblock %}

@@ -2,6 +2,7 @@
 
 {% block content %}
 
+
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -21,7 +22,7 @@
                     Delete
                 </button>
                 <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
-                        onclick="location.href='{{url_for('dashboard')}}'">Close
+                        onclick="location.href='{{url_for('dashboard', page=1)}}'">Close
                 </button>
             </div>
         </div>
@@ -60,7 +61,7 @@
 </form>
 
 
-<div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
+<div class="w-75" style="overflow-y:scroll;overflow-x:hidden; margin:auto; margin-top:2px">
 
 
     <div class="row w-100">
@@ -69,7 +70,7 @@
     </div>
 
 
-    <form action="" method="post">
+
         <div class="row">
             <div class="col-1 text-center" style="margin-top:32px; display:block; margin-left:-4px" id="filter">
                 <div class="btn-group btn-group-sm">
@@ -85,16 +86,18 @@
                         <div class="dropdown-header text-black">Filter By:</div>
                         <div class="dropdown-divider"></div>
                         <button type="button" class="dropdown-item"
-                                onclick="location.href='{{ url_for('dashboard') }}'"
+                                onclick="location.href='{{ url_for('filter_payment_status', filter_by='pending') }}'"
                                 data-toggle="modal">
                             List of Pending Sales Order
                         </button>
                         <button type="button" class="dropdown-item"
-                                data-toggle="modal" onclick="location.href='{{ url_for('paid_payment_list') }}'">
+                                data-toggle="modal"
+                                onclick="location.href='{{ url_for('filter_payment_status', filter_by='received') }}'">
                             List of Received Sales Order
                         </button>
                         <button type="button" class="dropdown-item"
-                                data-toggle="modal" onclick="location.href='{{ url_for('cancelled_payment_list') }}'">
+                                data-toggle="modal"
+                                onclick="location.href='{{ url_for('filter_payment_status', filter_by='cancelled') }}'">
                             List of Cancelled Sales Order
                         </button>
                     </div>
@@ -146,7 +149,7 @@
                 {% include 'alert.html' %}
             </div>
         </div>
-
+    <form action="" method="post">
         <table class="table table-hover table-sortable" id="table-count">
 
             <thead id="table-head">
@@ -189,7 +192,7 @@
 
                 <td style="cursor: pointer;"
                     onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
-                    {{ record.client_name.final_deal }}
+                    {{ record.final_deal }}
                 </td>
 
                 <td style="cursor: pointer; width:115px"
@@ -204,21 +207,83 @@
             {% endfor %}
             </tbody>
         </table>
+   </form>
 
 
-    </form>
     <hr/>
-    <div class="row w-100 mx-auto">
-        <div class="col text-end">
-            <label style="font-weight:600">Total Received: </label> Rs. {{final_deal_total}}
-        </div>
-    </div>
-    <div class="row w-100 mx-auto">
-        <div class="col text-end">
-            <label style="font-weight:600">Total Payable:</label> Rs.  {{pending_total}}
-        </div>
-    </div>
 
+    <div class="row mb-5">
+        <div class="col">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                {% if all_SalesOrder.has_prev %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('dashboard', page=all_SalesOrder.prev_num) }}'"
+                            class="btn btn-info btn-sm text-white">Previous
+                    </button>
+                </div>
+                {% endif %}
+                {% for page in all_SalesOrder.iter_pages()%}
+                {% if page %}
+                {% if all_SalesOrder.page == page %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('dashboard', page=page) }}'" id="page_btn"
+                            class="btn btn-info btn-sm text-white">{{page}}
+                    </button>
+                </div>
+                {% else %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('dashboard', page=page) }}'" id="page_btn"
+                            class="btn btn-outline-info btn-sm">{{page}}
+                    </button>
+                </div>
+                {% endif %}
+                {% else %}
+                . . .
+                {% endif %}
+                {% endfor %}
+                {% if all_SalesOrder.has_next %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('dashboard', page=all_SalesOrder.next_num) }}'"
+                            class="btn btn-info btn-sm text-white">Next
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+        <div class="col">
+            {%if received_total %}
+            <div class="row w-100 mx-auto">
+                <div class="col text-end">
+                    <label style="font-weight:600">Total Received: </label> &#8377 {{received_total}}
+                </div>
+            </div>
+            {% elif pending_total %}
+            <div class="row w-100 mx-auto">
+                <div class="col text-end">
+                    <label style="font-weight:600">Total Payable:</label> &#8377 {{pending_total}}
+                </div>
+            </div>
+            {% elif cancelled_total %}
+
+            {% else %}
+            <div class="row w-100 mx-auto">
+                <div class="col text-end">
+                    <label style="font-weight:600">Total Received: </label> &#8377 {{final_deal_total}}
+                </div>
+            </div>
+            <div class="row w-100 mx-auto">
+                <div class="col text-end">
+                    <label style="font-weight:600">Total Payable:</label> &#8377 {{pending_final_total}}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
     <div hidden>
         <form method="POST" action="/get_checked_boxes">
 
@@ -243,5 +308,6 @@
 </div>
 
 <script src="{{url_for('static', filename='checkbox_del.js')}}"></script>
+
 
 {% endblock %}

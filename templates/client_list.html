@@ -115,8 +115,7 @@
                 <th>Email</th>
                 <th>Phone No.</th>
                 <th>Address</th>
-                <th>Deal (In Rs.)</th>
-                <th>GST (18%)</th>
+
                 <th>Credit</th>
 
             </tr>
@@ -141,10 +140,7 @@
                 </td>
                 <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.address }}
                 </td>
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.final_deal
-                    }}
-                </td>
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.gst }}</td>
+
                 <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.credit_amount }}</td>
 
             </tr>

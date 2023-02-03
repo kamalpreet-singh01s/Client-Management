@@ -24,3 +24,12 @@
 .closebtn:hover {
   color: black;
 }
+
+#btn-bg{
+background-color:#17a2b8; color:white
+}
+
+#btn-bg:hover{
+    background-color:#31d2f2 !important;
+    color:black !important;
+}

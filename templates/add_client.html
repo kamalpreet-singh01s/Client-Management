@@ -5,14 +5,22 @@
 
 
 <style>
+
+label{
+font-weight:bold;
+}
+
+
     input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+
 </style>
 
-<div class="row w-50 mx-auto mt-3">
+<div class="row w-75 mx-auto mt-5" style="background-color:#eff4ff; border-radius:20px">
     <div class="col">
         <div class="col-8 mx-auto">
             <form action="{{url_for('add_client')}}" method="POST">
@@ -42,15 +50,10 @@ input::-webkit-inner-spin-button {
                     <textarea class="form-control" name="address" placeholder="Address" required>{{request.form['address']}}</textarea>
                     <br>
                 </div>
-                <div>
-                    <label class="form-label">Amount Agreed Upon (In Rs.)<span style="color:red">*</span></label>
-                    <input type="number" class="form-control" value="{{request.form['final_deal']}}" placeholder="Final Deal Amount" name="final_deal"
-                           required>
-                    <br>
-                </div>
 
-                <div class="d-grid gap-2 col-5 mx-auto">
-                    <button type="submit" class="btn btn-primary">Create Client</button>
+
+                <div class="d-grid gap-2 col-4 mx-auto">
+                    <button type="submit" class="btn" id="btn-bg">Create Client</button>
                 </div>
 
             </form>

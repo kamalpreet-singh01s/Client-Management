@@ -95,13 +95,10 @@ input::-webkit-inner-spin-button {
                     <td>{{client_to_update.address}}</td>
                 </tr>
                 <tr>
-                    <td class="bold">Final Deal:</td>
-                    <td>{{client_to_update.final_deal}}</td>
+                    <td class="bold">Overall Payments Total:</td>
+                    <td>&#8377 {{overall_payment_total}}</td>
                 </tr>
-                <tr>
-                    <td class="bold">GST(18%):</td>
-                    <td>{{client_to_update.gst}}</td>
-                </tr>
+
                 </tbody>
 
             </table>
@@ -135,23 +132,16 @@ input::-webkit-inner-spin-button {
                     </div>
 
                 </div>
-                <div class="row display-11">
+                <div class="row display-11 mb-3">
 
-                    <div class="col form_editable" hidden>
+                    <div class="col form_editable mb-5" hidden>
                         <label>Address</label>
                         <input class="form-control" type="text" name="address"
                                value="{{client_to_update.address}}">
                     </div>
 
                 </div>
-                <div class="row display-11 mb-3">
 
-                    <div class="col form_editable mb-2" hidden>
-                        <label>Final Deal</label>
-                        <input class="form-control" type="number" name="final_deal"
-                               value="{{client_to_update.final_deal}}">
-                    </div>
-                </div>
 
             </div>
         </div>

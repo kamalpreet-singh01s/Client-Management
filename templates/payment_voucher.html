@@ -63,7 +63,7 @@
         <div class="row">
             <div class="col text-start mb-3">
                 <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
-                        onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
+                        onclick="history.back()">
                     &#8592 Back
                 </button>
             </div>
@@ -86,7 +86,7 @@
                 <h6 style="font-weight:bold;margin-right:11px">Total Payment Received</h6>
             </div>
             {% endif %}
-            {% if total_amount >= client.final_deal or record.status.value == SalesOrderStatus.received.value or
+            {% if total_amount >= record.final_deal or record.status.value == SalesOrderStatus.received.value or
             record.status.value ==
             SalesOrderStatus.cancelled.value %}
             <div class="col text-end mb-3" hidden>

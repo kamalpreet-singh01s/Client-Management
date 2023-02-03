@@ -38,6 +38,17 @@ class SalesOrderStatus(enum.Enum):
         return [c.value for c in SalesOrderStatus]
 
 
+class Gst(enum.Enum):
+    percent_5 = 5
+    percent_12 = 12
+    percent_18 = 18
+    percent_28 = 28
+
+    @staticmethod
+    def fetch_names():
+        return [c.value for c in Gst]
+
+
 class Users(db.Model):
     __tablename__ = "users"
 
@@ -66,17 +77,16 @@ class Client(db.Model):
     email = db.Column(db.String(100))
     phone_no = db.Column(db.String(100))
     address = db.Column(db.String(500))
-    final_deal = db.Column(db.Float)
-    gst = db.Column(db.Float)
+
     credit_amount = db.Column(db.Float, default=0.0)
 
-    def __init__(self, client_name, email, phone_no, address, final_deal, gst, credit_amount=None):
+    def __init__(self, client_name, email, phone_no, address, credit_amount=None):
         self.client_name = client_name
-        self.final_deal = final_deal
+
         self.email = email
         self.phone_no = phone_no
         self.address = address
-        self.gst = gst
+
         self.credit_amount = credit_amount
 
 
@@ -91,7 +101,8 @@ class SalesOrder(db.Model):
     dop = db.Column(db.String(100))
     bill = db.Column(db.String(100))
     bill_date = db.Column(db.String(100))
-
+    final_deal = db.Column(db.Float)
+    gst = db.Column(db.String(100))
     amount_received_date = db.Column(db.String(100))
 
     status = db.Column(
@@ -100,7 +111,7 @@ class SalesOrder(db.Model):
 
     filename = db.Column(db.String())
 
-    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date,
+    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, final_deal, gst,
                  filename=None, amount_received_date=None):
         self.client_id = client_id
         self.content_advt = content_advt
@@ -108,6 +119,8 @@ class SalesOrder(db.Model):
         self.dop = dop
         self.bill = bill
         self.bill_date = bill_date
+        self.final_deal = final_deal
+        self.gst = gst
         self.amount_received_date = amount_received_date
         self.filename = filename
 

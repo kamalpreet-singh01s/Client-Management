@@ -3,17 +3,32 @@
 {% block content %}
 {% include 'alert.html' %}
 
-<div class="d-grid gap-2 col-5 mx-auto" style="margin-top:40px">
+<style>
+
+label{
+font-weight:bold;
+}
+s
+
+    input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+</style>
+
+<div class="row w-75 mx-auto" style="margin-top:40px;background-color:#eff4ff; border-radius:20px">
 
     <form action="{{request.path}}" method="post" enctype="multipart/form-data">
 
         <fieldset>
             {{ form.csrf_token}}
-            <div class="row mb-3">
+            <div class="row mb-3 mt-3">
                 <div class="col-6">
                     <div class="form-outline">
                         <label class="form-label">Client Name<span style="color:red">*</span></label>
-                        {{form.client_name(class="form-select form-select-lg mb-3 bg-info text-light")}}
+                        {{form.client_name(class="form-select form-select-lg mb-3")}}
 
                     </div>
                 </div>
@@ -60,35 +75,63 @@
 
             </div>
 
+            <div class="row mb-3">
+                {% if request.form['amount_by_user']%}
+                <div class="col">
 
-
-
-                <div class="row mb-3">
-
-                    <div class="col">
-                        <label class="form-label">Bill Copy</label>
-                        <input type="file" accept="application/pdf" class="form-control" name="file">
-                    </div>
-
+                    <label class="form-label">Final Deal<span style="color:red">*</span></label>
+                    <input type="number" class="form-control" id="amount_by_user" name="amount_by_user" value="{{request.form['amount_by_user']}}"
+                           placeholder="Final Deal" required>
                 </div>
-                <div class="row ">
-                    <div class="col mt-3 text-center">
-                        <button type="submit" class="btn btn-primary w-25" data-toggle="modal"
-                                data-target=".bd-example-modal-lg">Add
-                            Record
-                        </button>
-                    </div>
+                {% else %}
+                <div class="col">
+
+                    <label class="form-label">Final Deal<span style="color:red">*</span></label>
+                    <input type="number" class="form-control" id="amount_by_user" name="amount_by_user" value="0"
+                           placeholder="Final Deal" required>
+                </div>
+                {% endif %}
+                <div class="col">
+                    <label class="form-label">GST(%)<span style="color:red">*</span></label>
+                    {{form.gst(class="form-select form-select-lg")}}
+                </div>
+                {% if request.form['final_deal_including_gst'] %}
+                <div class="col">
+                    <label class="form-label">Total Amount (Including GST)</label>
+                    <input type="text" class="form-control" id="final_deal_including_gst" name="final_deal_including_gst" value="{{request.form['final_deal_including_gst']}}"
+                           placeholder="Total Including GST" readonly>
+                </div>
+                {% else %}
+                <div class="col">
+                    <label class="form-label">Total Amount (Including GST)</label>
+                    <input type="text" class="form-control" id="final_deal_including_gst" name="final_deal_including_gst" value="0"
+                           placeholder="Total Including GST" readonly>
+                </div>
+                {% endif %}
+            </div>
+
+
+            <div class="row mb-3">
+
+                <div class="col">
+                    <label class="form-label">Bill Copy</label>
+                    <input type="file" accept="application/pdf" class="form-control" name="file">
                 </div>
 
+            </div>
+            <div class="row ">
+                <div class="col mt-3 mb-3 text-center">
+                    <button type="submit" class="btn btn w-25" id="btn-bg" data-toggle="modal"
+                            data-target=".bd-example-modal-lg">Add
+                        Record
+                    </button>
+                </div>
+            </div>
 
 
         </fieldset>
 
-        <div class="col" hidden>
-            <label class="form-label">Status (Pending, Received or Cancel)<span
-                    style="color:red">*</span></label>
 
-        </div>
     </form>
 </div>
 
@@ -96,6 +139,7 @@
 <br>
 <br>
 
+<script src="{{url_for('static', filename='add_record.js')}}"></script>
 
 {% include 'footer.html' %}
 {% endblock %}

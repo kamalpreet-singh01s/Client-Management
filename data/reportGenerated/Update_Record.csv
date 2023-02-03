@@ -1,3 +1,2 @@
-Id,Client,AD/GP/Others,RO Date,DoP,Bill No.,Bill Date,Amount(Rs.),Amount Received Date,Status
-237,27,Blanditiis cupiditate dolores.,2023-12-21,2022-07-09,222,2022-11-02,118.0,NaN,Received
-236,27,Blanditiis cupiditate dolores.,2023-12-21,2022-07-09,110,2022-11-02,118.0,NaN,Pending
+Id,Client,AD/GP/Others,RO Date,DoP,Bill No.,Bill Date,Final Deal(Rs.),GST(%),Amount Received Date
+124,22,Distinctio omnis et neque ratione perferendis.,2022-05-15,2022-10-19,432,2022-06-11,789.0,28,
