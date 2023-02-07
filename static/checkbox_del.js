@@ -120,7 +120,7 @@ var status = document.querySelectorAll("status").innerText;
 
 $(document).ready(function(){
     $( ".status:contains('Pending')" ).css( "color", "white" );
-    $( ".status:contains('Pending')" ).css( "background-color", "#8e8df4" );
+    $( ".status:contains('Pending')" ).css( "background-color", "#ffc107" );
     $( ".status:contains('Pending')" ).css( "font-weight" , "bold" );
     $( ".status:contains('Pending')" ).css( "border-radius" , "20px" );
 })

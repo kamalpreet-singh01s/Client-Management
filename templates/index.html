@@ -108,15 +108,15 @@ background: white;
                 <a href="{{url_for('dashboard',  page=1)}}" class="nav-link active">Sales Orders</a>
             </li>
             <li class="nav-item active ">
-                <a href="{{url_for('all_vouchers_list')}}" class="nav-link active">Payment Vouchers</a>
+                <a href="{{url_for('all_vouchers_list', page=1)}}" class="nav-link active">Payment Vouchers</a>
             </li>
             <li class="nav-item active ">
-                <a href="{{url_for('all_client_names')}}" class="nav-link active">Clients</a>
+                <a href="{{url_for('all_client_names', page=1)}}" class="nav-link active">Clients</a>
             </li>
 
         </ul>
         <div class="dropdown show nav-item">
-            <a class="btn btn-success btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+            <a class="btn btn-info btn-bg btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                data-toggle="dropdown"
                aria-haspopup="true" aria-expanded="false" style="padding:0.3rem 1.5rem;">
                 {{session.username.capitalize()}}

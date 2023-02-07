@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
     $( ".status:contains('Draft')" ).css( "color", "white" );
-    $( ".status:contains('Draft')" ).css( "background-color", "#8e8df4" );
+    $( ".status:contains('Draft')" ).css( "background-color", "#ffc107" );
     $( ".status:contains('Draft')" ).css( "font-weight" , "600" );
 })
 

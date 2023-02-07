@@ -27,7 +27,7 @@
 </style>
 
 
-<h5 style="text-align:center">List of Payments</h5>
+<h5 style="text-align:center">List of Payment vouchers</h5>
 <br>
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -47,7 +47,7 @@
                         onclick="del_fun()">
                     Delete
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
+                <button type="button" class="btn btn-info btn-sm btn-bg" data-dismiss="modal"
                         onclick="location.href='{{url_for('voucher_list', record_id=record.id)}}'">Close
                 </button>
             </div>
@@ -56,14 +56,14 @@
 </div>
 <form>
 
-    <!--    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">-->
 
-    <div class="w-75 mx-auto" style="overflow-y:scroll; height:400px;overflow-x:hidden">
+
+    <div class="w-75 mx-auto" style="overflow-y:scroll;overflow-x:hidden">
 
         <div class="row">
             <div class="col text-start mb-3">
-                <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
-                        onclick="history.back()">
+                <button type="button" class="btn btn-info btn-bg btn-sm" style="padding:0.3rem 1.5rem"
+                        onclick="location.href='{{url_for('record_details', record_id=record.id)}}'">
                     &#8592 Back
                 </button>
             </div>
@@ -83,7 +83,7 @@
             </div>
             {% if record.status.value == SalesOrderStatus.received.value%}
             <div class="col text-end mb-3 text-success">
-                <h6 style="font-weight:bold;margin-right:11px">Total Payment Received</h6>
+                <h6 style="font-weight:bold;margin-right:11px">Payable Amount 0</h6>
             </div>
             {% endif %}
             {% if total_amount >= record.final_deal or record.status.value == SalesOrderStatus.received.value or
@@ -147,7 +147,7 @@
                 {%else%}
                 <td style="cursor: pointer;"
                     onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >Not Yet Approved
+                >Not Approved
                 </td>
                 {% endif %}
                 <td style="cursor: pointer;"
@@ -197,5 +197,6 @@
 
     </form>
 </div>
+
 <script src="{{url_for('static', filename='vouchers_list.js')}}"></script>
 {%endblock%}

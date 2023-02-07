@@ -24,7 +24,7 @@ input::-webkit-inner-spin-button {
             <div class="row mb-3 mt-5">
                 <div class="row">
                     <div class="col text-start mb-3">
-                        <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
+                        <button type="button" class="btn btn-info btn-sm btn-bg" style="padding:0.3rem 1.5rem"
                                 onclick="history.back()">
                             &#8592 Back
                         </button>
@@ -74,7 +74,7 @@ input::-webkit-inner-spin-button {
             </div>
             <div class="row ">
                 <div class="col mt-3 text-center">
-                    <button type="submit" class="btn w-25" id="btn-bg" data-toggle="modal"
+                    <button type="submit" class="btn w-25 btn-bg" data-toggle="modal"
                             data-target=".bd-example-modal-lg">Create Voucher
                     </button>
                 </div>
@@ -91,4 +91,16 @@ input::-webkit-inner-spin-button {
 <br>
 
 <script src="{{url_for('static', filename='create_payment_voucher.js')}}"></script>
+<script>
+    if (document.referrer.includes('voucher-list')){
+        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', record_id=record.id)}}'")
+        console.log('voucher-list')
+    }
+    else{
+        console.log('all-voucher-list')
+        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('all_vouchers_list', page=1)}}'")
+    }
+
+
+</script>
 {%endblock%}

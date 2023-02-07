@@ -29,7 +29,7 @@
 
 <!--    <div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">-->
 
-<div class="w-75 mx-auto" style="overflow-y:scroll; height:400px;overflow-x:hidden">
+<div class="w-75 mx-auto" style="overflow-x:hidden">
     <form method="GET" action="{{ url_for('search_vouchers') }}">
         <div class="row w-100 mx-auto mb-4">
             <div class="col-5">
@@ -40,7 +40,7 @@
 
                     </div>
                     <div class="btn-group me-2" role="group" aria-label="Second group">
-                        <button type="submit" class="btn btn-info btn-sm"
+                        <button type="submit" class="btn btn-info btn-sm btn-bg"
                         >Search
                         </button>
 
@@ -61,6 +61,12 @@
         </div>
     </form>
     <form>
+        <div class="col" style="display:block" id="back_button">
+            <button type="button" class="btn btn-info btn-bg btn-sm" style="padding:0.3rem 1.5rem;"
+                    onclick="history.back()">
+                &#8592 Back
+            </button>
+        </div>
         <table class="table table-hover table-sortable" id="table-count">
             <thead>
             <tr>
@@ -126,6 +132,51 @@
             </tbody>
         </table>
     </form>
+    {% if not request.args['search'] %}
+    <div class="row mb-5">
+        <div class="col">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                {% if all_vouchers.has_prev %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('all_vouchers_list', page=all_vouchers.prev_num) }}'"
+                            class="btn btn-info btn-bg btn-sm text-white">Previous
+                    </button>
+                </div>
+                {% endif %}
+                {% for page in all_vouchers.iter_pages()%}
+                {% if page %}
+                {% if all_vouchers.page == page %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('all_vouchers_list', page=page) }}'" id="page_btn"
+                            class="btn btn-warning btn-sm text-white">{{page}}
+                    </button>
+                </div>
+                {% else %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('all_vouchers_list', page=page) }}'" id="page_btn"
+                            class="btn btn-info btn-bg btn-sm">{{page}}
+                    </button>
+                </div>
+                {% endif %}
+                {% else %}
+                . . .
+                {% endif %}
+                {% endfor %}
+                {% if all_vouchers.has_next %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('all_vouchers_list', page=all_vouchers.next_num) }}'"
+                            class="btn btn-info btn-bg btn-sm text-white">Next
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <script src="{{url_for('static', filename='all_payment_vouchers_list.js')}}"></script>

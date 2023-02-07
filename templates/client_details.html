@@ -45,7 +45,7 @@ input::-webkit-inner-spin-button {
         </div>
 
         <div class="row w-100">
-            <div class="col d-flex justify-content-start mb-2 mt-2">
+            <div class="col d-flex justify-content-start mb-3 mt-2">
                 <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
                     <div class="btn-group me-2" role="group" aria-label="First group">
                         <input type="submit" value="Update"
@@ -67,7 +67,7 @@ input::-webkit-inner-spin-button {
 
         </div>
         <div class="row">
-            <div class="col text-start  mt-3 mb-3" id="back_button" style="display:block">
+            <div class="col text-start  mt-2 mb-3" id="back_button" style="display:block">
             <button type="button" class="btn btn-info btn-sm" style="padding:0.3rem 1.5rem"
                     onclick="history.back()">
                 &#8592 Back
@@ -79,7 +79,7 @@ input::-webkit-inner-spin-button {
 
                 <tbody>
                 <tr>
-                    <td class="bold">Client Name:</td>
+                    <td class="bold">Name:</td>
                     <td>{{client_to_update.client_name}}</td>
                 </tr>
                 <tr>
@@ -117,7 +117,7 @@ input::-webkit-inner-spin-button {
 
                 <div class="row display-11">
 
-                    <div class="col form_editable" hidden>
+                    <div class="col form_editable mb-2" hidden>
                         <label>Email</label>
                         <input class="form-control" type="text" name="email"
                                value="{{client_to_update.email}}">
@@ -125,7 +125,7 @@ input::-webkit-inner-spin-button {
                 </div>
                 <div class="row display-11">
 
-                    <div class="col form_editable" hidden>
+                    <div class="col form_editable mb-2" hidden>
                         <label>Phone</label>
                         <input class="form-control" type="text" name="phone_no"
                                value="{{client_to_update.phone_no}}">

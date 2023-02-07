@@ -174,10 +174,12 @@ def change_admin_pass(admin_id):
 
 
 # list of clients
-@app.route('/client-list')
-def all_client_names():
+@app.route('/client-list/<int:page>')
+def all_client_names(page):
+    per_page = 8
     if "username" in session:
-        clients = Client.query.order_by(desc(Client.id))
+        clients = Client.query.order_by(desc(Client.id)).paginate(page=page, per_page=per_page,
+                                                                  error_out=False)
         return render_template(Templates.client_list, clients=clients)
     return render_template(Templates.login)
 
@@ -211,7 +213,7 @@ def add_client():
                 db.session.add(added_client)
                 db.session.commit()
                 flash('client Added', category='success')
-                return redirect(url_for('all_client_names'))
+                return redirect(url_for('all_client_names', page=1))
         return render_template(Templates.add_client)
     return render_template(Templates.login)
 
@@ -289,12 +291,10 @@ def update_client(client_id):
 def dashboard(page):
     if "username" in session:
         per_page = 8
-        all_SalesOrder = SalesOrder.query.order_by(SalesOrder.id.desc()).paginate(page=page, per_page=per_page,
-                                                                                  error_out=False)
+        all_SalesOrder = SalesOrder.query.order_by(SalesOrder.bill.desc()).paginate(page=page, per_page=per_page,
+                                                                                    error_out=False)
         all_SalesOrder_count = db.session.query(SalesOrder).count()
-        sales_orders = SalesOrder.query.all()
-        print(all_SalesOrder_count)
-        # all_SalesOrder = SalesOrder.query.order_by(SalesOrder.bill.desc())
+
         total_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.received.value).all()
         pending_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.pending.value).all()
 
@@ -302,10 +302,8 @@ def dashboard(page):
         pending_final_total = 0
 
         for i in total_amount:
-            # sale_order = Client.query.filter_by(id=i.client_id).first()
             final_deal_total = round(float(i.final_deal) + final_deal_total, 2)
         for i in pending_amount:
-            # client = Client.query.filter_by(id=i.client_id).first()
             pending_final_total = round(float(i.final_deal) + pending_final_total, 2)
 
         return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder, final_deal_total=final_deal_total,
@@ -321,10 +319,10 @@ def add_record():
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
 
         if request.method == "POST":
-            file = request.files['file']
-            if file:
+            get_file = request.files['file']
+            if get_file:
                 filename = 'Bill No' + '-' + request.form["bill"] + '-' + request.form["date_of_order"] + '.pdf'
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                get_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 record = SalesOrder(request.form["client_name"], request.form["content_advt"],
                                     datetime.datetime.strptime(request.form["date_of_order"], "%d-%m-%Y").strftime(
@@ -448,26 +446,6 @@ def record_details(record_id):
     return render_template(Templates.login)
 
 
-# set record payment status to received
-# @app.route('/set-receive/<int:record_id>', methods=['GET', 'POST'])
-# def set_receive(record_id):
-#     form = Form()
-#     record_to_update = SalesOrder.query.filter_by(id=record_id).first()
-#     client = Client.query.filter(Client.id == record_to_update.client_id).first()
-#
-#     date_now = datetime.date.today()
-#     time_now = datetime.datetime.now()
-#     last_updated = date_now.strftime("%d/%b/%Y")
-#     last_updated_time = time_now.strftime("%I:%M %p")
-#     record_to_update.status = SalesOrderStatus.received.value
-#
-#     record_to_update.amount_received_date = date_now
-#     db.session.commit()
-#     flash('Status Updated', category='success')
-#     return render_template(Templates.record_details, record_to_update=record_to_update, form=form,
-#                            last_updated=last_updated, client=client, last_updated_time=last_updated_time)
-
-
 # set record payment status to cancelled
 @app.route('/set-cancel/<int:record_id>', methods=['GET', 'POST'])
 def set_cancel(record_id):
@@ -504,7 +482,7 @@ def voucher_list(record_id):
         client.credit_amount = round(client.credit_amount + float(total_amount) - record.final_deal, 2)
         db.session.commit()
 
-    return render_template('payment_voucher.html', total_vouchers=total_vouchers, record=record,
+    return render_template('list_of_sale_order_vouchers.html', total_vouchers=total_vouchers, record=record,
                            total_amount=total_amount, client=client, SalesOrderStatus=SalesOrderStatus,
                            total_voucher_count=total_voucher_count)
 
@@ -514,13 +492,13 @@ def create_payment_voucher(record_id):
     if "username" in session:
         record = SalesOrder.query.filter_by(id=record_id).first()
         date_today = datetime.date.today()
-        paymentVoucher_count = db.session.query(PaymentVoucher).count()
+        payment_voucher_count = db.session.query(PaymentVoucher).count()
 
         last_voucher_ref_no = db.session.query(PaymentVoucher).order_by(PaymentVoucher.id.desc()).first()
 
         if request.method == "POST":
 
-            if paymentVoucher_count < 1:
+            if payment_voucher_count < 1:
                 voucher_no = 0
                 random_string = ''
                 for i in range(10):
@@ -570,14 +548,14 @@ def get_client_list(bill_no):
 @app.route('/create-new-payment-voucher', methods=['GET', 'POST'])
 def create_new_payment_voucher():
     if "username" in session:
-        # record = SalesOrder.query.filter_by(id=record_id).first()
+
         form = Form()
 
-        form.bill_no.choices = [(bill_no.id, bill_no.bill) for bill_no in SalesOrder.query.all()]
-        # form.client_name.choices = [(client.client_id, client.client_name) for client in SalesOrder.query.all()]
+        form.bill_no.choices = [(bill_no.id, bill_no.bill) for bill_no in
+                                SalesOrder.query.order_by(SalesOrder.bill.asc()).all()]
 
         date_today = datetime.date.today()
-        paymentVoucher_count = db.session.query(PaymentVoucher).count()
+        payment_voucher_count = db.session.query(PaymentVoucher).count()
 
         last_voucher_ref_no = db.session.query(PaymentVoucher).order_by(PaymentVoucher.id.desc()).first()
 
@@ -588,7 +566,7 @@ def create_new_payment_voucher():
             if check_sales_order_status.status.value == SalesOrderStatus.received.value or check_sales_order_status.status.value == SalesOrderStatus.cancelled.value:
                 flash("Cannot make changes to this Record.")
                 return redirect(url_for('create_new_payment_voucher'))
-            if paymentVoucher_count < 1:
+            if payment_voucher_count < 1:
                 voucher_no = 0
                 random_string = ''
                 for i in range(10):
@@ -622,8 +600,9 @@ def create_new_payment_voucher():
 def voucher_details(voucher_id):
     if "username" in session:
         voucher = PaymentVoucher.query.filter_by(id=voucher_id).first()
-        print(voucher.status.value)
-        return render_template('voucher_details.html', voucher=voucher, PaymentStatus=PaymentStatus)
+        record = SalesOrder.query.filter_by(bill=voucher.bill_no.bill).first()
+        return render_template('payment_voucher_details.html', voucher=voucher, PaymentStatus=PaymentStatus,
+                               record=record)
     return render_template(Templates.login)
 
 
@@ -660,11 +639,14 @@ def cancel_voucher(voucher_id):
     return render_template(Templates.login)
 
 
-@app.route('/all-vouchers-list', methods=['GET', 'POST'])
-def all_vouchers_list():
+@app.route('/all-vouchers-list/<int:page>', methods=['GET', 'POST'])
+def all_vouchers_list(page):
+    per_page = 8
     if "username" in session:
-        all_vouchers = PaymentVoucher.query.order_by(desc(PaymentVoucher.id)).all()
-        return render_template('all_payment_vouchers_list.html', all_vouchers=all_vouchers)
+        all_vouchers = PaymentVoucher.query.order_by(desc(PaymentVoucher.id)).paginate(page=page, per_page=per_page,
+                                                                                       error_out=False)
+
+        return render_template('list_of_all_payment_vouchers.html', all_vouchers=all_vouchers)
     return render_template(Templates.login)
 
 
@@ -673,42 +655,72 @@ def search_vouchers():
     if "username" in session:
 
         if request.method == 'GET':
+
             search = request.args['search'].lower()
             records = SalesOrder.query.filter(SalesOrder.bill.ilike(f"%{search}%")).all()
             clients = Client.query.filter(Client.client_name.ilike(f"%{search}%")).all()
             record_ids = [record.id for record in records]
             client_ids = [client.id for client in clients]
             all_vouchers = PaymentVoucher.query.filter(PaymentVoucher.reference_no.ilike(f"%{search}%") |
-                                                       PaymentVoucher.record_id.in_(
+                                                       PaymentVoucher.sales_order_id.in_(
                                                            record_ids) | PaymentVoucher.client_id.in_(
                 client_ids)).all()
             if all_vouchers:
-                return render_template('all_payment_vouchers_list.html', all_vouchers=all_vouchers)
+                return render_template('list_of_all_payment_vouchers.html', all_vouchers=all_vouchers)
             flash('No Record Found')
-            return redirect(url_for('all_vouchers_list'))
-        return redirect(url_for('voucher_list'))
+            return redirect(url_for('all_vouchers_list', page=1))
+        return redirect(url_for('all_vouchers_list'))
     return render_template(Templates.login)
 
 
 # list of records with pending payment status
-@app.route('/sales-order/<string:filter_by>')
-def filter_payment_status(filter_by):
+@app.route('/sales-order/<string:filter_by>/<int:page>')
+def filter_payment_status(filter_by, page):
     if "username" in session:
+        per_page = 8
 
         if filter_by == 'pending':
-
+            print(filter_by)
             pending_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.pending.value).all()
 
             pending_total = 0
 
             for i in pending_amount:
-                client = Client.query.filter_by(id=i.client_id).first()
-                pending_total = round(float(client.final_deal) + pending_total, 2)
+                pending_total = round(float(i.final_deal) + pending_total, 2)
+
+            if request.args.get('search', ''):
+                search = request.args['search'].lower()
+
+                clients = Client.query.filter(Client.client_name.ilike(f"%{search}%")).all()
+                client_ids = [client.id for client in clients]
+                all_SalesOrder_count = db.session.query(SalesOrder).count()
+                all_SalesOrder = SalesOrder.query.filter(
+                    SalesOrder.client_id.in_(client_ids) | SalesOrder.bill.ilike(f"%{search}%")).filter(
+                    SalesOrder.status == SalesOrderStatus.pending.value).all()
+
+                pending_total = 0
+
+                for i in all_SalesOrder:
+                    print(i)
+                    pending_total = round(float(i.final_deal) + pending_total, 2)
+                if all_SalesOrder:
+                    all_SalesOrder = SalesOrder.query.filter(
+                        SalesOrder.client_id.in_(client_ids) | SalesOrder.bill.ilike(
+                            f"%{search}%")).filter(SalesOrder.status == SalesOrderStatus.pending.value).paginate(
+                        page=page,
+                        per_page=per_page,
+                        error_out=False)
+
+                    return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder,
+                                           all_SalesOrder_count=all_SalesOrder_count, pending_total=pending_total,
+                                           search=search,
+                                           filter_by=filter_by)
+                flash('No Record Found')
 
             all_SalesOrder = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.pending.value).order_by(
-                desc(SalesOrder.id)).all()
+                desc(SalesOrder.id)).paginate(page=page, per_page=per_page, error_out=False)
             return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder,
-                                   pending_total=pending_total)
+                                   pending_total=pending_total, filter_by=filter_by)
 
         elif filter_by == 'received':
             received_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.received.value).all()
@@ -716,12 +728,40 @@ def filter_payment_status(filter_by):
             received_total = 0
 
             for i in received_amount:
-                client = Client.query.filter_by(id=i.client_id).first()
-                received_total = round(float(client.final_deal) + received_total, 2)
+                received_total = round(float(i.final_deal) + received_total, 2)
 
+            if request.args.get('search', ''):
+                search = request.args['search'].lower()
+
+                clients = Client.query.filter(Client.client_name.ilike(f"%{search}%")).all()
+                client_ids = [client.id for client in clients]
+                all_SalesOrder_count = db.session.query(SalesOrder).count()
+                all_SalesOrder = SalesOrder.query.filter(
+                    SalesOrder.client_id.in_(client_ids) | SalesOrder.bill.ilike(f"%{search}%")).filter(
+                    SalesOrder.status == SalesOrderStatus.received.value).all()
+
+                received_total = 0
+
+                for i in all_SalesOrder:
+                    received_total = round(float(i.final_deal) + received_total, 2)
+
+                if all_SalesOrder:
+                    all_SalesOrder = SalesOrder.query.filter(
+                        SalesOrder.client_id.in_(client_ids) | SalesOrder.bill.ilike(
+                            f"%{search}%")).filter(SalesOrder.status == SalesOrderStatus.received.value).paginate(
+                        page=page,
+                        per_page=per_page,
+                        error_out=False)
+
+                    return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder,
+                                           all_SalesOrder_count=all_SalesOrder_count, received_total=received_total,
+                                           search=search,
+                                           filter_by=filter_by)
+                flash('No Record Found')
             all_SalesOrder = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.received.value).order_by(
-                desc(SalesOrder.id)).all()
-            return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder, received_total=received_total)
+                desc(SalesOrder.id)).paginate(page=page, per_page=per_page, error_out=False)
+            return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder, received_total=received_total,
+                                   filter_by=filter_by)
 
         elif filter_by == 'cancelled':
             received_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.cancelled.value).all()
@@ -729,12 +769,39 @@ def filter_payment_status(filter_by):
             cancelled_total = 0
 
             for i in received_amount:
-                client = Client.query.filter_by(id=i.client_id).first()
-                cancelled_total = round(float(client.final_deal) + cancelled_total, 2)
+                cancelled_total = round(float(i.final_deal) + cancelled_total, 2)
 
+            if request.args.get('search', ''):
+                search = request.args['search'].lower()
+
+                clients = Client.query.filter(Client.client_name.ilike(f"%{search}%")).all()
+                client_ids = [client.id for client in clients]
+                all_SalesOrder_count = db.session.query(SalesOrder).count()
+                all_SalesOrder = SalesOrder.query.filter(
+                    SalesOrder.client_id.in_(client_ids) | SalesOrder.bill.ilike(f"%{search}%")).filter(
+                    SalesOrder.status == SalesOrderStatus.received.value).all()
+
+                cancelled_total = 0
+
+                for i in received_amount:
+                    cancelled_total = round(float(i.final_deal) + cancelled_total, 2)
+
+                if all_SalesOrder:
+                    all_SalesOrder = SalesOrder.query.filter(
+                        SalesOrder.client_id.in_(client_ids) | SalesOrder.bill.ilike(
+                            f"%{search}%")).filter(SalesOrder.status == SalesOrderStatus.cancelled.value).paginate(
+                        page=page,
+                        per_page=per_page,
+                        error_out=False)
+                    return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder,
+                                           all_SalesOrder_count=all_SalesOrder_count, cancelled_total=cancelled_total,
+                                           search=search,
+                                           filter_by=filter_by)
+                flash('No Record Found')
             all_SalesOrder = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.cancelled.value).order_by(
-                desc(SalesOrder.id)).all()
-            return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder, cancelled_total=cancelled_total)
+                desc(SalesOrder.id)).paginate(page=page, per_page=per_page, error_out=False)
+            return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder, cancelled_total=cancelled_total,
+                                   filter_by=filter_by)
     return render_template(Templates.login)
 
 
@@ -749,19 +816,37 @@ def download(filename, record_id):
 
 
 # Search specific keyword in list of records
-@app.route('/search', methods=['POST', 'GET'])
-def search_records():
+@app.route('/sales-order/<int:page>', methods=['POST', 'GET'])
+def search_records(page):
+    per_page = 8
     if "username" in session:
         if request.method == 'GET':
             search = request.args['search'].lower()
+
             clients = Client.query.filter(Client.client_name.ilike(f"%{search}%")).all()
             client_ids = [client.id for client in clients]
             all_SalesOrder_count = db.session.query(SalesOrder).count()
             all_SalesOrder = SalesOrder.query.filter(
                 SalesOrder.client_id.in_(client_ids) | SalesOrder.bill.ilike(f"%{search}%")).all()
             if all_SalesOrder:
+                all_SalesOrder = SalesOrder.query.filter(
+                    SalesOrder.client_id.in_(client_ids) | SalesOrder.bill.ilike(f"%{search}%")).paginate(page=page,
+                                                                                                          per_page=per_page,
+                                                                                                          error_out=False)
+
+                final_deal_total = 0
+                pending_final_total = 0
+
+                for i in all_SalesOrder:
+                    if i.status.value == SalesOrderStatus.received.value:
+                        final_deal_total = round(float(i.final_deal) + final_deal_total, 2)
+                    elif i.status.value == SalesOrderStatus.pending.value:
+                        pending_final_total = round(float(i.final_deal) + pending_final_total, 2)
+
                 return render_template(Templates.dashboard, all_SalesOrder=all_SalesOrder,
-                                       all_SalesOrder_count=all_SalesOrder_count)
+                                       all_SalesOrder_count=all_SalesOrder_count, search=search,
+                                       final_deal_total=final_deal_total, pending_final_total=pending_final_total)
+
             flash('No Record Found')
             return redirect(url_for('dashboard', page=1))
         return redirect(url_for('dashboard', page=1))
@@ -769,20 +854,22 @@ def search_records():
 
 
 # Search specific keyword in list of clients
-@app.route('/clients', methods=['POST', 'GET'])
-def search_clients():
+@app.route('/clients/<int:page>', methods=['POST', 'GET'])
+def search_clients(page):
+    per_page = 8
     if "username" in session:
         if request.method == 'GET':
             search = request.args['search'].lower()
             clients = Client.query.filter(
                 Client.client_name.ilike(f"%{search}%") | Client.phone_no.ilike(f"%{search}%") | Client.address.ilike(
-                    f"%{search}%") | Client.email.ilike(f"%{search}%")).all()
+                    f"%{search}%") | Client.email.ilike(f"%{search}%")).paginate(page=page, per_page=per_page,
+                                                                                 error_out=False)
             if clients:
-                return render_template(Templates.client_list, clients=clients)
-            else:
-                flash('No Record Found')
-                return redirect(url_for('all_client_names'))
+                return render_template(Templates.client_list, clients=clients, search=search)
 
+            flash('No Record Found', category='error')
+            return redirect(url_for('all_client_names', page=1))
+        return redirect(url_for('all_client_names', page=1))
     return render_template(Templates.login)
 
 
@@ -904,10 +991,7 @@ def csv_file_record_to_update():
                      'Amount Received Date'])
                 for rec_id in rec_ids.split(','):
                     record = SalesOrder.query.filter_by(id=rec_id).first()
-                    client = Client.query.filter_by(id=SalesOrder.client_id).first()
-                    record.date_of_order = record.date_of_order
-                    record.dop = record.dop
-                    record.bill_date = record.bill_date
+
                     final = [record.client_name.client_name, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
@@ -963,12 +1047,7 @@ def file_upload():
                         if row.status.value == SalesOrderStatus.received.value or row.status.value == SalesOrderStatus.cancelled.value:
                             flash("Cannot make changes to Records with status Received/Pending")
                             return render_template(Templates.file_upload)
-                        # if read_file.loc[count, 'Status'] == SalesOrderStatus.pending.value:
-                        #     read_file.loc[count, 'Status'] = SalesOrderStatus.pending.value
-                        # elif read_file.loc[count, 'Status'] == SalesOrderStatus.received.value:
-                        #     read_file.loc[count, 'Status'] = SalesOrderStatus.received.value
-                        # elif read_file.loc[count, 'Status'] == SalesOrderStatus.cancelled.value:
-                        #     read_file.loc[count, 'Status'] = SalesOrderStatus.cancelled.value
+
                         if row.id == int(read_file.loc[count, 'Id']):
                             row.client_id = int(read_file.loc[count, 'Client'])
                             row.content_advt = read_file.loc[count, 'AD/GP/Others']
@@ -980,7 +1059,7 @@ def file_upload():
                                                                        "%d-%m-%Y").strftime("%Y-%m-%d")
                             row.final_deal = float(read_file.loc[count, 'Final Deal(Rs.)'])
                             row.gst = str(read_file.loc[count, 'GST(%)'])
-                            # row.status = read_file.loc[count, 'Status']
+
                             row.amount_received_date = read_file.loc[count, 'Amount Received Date']
                             db.session.commit()
                             count += 1
@@ -1000,13 +1079,7 @@ def file_upload():
                     if count >= len(read_file):
                         break
                     else:
-                        #
-                        # if read_file.loc[count, 'Status'] == SalesOrderStatus.pending.value:
-                        #     read_file.loc[count, 'Status'] = SalesOrderStatus.pending.value
-                        # elif read_file.loc[count, 'Status'] == SalesOrderStatus.received.value:
-                        #     read_file.loc[count, 'Status'] = SalesOrderStatus.received.value
-                        # elif read_file.loc[count, 'Status'] == SalesOrderStatus.cancelled.value:
-                        #     read_file.loc[count, 'Status'] = SalesOrderStatus.cancelled.value
+
 
                         bill_no_exists = db.session.query(db.exists().where(
                             str(SalesOrder.bill) == read_file.loc[count, 'Bill No.']))

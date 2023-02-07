@@ -11,15 +11,18 @@ console.log('status_name')
 
 
 if (status_name.innerHTML == "Approved"){
-    status_name.style.color = "green";
+    status_name.style.color = "white";
     status_name.style.fontWeight = "bolder";
+    document.getElementById('status_div').style.backgroundColor = "green";
 }
 
 if (status_name.innerHTML == "Cancelled"){
-    status_name.style.color = "red";
+    status_name.style.color = "white";
     status_name.style.fontWeight = "bolder";
+    document.getElementById('status_div').style.backgroundColor = "red";
 }
 if (status_name.innerHTML == "Draft"){
-    status_name.style.color = "#5F5DFF";
+    status_name.style.color = "white";
     status_name.style.fontWeight = "bolder";
+    document.getElementById('status_div').style.backgroundColor = "#ffc107";
 }

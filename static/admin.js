@@ -50,3 +50,18 @@ $(".form-check-input").click(function(){
     });
 
 
+$(document).ready(function() {
+  // Get all rows in the table
+  var rows = $("#table-count tr");
+
+  // Iterate through each row
+  rows.each(function(index) {
+    // Get the specified column
+    var column = $(this).find("td:nth-child(2)"); // assumes the 2nd column is the one to be numbered
+    // Check if the column exists
+    if (column.length) {
+      // Add the current index as the column number
+      column.text(index);
+    }
+  });
+});

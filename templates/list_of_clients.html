@@ -21,8 +21,8 @@
                         onclick="del_fun()">
                     Delete
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal"
-                        onclick="location.href='{{url_for('all_client_names')}}'">Close
+                <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
+                        onclick="location.href='{{url_for('all_client_names', page=1)}}'">Close
                 </button>
             </div>
         </div>
@@ -33,7 +33,7 @@
 <br>
 
 
-<form method="GET" action="{{ url_for('search_clients') }}">
+<form method="GET" action="{{ url_for('search_clients', page=1) }}">
     <div class="row w-75 mx-auto">
 
 
@@ -45,7 +45,7 @@
 
                 </div>
                 <div class="btn-group me-2" role="group" aria-label="Second group">
-                    <button type="submit" class="btn btn-info btn-sm"
+                    <button type="submit" class="btn btn-info btn-sm btn-bg"
                     >Search
                     </button>
 
@@ -61,7 +61,7 @@
     </div>
 </form>
 <br>
-<div class="w-75" style="overflow-y:scroll;overflow-x:hidden;height:450px; margin:auto; margin-top:2px">
+<div class="w-75" style="margin:auto; margin-top:2px">
 
     <div class="row mb-1 ">
 
@@ -149,6 +149,49 @@
         </table>
 
     </form>
+    <div class="row mb-5">
+        <div class="col">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                {% if clients.has_prev %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('search_clients', page=clients.prev_num, search=request.args.get('search', '')) }}'"
+                            class="btn btn-info btn-sm btn-bg text-white">Previous
+                    </button>
+                </div>
+                {% endif %}
+                {% for page in clients.iter_pages()%}
+                {% if page %}
+                {% if clients.page == page %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('search_clients', page=page, search=request.args.get('search', '')) }}'" id="page_btn"
+                            class="btn btn-warning btn-sm text-white">{{page}}
+                    </button>
+                </div>
+                {% else %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('search_clients', page=page, search=request.args.get('search', '')) }}'" id="page_btn"
+                            class="btn btn-info btn-bg btn-sm">{{page}}
+                    </button>
+                </div>
+                {% endif %}
+                {% else %}
+                . . .
+                {% endif %}
+                {% endfor %}
+                {% if clients.has_next %}
+                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                    <button type="button"
+                            onclick="location.href='{{ url_for('search_clients', page=clients.next_num, search=request.args.get('search', '')) }}'"
+                            class="btn btn-info btn-bg btn-sm text-white">Next
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 <br>
 
