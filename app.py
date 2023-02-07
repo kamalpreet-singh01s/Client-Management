@@ -319,6 +319,12 @@ def add_record():
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
 
         if request.method == "POST":
+
+            exists = db.session.query(SalesOrder.bill).filter_by(bill=request.form["bill"]).first() is not None
+            if exists:
+                flash('Bill No. already exists', category='error')
+                return render_template(Templates.add_record, form=form)
+
             get_file = request.files['file']
             if get_file:
                 filename = 'Bill No' + '-' + request.form["bill"] + '-' + request.form["date_of_order"] + '.pdf'
@@ -971,12 +977,6 @@ def csv_file_record_to_update():
                 for rec_id in rec_ids.split(','):
                     record = SalesOrder.query.filter_by(id=rec_id).first()
 
-                    record.date_of_order = record.date_of_order
-
-                    record.dop = record.dop
-
-                    record.bill_date = record.bill_date
-
                     final = [record.id, record.client_id, record.content_advt, record.date_of_order,
                              record.dop, record.bill,
                              record.bill_date,
@@ -1044,19 +1044,18 @@ def file_upload():
                     for row in record:
                         if count >= len(read_file):
                             break
-                        if row.status.value == SalesOrderStatus.received.value or row.status.value == SalesOrderStatus.cancelled.value:
-                            flash("Cannot make changes to Records with status Received/Pending")
-                            return render_template(Templates.file_upload)
 
                         if row.id == int(read_file.loc[count, 'Id']):
+                            if row.status.value == SalesOrderStatus.received.value or row.status.value == SalesOrderStatus.cancelled.value:
+                                print(count, row.status.value)
+                                flash("Cannot make changes to Records with status Received/Cancelled")
+                                return render_template(Templates.file_upload)
                             row.client_id = int(read_file.loc[count, 'Client'])
                             row.content_advt = read_file.loc[count, 'AD/GP/Others']
-                            row.date_of_order = datetime.datetime.strptime(read_file.loc[count, 'RO Date'],
-                                                                           "%d-%m-%Y").strftime("%Y-%m-%d")
-                            row.dop = datetime.datetime.strptime(read_file.loc[count, 'DoP'], "%d-%m-%Y").strftime(
-                                "%Y-%m-%d")
-                            row.bill_date = datetime.datetime.strptime(read_file.loc[count, 'Bill Date'],
-                                                                       "%d-%m-%Y").strftime("%Y-%m-%d")
+                            row.date_of_order = read_file.loc[count, 'RO Date'],
+
+                            row.dop = read_file.loc[count, 'DoP']
+                            row.bill_date = read_file.loc[count, 'Bill Date'],
                             row.final_deal = float(read_file.loc[count, 'Final Deal(Rs.)'])
                             row.gst = str(read_file.loc[count, 'GST(%)'])
 
@@ -1080,7 +1079,6 @@ def file_upload():
                         break
                     else:
 
-
                         bill_no_exists = db.session.query(db.exists().where(
                             str(SalesOrder.bill) == read_file.loc[count, 'Bill No.']))
                         print(bill_no_exists)
@@ -1094,15 +1092,14 @@ def file_upload():
 
                             new_record = SalesOrder(client_id=get_client_id.id,
                                                     content_advt=read_file.loc[count, 'AD/GP/Others'],
-                                                    date_of_order=datetime.datetime.strptime(
-                                                        read_file.loc[count, 'RO Date'], "%d-%m-%Y").strftime(
-                                                        "%Y-%m-%d"),
-                                                    dop=datetime.datetime.strptime(read_file.loc[count, 'DoP'],
-                                                                                   "%d-%m-%Y").strftime("%Y-%m-%d"),
+                                                    date_of_order=
+                                                    read_file.loc[count, 'RO Date'],
+                                                    dop=read_file.loc[count, 'DoP'],
+
                                                     bill=int(read_file.loc[count, 'Bill No.']),
-                                                    bill_date=datetime.datetime.strptime(
-                                                        read_file.loc[count, 'Bill Date'],
-                                                        "%d-%m-%Y").strftime("%Y-%m-%d"),
+                                                    bill_date=
+                                                    read_file.loc[count, 'Bill Date'],
+
                                                     final_deal=float(read_file.loc[count, 'Final Deal(Rs.)']),
                                                     gst=str(read_file.loc[count, 'GST(%)']),
                                                     amount_received_date=read_file.loc[count, 'Amount Received Date'],
