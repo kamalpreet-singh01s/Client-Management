@@ -26,24 +26,70 @@ input[type="file"] {
     background-color: #0dcaf070;
 }
 
-
-
-
-
-
 body{
     background-color: #f8f9fa;
 }
 
 
-
-
 </style>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left">
+                Do you really want to Cancel this Sales Order?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm"
+                        onclick="location.href='{{url_for('set_cancel',record_id = record_to_update.id)}}'">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
+                        onclick="location.href='{{url_for('record_details', record_id=record_to_update.id)}}'">Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="exampleModalCenterDiscard" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitleDiscard">Confirmation</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left">
+                Do you really want to discard the changes made?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm"
+                        onclick="location.href='{{url_for('record_details',record_id = record_to_update.id)}}'">
+                    Yes
+                </button>
+                <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
+                        >No
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <form action="{{request.path}}" method="post" enctype="multipart/form-data" style="overflow:hidden">
     <div class="row mx-auto mt-2" id="action_buttons" style="z-index:1; width:75%">
 
-        <!--        <div class="row mb-2">-->
         {% if record_to_update.status.value == SalesOrderStatus.received.value or record_to_update.status.value ==
         SalesOrderStatus.cancelled.value%}
         <div class="col-2">
@@ -55,7 +101,7 @@ body{
             </button>
         </div>
         <div class="col-8 text-center" id="voucher_book">
-            <img src="{{url_for('static', filename= 'book.png')}}" alt="no image" height="40px"
+            <img src="{{url_for('static', filename= 'images/book.png')}}" alt="no image" height="40px"
                  style="cursor:pointer"
                  onclick="location.href='{{url_for('voucher_list', record_id = record_to_update.id)}}'">
             <h6>{{total_vouchers}}</h6>
@@ -71,15 +117,16 @@ body{
         </div>
 
         <div title="Payment Vouchers" class="col-8 text-center" id="voucher_book">
-            <img src="{{url_for('static', filename= 'book.png')}}" alt="no image" height="40px"
+            <img src="{{url_for('static', filename= 'images/book.png')}}" alt="no image" height="40px"
                  style="cursor:pointer"
                  onclick="location.href='{{url_for('voucher_list', record_id = record_to_update.id)}}'">
             <h6>{{total_vouchers}}</h6>
         </div>
         <div class="col-2 text-end mt-2">
-            <button type="button" class="btn btn-danger btn-sm"
+            <button type="button" class="btn btn-danger btn-sm" data-target="#exampleModalCenter"
+                            data-toggle="modal"
                     id="cancelled_button_before" style="padding:0.3rem 1.5rem"
-                    onclick="location.href='{{url_for('set_cancel',record_id = record_to_update.id)}}'">
+                    >
                 Cancel
             </button>
         </div>
@@ -97,8 +144,9 @@ body{
 
                     </div>
                     <div class="btn-group me-2" role="group" aria-label="Second group">
-                        <button type="button" class="btn btn-danger btn-sm" style="padding:0.3rem 1.5rem"
-                                onclick="location.href='{{url_for('record_details',record_id = record_to_update.id)}}'"
+                        <button type="button" class="btn btn-danger btn-sm" style="padding:0.3rem 1.5rem" data-target="#exampleModalCenterDiscard"
+                            data-toggle="modal"
+
                         >
                             Discard
                         </button>
@@ -106,7 +154,7 @@ body{
                 </div>
             </div>
             <div title="Payment Vouchers" class="col-4 text-center" id="voucher_book_action_button" hidden>
-                <img src="{{url_for('static', filename= 'book.png')}}" alt="no image" height="40px"
+                <img src="{{url_for('static', filename= 'images/book.png')}}" alt="no image" height="40px"
                      style="cursor:pointer;margin-left:162px" id="voucher_book_action_button_image"
                      onclick="location.href='{{url_for('voucher_list', record_id = record_to_update.id)}}'">
                 <h6 class="" style="margin-left:162px" id="total_vouchers_after">{{total_vouchers}}</h6>
@@ -115,8 +163,9 @@ body{
 
             <div class="col-5 text-end " id="cancelled_button_after" style="display:none">
                 <button type="button" class="btn btn-danger btn-sm"
-                        id="cancelled_button" style="padding:0.3rem 1.5rem"
-                        onclick="location.href='{{url_for('set_cancel',record_id = record_to_update.id)}}'">
+                        id="cancelled_button" style="padding:0.3rem 1.5rem" data-target="#exampleModalCenter"
+                            data-toggle="modal"
+                        >
                     Cancel
                 </button>
             </div>
@@ -132,11 +181,12 @@ body{
 
 
 
+
     </script>
     <div class="row w-75 mx-auto">
         <div class="col mb-1" style="display:block" id="back_button">
             <button type="button" class="btn btn-info btn-bg btn-sm" style="padding:0.3rem 1.5rem;"
-                    onclick="history.back()">
+                    onclick="location.href='{{url_for('dashboard', page=1)}}'">
                 &#8592 Back
             </button>
         </div>
@@ -236,12 +286,13 @@ body{
                     </div>
                     <div class="col form_editable mb-5" hidden>
                         <label>GST(%)</label>
-                        {{form.gst(class="form-select form-select-lg")}}
+                        {{form.gst(class="form-select form-select")}}
                     </div>
                     <div class="col form_editable mb-5" hidden>
-                        <label class="form-label">Total (Inc. GST)</label>
-                    <input type="text" class="form-control" id="final_deal_including_gst" name="final_deal_including_gst" value="{{request.form['final_deal_including_gst']}}"
-                           placeholder="Total Including GST" readonly>
+                        <label>Total (Inc. GST)</label>
+                        <input type="text" class="form-control" id="final_deal_including_gst" style="display:none"
+                               name="final_deal_including_gst" value="{{request.form['final_deal_including_gst']}}"
+                               placeholder="Total Including GST" readonly>
                     </div>
                 </div>
 
@@ -252,7 +303,7 @@ body{
 
         </div>
         <div class="col-5" id="hide_table2">
-            <div class="row w-100">
+            <div class="row w-75">
                 <div class="row">
                     <div class="col mt-3 mb-2" style="font-size:large; font-weight:bold">
                         <u>Bill Details</u>
@@ -322,7 +373,7 @@ body{
 
                 <div class="col form_editable" hidden>
                     <label>Bill Date</label>
-                    <input class="form-control" type="date" name="bill_date" value="{{record_to_update.bill_date}}">
+                    <input class="form-control" type="date" name="bill_date" value="{{record_to_update.bill_date}}" readonly>
                 </div>
 
             </div>
@@ -380,8 +431,10 @@ body{
     </div>
 </form>
 
-<script src="{{url_for('static', filename='record_details.js')}}"></script>
-<script src="{{url_for('static', filename='add_record.js')}}"></script>
+
+
+<script src="{{url_for('static', filename='js/record_details.js')}}"></script>
+
 
 {% include 'footer.html' %}
 {% endblock %}

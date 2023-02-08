@@ -45,8 +45,8 @@ input::-webkit-inner-spin-button {
                     <div class="form-outline">
                         <label class="form-label">RO Date<span style="color:red">*</span></label>
                         <input type="date" class="form-control" name="date_of_order"
-                               value="{{request.form['date_of_order']}}"
-                               placeholder="RO Date" required/>
+                               value="{{date_today}}"
+                               placeholder="RO Date" required readonly/>
 
                     </div>
                 </div>
@@ -54,8 +54,8 @@ input::-webkit-inner-spin-button {
                     <div class="form-outline">
                         <label class="form-label">DoP<span style="color:red">*</span></label>
                         <input type="date" class="form-control" name="dop"
-                               value="{{request.form['dop']}}"
-                               placeholder="DoP" required/>
+                               value="{{date_today}}"
+                               placeholder="DoP" required readonly/>
                     </div>
                 </div>
             </div>
@@ -69,8 +69,8 @@ input::-webkit-inner-spin-button {
                 <div class="col">
 
                     <label class="form-label">Bill Date<span style="color:red">*</span></label>
-                    <input type="date" class="form-control" name="bill_date" value="{{request.form['bill_date']}}"
-                           placeholder="Bill Date" required>
+                    <input type="date" class="form-control" name="bill_date" value="{{date_today}}"
+                           placeholder="Bill Date" required readonly>
                 </div>
 
             </div>
@@ -86,14 +86,14 @@ input::-webkit-inner-spin-button {
                 {% else %}
                 <div class="col">
 
-                    <label class="form-label">Final Deal<span style="color:red">*</span></label>
+                    <label class="form-label">Amount<span style="color:red">*</span></label>
                     <input type="number" class="form-control" id="amount_by_user" name="amount_by_user" value="0"
                            placeholder="Final Deal" required>
                 </div>
                 {% endif %}
                 <div class="col">
                     <label class="form-label">GST(%)<span style="color:red">*</span></label>
-                    {{form.gst(class="form-select form-select-lg")}}
+                    {{form.gst(class="form-select form-select")}}
                 </div>
                 {% if request.form['final_deal_including_gst'] %}
                 <div class="col">
@@ -122,8 +122,7 @@ input::-webkit-inner-spin-button {
             <div class="row ">
                 <div class="col mt-3 mb-3 text-center">
                     <button type="submit" class="btn btn w-25 btn-bg" id="btn-bg" data-toggle="modal"
-                            data-target=".bd-example-modal-lg">Add
-                        Record
+                            data-target=".bd-example-modal-lg">Create
                     </button>
                 </div>
             </div>
@@ -139,7 +138,7 @@ input::-webkit-inner-spin-button {
 <br>
 <br>
 
-<script src="{{url_for('static', filename='add_record.js')}}"></script>
+<script src="{{url_for('static', filename='js/add_record.js')}}"></script>
 
 {% include 'footer.html' %}
 {% endblock %}

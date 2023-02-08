@@ -9,9 +9,9 @@
           integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="{{url_for('static', filename= 'alert.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename= 'css/alert.css')}}">
 
-    <script src="{{url_for('static', filename = 'jquery-3.2.1.js')}}"></script>
+    <script src="{{url_for('static', filename = 'js/jquery-3.2.1.js')}}"></script>
 
 
     <title>{%block title%}{% endblock %}</title>
@@ -94,7 +94,7 @@ background: white;
 
 <nav style="position:sticky; top:0; z-index:1; box-shadow: rgb(38, 57, 77) 0px 10px 20px -10px;" class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container w-75">
-        <a href="{{url_for('dashboard', page=1)}}" class="navbar-brand"><img src="{{url_for('static', filename= 'logo.png')}}"
+        <a href="{{url_for('dashboard', page=1)}}" class="navbar-brand"><img src="{{url_for('static', filename= 'images/logo.png')}}"
                                                                  style="background-color: #ffffff; border-radius:50px; margin:auto;"
                                                                  height="40px" alt="LOGO" class="navbar-brand"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"

@@ -9,8 +9,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+
                 </button>
             </div>
             <div class="modal-body" style="text-align:left">
@@ -98,7 +98,7 @@
         <div class="col text-end mb-3">
             <a class="add_button"
                style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
-               href="{{ url_for('add_client') }}" id="add">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+               href="{{ url_for('add_client') }}" id="add">Create <i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
         <div class="row">
             <div class="col">
@@ -207,7 +207,7 @@
     </form>
 </div>
 
-<script src="{{url_for('static', filename='client_checkbox.js')}}"></script>
+<script src="{{url_for('static', filename='js/client_checkbox.js')}}"></script>
 
 
 {%endblock%}

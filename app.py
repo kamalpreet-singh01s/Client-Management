@@ -42,6 +42,7 @@ def login():
                 session["username"] = i.username
                 session.permanent = True
                 app.permanent_session_lifetime = timedelta(minutes=5)
+                flash(f"Welcome {i.first_name} {i.last_name}", category='success')
                 return redirect(url_for('dashboard', page=1))
 
         flash('Username or password is incorrect', category='error')
@@ -54,6 +55,7 @@ def add_user():
     if 'username' in session:
         if request.method == 'POST':
             userpass = request.form["password"]
+
             confirm_userpass = request.form["confirm_password"]
             hash_pass = generate_password_hash(userpass)
             email_regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
@@ -81,6 +83,11 @@ def add_user():
                 return render_template(Templates.register)
             if userpass != confirm_userpass:
                 flash("Password does not match", category='error')
+                return render_template(Templates.register)
+            pass_regex = "^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$"
+            if not re.match(pass_regex, userpass):
+                flash("Password must contain Minimum eight characters, at least one letter and one number:",
+                      category='error')
                 return render_template(Templates.register)
             else:
                 db.session.add(add_new_user)
@@ -248,9 +255,28 @@ def update_client(client_id):
         get_client = SalesOrder.query.filter_by(client_id=client_id).all()
 
         overall_payment_total = 0
+        overall_payable_total = 0
         for i in get_client:
             if i.status.value == SalesOrderStatus.received.value:
                 overall_payment_total = overall_payment_total + i.final_deal
+            if i.status.value == SalesOrderStatus.pending.value:
+                overall_payable_total = overall_payable_total + i.final_deal
+
+        get_vouchers = PaymentVoucher.query.filter_by(client_id=client_id).all()
+        final_deal = SalesOrder.query.filter_by(client_id=client_id).all()
+        overall_payable_total = 0
+        total_final_deal = 0
+
+        for i in final_deal:
+            total_final_deal = total_final_deal + i.final_deal
+        print(total_final_deal, 'final')
+
+        for i in get_vouchers:
+
+            if i.status.value == PaymentStatus.approved.value:
+                overall_payable_total = i.amount + overall_payable_total
+
+        total_payable = total_final_deal - overall_payable_total
 
         client_to_update = Client.query.filter_by(id=client_id).first()
 
@@ -281,7 +307,8 @@ def update_client(client_id):
                 db.session.commit()
                 flash('Client Updated.', category='success')
         return render_template(Templates.update_client, client_to_update=client_to_update, last_updated=last_updated,
-                               last_updated_time=last_updated_time, overall_payment_total=overall_payment_total
+                               last_updated_time=last_updated_time, overall_payment_total=overall_payment_total,
+                               total_payable=total_payable
                                )
     return render_template(Templates.login)
 
@@ -314,6 +341,8 @@ def dashboard(page):
 # create a new record
 @app.route('/add-record', methods=['GET', 'POST'])
 def add_record():
+    date_today = datetime.date.today()
+    print(date_today)
     if "username" in session:
         form = Form()
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
@@ -331,19 +360,18 @@ def add_record():
                 get_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 record = SalesOrder(request.form["client_name"], request.form["content_advt"],
-                                    datetime.datetime.strptime(request.form["date_of_order"], "%d-%m-%Y").strftime(
-                                        "%Y-%m-%d")
-                                    , datetime.datetime.strptime(request.form["dop"], "%d-%m-%Y").strftime("%Y-%m-%d")
+                                    request.form["date_of_order"]
+                                    , request.form["dop"]
                                     , request.form["bill"],
-                                    datetime.datetime.strptime(request.form["bill_date"], "%d-%m-%Y").strftime(
-                                        "%Y-%m-%d"), request.form['final_deal_including_gst'], request.form['gst'],
+                                    request.form["bill_date"], request.form['final_deal_including_gst'],
+                                    request.form['gst'],
 
                                     filename=os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
                 db.session.add(record)
                 db.session.commit()
-                flash('Record Added', category='success')
-                return redirect(url_for('dashboard'))
+                flash(f'Sales Order With Bill No. {request.form["bill"]} Created Successfully', category='success')
+                return redirect(url_for('dashboard', page=1))
             else:
                 record = SalesOrder(client_id=request.form["client_name"], content_advt=request.form["content_advt"],
                                     date_of_order=request.form["date_of_order"],
@@ -355,22 +383,9 @@ def add_record():
 
                 db.session.add(record)
                 db.session.commit()
-                flash('Record Added', category='success')
+                flash(f'Sales Order With Bill No. {request.form["bill"]} Created Successfully', category='success')
                 return redirect(url_for('dashboard', page=1))
-        return render_template(Templates.add_record, form=form)
-    return render_template(Templates.login)
-
-
-# delete a record
-@app.route('/delete-record/<int:record_id>')
-def delete_record(record_id):
-    if "username" in session:
-        record_to_delete = SalesOrder.query.filter_by(id=record_id).first()
-        if record_to_delete:
-            db.session.delete(record_to_delete)
-            db.session.commit()
-            flash(f'Record of {record_to_delete} Deleted', category='success')
-            return redirect(url_for('dashboard'))
+        return render_template(Templates.add_record, form=form, date_today=date_today)
     return render_template(Templates.login)
 
 
@@ -426,7 +441,7 @@ def record_details(record_id):
 
             db.session.commit()
 
-            flash('Record Updated', category='success')
+            flash('Sales Order Updated', category='success')
 
         if get_gst_percentage == str(Gst.percent_12.value):
             form.client_name.default = record_to_update.client_id
@@ -466,7 +481,7 @@ def set_cancel(record_id):
     record_to_update.status = SalesOrderStatus.cancelled.value
     record_to_update.amount_received_date = date_now
     db.session.commit()
-    flash('Status Updated', category='success')
+    flash('Sales Order Cancelled', category='success')
 
     return render_template(Templates.record_details, record_to_update=record_to_update, form=form,
                            last_updated=last_updated, client=client, last_updated_time=last_updated_time,
@@ -515,7 +530,7 @@ def create_payment_voucher(record_id):
                                          client_id=record.client_id)
                 db.session.add(voucher)
                 db.session.commit()
-                flash('Voucher created', category='success')
+                flash('Payment Voucher Created', category='success')
                 return redirect(url_for('voucher_details', voucher_id=voucher.id))
             else:
                 random_string = ''
@@ -528,7 +543,7 @@ def create_payment_voucher(record_id):
                                          client_id=record.client_id)
                 db.session.add(voucher)
                 db.session.commit()
-                flash('Voucher created', category='success')
+                flash('Payment Voucher Created', category='success')
                 return redirect(url_for('voucher_details', voucher_id=voucher.id))
         return render_template('create_payment_voucher.html', record=record, date_today=date_today)
     return render_template(Templates.login)
@@ -868,13 +883,17 @@ def search_clients(page):
             search = request.args['search'].lower()
             clients = Client.query.filter(
                 Client.client_name.ilike(f"%{search}%") | Client.phone_no.ilike(f"%{search}%") | Client.address.ilike(
-                    f"%{search}%") | Client.email.ilike(f"%{search}%")).paginate(page=page, per_page=per_page,
-                                                                                 error_out=False)
+                    f"%{search}%") | Client.email.ilike(f"%{search}%")).all()
             if clients:
+                clients = Client.query.filter(
+                    Client.client_name.ilike(f"%{search}%") | Client.phone_no.ilike(
+                        f"%{search}%") | Client.address.ilike(
+                        f"%{search}%") | Client.email.ilike(f"%{search}%")).paginate(page=page, per_page=per_page,
+                                                                                     error_out=False)
                 return render_template(Templates.client_list, clients=clients, search=search)
-
-            flash('No Record Found', category='error')
-            return redirect(url_for('all_client_names', page=1))
+            else:
+                flash('No Record Found', category='error')
+                return redirect(url_for('all_client_names', page=1))
         return redirect(url_for('all_client_names', page=1))
     return render_template(Templates.login)
 
@@ -895,7 +914,7 @@ def get_checked_boxes():
 
             db.session.delete(delete_rec)
             db.session.commit()
-        flash("record_deleted", category='success')
+        flash("Sales Order Deleted", category='success')
         return redirect(url_for('dashboard', page=1))
 
     return render_template(Templates.login)
@@ -911,10 +930,10 @@ def get_checked_boxes_for_client():
             delete = Client.query.filter_by(id=ids).first()
             if SalesOrder.query.filter_by(client_id=delete.id).first():
                 flash("Client in use", category='error')
-                return redirect(url_for('all_client_names'))
+                return redirect(url_for('all_client_names', page=1))
             db.session.delete(delete)
             db.session.commit()
-        flash("client Deleted", category='success')
+        flash("Client Deleted", category='success')
         return redirect(url_for('all_client_names'))
 
     return render_template(Templates.login)
@@ -953,7 +972,7 @@ def get_checked_boxes_for_payment_vouchers(record_id):
                 delete = PaymentVoucher.query.filter_by(id=ids).first()
                 db.session.delete(delete)
                 db.session.commit()
-            flash("record_deleted", category='success')
+            flash("Sales Order Deleted", category='success')
             return redirect(url_for('voucher_list', record_id=record_id))
     return render_template(Templates.login)
 
@@ -1112,4 +1131,4 @@ def file_upload():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0')

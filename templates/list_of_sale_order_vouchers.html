@@ -35,8 +35,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+
                 </button>
             </div>
             <div class="modal-body" style="text-align:left">
@@ -180,7 +180,7 @@
 
         <div>
             <img style="display: block;margin-left: auto; margin-right: auto;"
-                 src="{{url_for('static', filename='empty.png')}}" alt="No Image" height="250px">
+                 src="{{url_for('static', filename='images/empty.png')}}" alt="No Image" height="250px">
         </div>
 
         {% endif %}
@@ -198,5 +198,5 @@
     </form>
 </div>
 
-<script src="{{url_for('static', filename='vouchers_list.js')}}"></script>
+<script src="{{url_for('static', filename='js/vouchers_list.js')}}"></script>
 {%endblock%}

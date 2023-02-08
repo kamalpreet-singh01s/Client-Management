@@ -9,8 +9,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+
                 </button>
             </div>
             <div class="modal-body" style="text-align:left">
@@ -51,10 +51,8 @@
         <div class="col text-end">
             <a class="add_button"
                    style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
-                   href="{{ url_for('add_user') }}">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
-<!--            <button type="button" class="btn btn-success btn-sm" id="add"-->
-<!--                    onclick="location.href='{{ url_for('add_user')}}'" style="padding:0.3rem 1.5rem">Add-->
-<!--            </button>-->
+                   href="{{ url_for('add_user') }}">Create <i class="fa fa-plus" aria-hidden="true"></i></a>
+
         </div>
     </div>
     <div class="row">
@@ -114,5 +112,5 @@
 
     </form>
 </div>
-<script src="{{url_for('static', filename='admin.js')}}"></script>
+<script src="{{url_for('static', filename='js/admin.js')}}"></script>
 {%endblock%}

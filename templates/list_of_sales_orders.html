@@ -9,8 +9,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+
                 </button>
             </div>
             <div class="modal-body" style="text-align:left">
@@ -102,7 +102,7 @@
         <div class="col-1 text-center" style="margin-top:32px; display:block; margin-left:-4px" id="filter">
             <div class="btn-group btn-group-sm">
 
-                <img title="Filter" src="{{url_for('static', filename='filter.png')}}" height="25px" alt="no image"
+                <img title="Filter" src="{{url_for('static', filename='images/filter.png')}}" height="25px" alt="no image"
                      style="cursor:pointer"
                      class="dropdown-toggle" data-toggle="dropdown"
                      aria-haspopup="true"
@@ -168,7 +168,7 @@
         <div class="col text-end mb-3" style="display:block" id="add">
             <a class="add_button"
                style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
-               href="{{ url_for('add_record') }}">Add <i class="fa fa-plus" aria-hidden="true"></i></a>
+               href="{{ url_for('add_record') }}">Create <i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
     </div>
     <div class="row">
@@ -425,7 +425,7 @@
     </div>
 </div>
 
-<script src="{{url_for('static', filename='checkbox_del.js')}}"></script>
+<script src="{{url_for('static', filename='js/checkbox_del.js')}}"></script>
 
 
 {% endblock %}

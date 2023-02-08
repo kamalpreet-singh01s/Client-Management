@@ -7,12 +7,63 @@
     font-weight:bold;
 }
 
-
-
-
-
-
 </style>
+
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left">
+                Approve Voucher?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm"
+                        onclick="location.href='{{ url_for('approve_voucher', voucher_id = voucher.id) }}'">
+                    Approve
+                </button>
+                <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
+                >Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="exampleModalCenterCancel" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitleCancel">Confirmation</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left">
+                Do you really want to cancel the voucher?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm"
+                        onclick="location.href='{{ url_for('cancel_voucher', voucher_id = voucher.id) }}'">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
+                >Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="row w-75 mx-auto" style="margin-top:40px;background-color:#eff4ff; border-radius:20px">
 
     <div class="row">
@@ -50,30 +101,38 @@
                                 <div class="btn-group me-2" role="group" aria-label="First group" id="approve_button"
                                      style="display:none;">
                                     <button type="button" class="btn btn-success btn-sm"
-                                            onclick="location.href='{{ url_for('approve_voucher', voucher_id = voucher.id) }}'"
+                                            data-target="#exampleModalCenter"
+                                            data-toggle="modal"
+
                                             style="padding:0.3rem 1.5rem">Approve
                                     </button>
                                 </div>
                             </div>
                             <div class="btn-group me-2" role="group" id="cancel_button" style="display:none;">
-                                <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="location.href='{{ url_for('cancel_voucher', voucher_id = voucher.id) }}'"
+                                <button type="button" class="btn btn-danger btn-sm" data-target="#exampleModalCenterCancel"
+                                        data-toggle="modal"
+
                                         style="padding:0.3rem 1.5rem">Cancel
                                 </button>
                             </div>
                             {% else %}
                             <div class="btn-group me-2" role="group" aria-label="First group">
                                 <div class="btn-group me-2" role="group" aria-label="First group" id="approve_button"
+                                     data-target="#exampleModalCenter"
+                                     data-toggle="modal"
                                      style="display:block;">
                                     <button type="button" class="btn btn-success btn-sm"
-                                            onclick="location.href='{{ url_for('approve_voucher', voucher_id = voucher.id) }}'"
+                                            data-target="#exampleModalCenter"
+                                            data-toggle="modal"
+
                                             style="padding:0.3rem 1.5rem">Approve
                                     </button>
                                 </div>
                             </div>
                             <div class="btn-group me-2" role="group" id="cancel_button" style="display:block;">
-                                <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="location.href='{{ url_for('cancel_voucher', voucher_id = voucher.id) }}'"
+                                <button type="button" class="btn btn-danger btn-sm" data-target="#exampleModalCenterCancel"
+                                        data-toggle="modal"
+
                                         style="padding:0.3rem 1.5rem">Cancel
                                 </button>
                             </div>
@@ -151,12 +210,11 @@
 </div>
 
 
-
 <br>
 <br>
 <br>
 
-<script src="{{url_for('static', filename='voucher_details.js')}}"></script>
+<script src="{{url_for('static', filename='js/voucher_details.js')}}"></script>
 <script>
     if (document.referrer.includes('voucher-list')){
         document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', record_id=record.id)}}'")
@@ -179,5 +237,6 @@
         history.go(-1);
     }
     console.log(document.referrer)
+
 </script>
 {%endblock%}

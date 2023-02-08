@@ -95,10 +95,13 @@ input::-webkit-inner-spin-button {
                     <td>{{client_to_update.address}}</td>
                 </tr>
                 <tr>
-                    <td class="bold">Overall Payments Total:</td>
+                    <td class="bold">Overall Received Total:</td>
                     <td>&#8377 {{overall_payment_total}}</td>
                 </tr>
-
+                <tr>
+                    <td class="bold">Overall Payable Total:</td>
+                    <td>&#8377 {{total_payable}}</td>
+                </tr>
                 </tbody>
 
             </table>
@@ -149,6 +152,6 @@ input::-webkit-inner-spin-button {
     </div>
     <input type="text" name="old_final_deal" value="{{old_final_deal}}" hidden>
 </form>
-<script src="{{url_for('static', filename='edit_client.js')}}"></script>
+<script src="{{url_for('static', filename='js/edit_client.js')}}"></script>
 {% include 'footer.html' %}
 {% endblock %}

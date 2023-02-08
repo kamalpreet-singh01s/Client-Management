@@ -14,7 +14,7 @@ input::-webkit-inner-spin-button {
 }
 
 </style>
-<div class="row w-75 mx-auto" style="margin-top:40px">
+<div class="row w-75 mx-auto" style="margin-top:40px; background-color:#eff4ff; border-radius:20px">
 
     <form action="{{request.path}}" method="post" enctype="multipart/form-data">
 
@@ -73,7 +73,7 @@ input::-webkit-inner-spin-button {
                 </div>
             </div>
             <div class="row ">
-                <div class="col mt-3 text-center">
+                <div class="col mt-3 mb-3 text-center">
                     <button type="submit" class="btn w-25 btn-bg" data-toggle="modal"
                             data-target=".bd-example-modal-lg">Create Voucher
                     </button>
@@ -90,7 +90,7 @@ input::-webkit-inner-spin-button {
 <br>
 <br>
 
-<script src="{{url_for('static', filename='create_payment_voucher.js')}}"></script>
+<script src="{{url_for('static', filename='js/create_payment_voucher.js')}}"></script>
 <script>
     if (document.referrer.includes('voucher-list')){
         document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', record_id=record.id)}}'")
