@@ -11,12 +11,6 @@ font-weight:bold;
 }
 
 
-    input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 
 </style>
 
@@ -42,7 +36,7 @@ input::-webkit-inner-spin-button {
 
                 <div>
                     <label class="form-label">Phone No.<span style="color:red">*</span></label>
-                    <input type="text" class="form-control" placeholder="Phone No." value="{{request.form['phone_no']}}" name="phone_no">
+                    <input type="number" class="form-control" placeholder="Phone No." value="{{request.form['phone_no']}}" name="phone_no">
                     <br>
                 </div>
                 <div>

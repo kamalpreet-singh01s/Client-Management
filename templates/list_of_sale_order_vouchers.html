@@ -40,7 +40,7 @@
                 </button>
             </div>
             <div class="modal-body" style="text-align:left">
-                Do you really want to delete this record?
+                Do you really want to delete this sale order?
             </div>
             <div class="modal-footer">
                 <button class="btn btn-danger btn-sm"
@@ -48,7 +48,7 @@
                     Delete
                 </button>
                 <button type="button" class="btn btn-info btn-sm btn-bg" data-dismiss="modal"
-                        onclick="location.href='{{url_for('voucher_list', record_id=record.id)}}'">Close
+                        onclick="location.href='{{url_for('voucher_list', sale_order_id=sale_order.id)}}'">Close
                 </button>
             </div>
         </div>
@@ -63,7 +63,7 @@
         <div class="row">
             <div class="col text-start mb-3">
                 <button type="button" class="btn btn-info btn-bg btn-sm" style="padding:0.3rem 1.5rem"
-                        onclick="location.href='{{url_for('record_details', record_id=record.id)}}'">
+                        onclick="location.href='{{url_for('sale_order_details', sale_order_id=sale_order.id)}}'">
                     &#8592 Back
                 </button>
             </div>
@@ -81,18 +81,18 @@
                     </div>
                 </div>
             </div>
-            {% if record.status.value == SalesOrderStatus.received.value%}
+            {% if sale_order.status.value == SalesOrderStatus.received.value%}
             <div class="col text-end mb-3 text-success">
-                <h6 style="font-weight:bold;margin-right:11px">Payable Amount 0</h6>
+                <h6 style="font-weight:bold;margin-right:11px">Payable Amount &#8377 0</h6>
             </div>
             {% endif %}
-            {% if total_amount >= record.final_deal or record.status.value == SalesOrderStatus.received.value or
-            record.status.value ==
+            {% if total_amount >= sale_order.total_amount or sale_order.status.value == SalesOrderStatus.received.value or
+            sale_order.status.value ==
             SalesOrderStatus.cancelled.value %}
             <div class="col text-end mb-3" hidden>
                 <a class="add_button"
                    style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
-                   href="{{ url_for('create_payment_voucher', record_id = record.id) }}" id="add">Create <i
+                   href="{{ url_for('create_payment_voucher', sale_order_id = sale_order.id) }}" id="add">Create <i
                         class="fa fa-plus" aria-hidden="true"></i></a>
             </div>
 
@@ -100,7 +100,7 @@
             <div class="col text-end mb-3">
                 <a class="add_button"
                    style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
-                   href="{{ url_for('create_payment_voucher', record_id = record.id) }}" id="add">Create <i
+                   href="{{ url_for('create_payment_voucher', sale_order_id = sale_order.id) }}" id="add">Create <i
                         class="fa fa-plus" aria-hidden="true"></i></a>
             </div>
             {% endif %}
@@ -114,10 +114,10 @@
                 <th>Ref.No.</th>
                 <th>Payment Date</th>
                 <th>Approval Date</th>
-                <th>Client Name</th>
+                <th>Client</th>
                 <th>Bill No.</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th style="text-align:right">Amount</th>
+                <th style="width:100px">Status</th>
             </tr>
             </thead>
             <tbody>
@@ -162,12 +162,12 @@
                     }}
                 </td>
 
-                <td style="cursor: pointer;"
+                <td style="cursor: pointer; text-align:right"
                     onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
                 >{{ voucher.amount }}
                 </td>
 
-                <td style="cursor: pointer; border-radius:20px; text-align:center;width:100px" class="status"
+                <td style="cursor: pointer; border-radius:20px; width:100px" class="status"
                     onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
                 >{{ voucher.status.value }}
                 </td>
@@ -188,7 +188,7 @@
 
 </form>
 <div hidden>
-    <form method="POST" action="{{url_for('get_checked_boxes_for_payment_vouchers', record_id=record.id)}}">
+    <form method="POST" action="{{url_for('get_checked_boxes_for_payment_vouchers', sale_order_id=sale_order.id)}}">
 
         <input type="text" id="rec_ids" name="rec_ids"/>
         <button type="submit" id="stu_ids_submit">

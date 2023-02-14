@@ -22,7 +22,7 @@
                     Delete
                 </button>
                 <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
-                        onclick="location.href='{{url_for('dashboard', page=1)}}'">Close
+                        onclick="location.href='{{url_for('list_of_sales_order', page=1)}}'">Close
                 </button>
             </div>
         </div>
@@ -32,7 +32,7 @@
 <br>
 
 {% if not filter_by %}
-<form method="GET" action="{{ url_for('search_records', page=1) }}">
+<form method="GET" action="{{ url_for('search_sale_orders', page=1) }}">
     <div class="row w-75 mx-auto">
 
 
@@ -150,7 +150,7 @@
         </div>
 
         <div class="col-10 text-end" style="display:none" id="generate_custom_report">
-            <form action="{{ url_for('csv_file_record_to_update') }}" method="POST">
+            <form action="{{ url_for('csv_file_sale_order_to_update') }}" method="POST">
 
                 <div class="mt-3">
                     <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
@@ -168,7 +168,7 @@
         <div class="col text-end mb-3" style="display:block" id="add">
             <a class="add_button"
                style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
-               href="{{ url_for('add_record') }}">Create <i class="fa fa-plus" aria-hidden="true"></i></a>
+               href="{{ url_for('add_sale_order') }}">Create <i class="fa fa-plus" aria-hidden="true"></i></a>
         </div>
     </div>
     <div class="row">
@@ -186,7 +186,9 @@
                 <th title="Bill No.">Bill No.</th>
                 <th title='Bill Date'>Bill Date</th>
                 <th title="Client Name">Client</th>
-                <th title="Client Name">Final Deal</th>
+                <th title="Client Name" style="text-align:right">Amount</th>
+                <th title="Client Name" style="text-align:right">GST Amount</th>
+                <th title="Client Name" style="text-align:right">Total Amount</th>
                 <th title="Shows Current Status of Payment">Status</th>
             </tr>
             </thead>
@@ -205,25 +207,33 @@
                 </td>
                 <td class="numbered"></td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill }}
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'">{{ record.bill }}
                 </td>
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">{{ record.bill_date
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'">{{ record.bill_date
                     }}
                 </td>
 
                 <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'">
                     {{ record.client_name.client_name }}
                 </td>
+                <td style="cursor: pointer; text-align:right"
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'">
+                    &#8377 {{ record.amount }}
+                </td>
+                <td style="cursor: pointer; text-align:right"
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'">
+                    &#8377 {{ record.gst_amount }}
+                </td>
 
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'">
-                    {{ record.final_deal }}
+                <td style="cursor: pointer;text-align:right"
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'">
+                    &#8377 {{ record.total_amount }}
                 </td>
 
                 <td style="cursor: pointer; width:115px"
-                    onclick="location.href='{{ url_for('record_details', record_id = record.id) }}'"
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'"
                     class="status">
                     {{ record.status.value }}
                 </td>
@@ -292,7 +302,7 @@
                     {% if all_SalesOrder.has_prev %}
                     <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
                         <button type="button"
-                                onclick="location.href='{{ url_for('search_records', page=all_SalesOrder.prev_num, search=request.args.get('search', '')) }}'"
+                                onclick="location.href='{{ url_for('search_sale_orders', page=all_SalesOrder.prev_num, search=request.args.get('search', '')) }}'"
                                 class="btn btn-info btn-bg btn-sm text-white">Previous
                         </button>
                     </div>
@@ -302,14 +312,14 @@
                     {% if all_SalesOrder.page == page %}
                     <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
                         <button type="button"
-                                onclick="location.href='{{ url_for('search_records', page=page, search=request.args.get('search', '')) }}'" id="page_btn"
+                                onclick="location.href='{{ url_for('search_sale_orders', page=page, search=request.args.get('search', '')) }}'" id="page_btn"
                                 class="btn btn-warning btn-sm text-white">{{page}}
                         </button>
                     </div>
                     {% else %}
                     <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
                         <button type="button"
-                                onclick="location.href='{{ url_for('search_records', page=page, search=request.args.get('search', '')) }}'" id="page_btn"
+                                onclick="location.href='{{ url_for('search_sale_orders', page=page, search=request.args.get('search', '')) }}'" id="page_btn"
                                 class="btn btn-outline-info btn-bg btn-sm">{{page}}
                         </button>
                     </div>
@@ -321,7 +331,7 @@
                     {% if all_SalesOrder.has_next %}
                     <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
                         <button type="button"
-                                onclick="location.href='{{ url_for('search_records', page=all_SalesOrder.next_num, search=request.args.get('search', '')) }}'"
+                                onclick="location.href='{{ url_for('search_sale_orders', page=all_SalesOrder.next_num, search=request.args.get('search', '')) }}'"
                                 class="btn btn-info btn-bg btn-sm text-white">Next
                         </button>
                     </div>
@@ -334,7 +344,7 @@
                     {% if all_SalesOrder.has_prev %}
                     <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
                         <button type="button"
-                                onclick="location.href='{{ url_for('dashboard', page=all_SalesOrder.prev_num) }}'"
+                                onclick="location.href='{{ url_for('list_of_sales_order', page=all_SalesOrder.prev_num) }}'"
                                 class="btn btn-info btn-bg btn-sm">Previous
                         </button>
                     </div>
@@ -344,14 +354,14 @@
                     {% if all_SalesOrder.page == page %}
                     <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
                         <button type="button"
-                                onclick="location.href='{{ url_for('dashboard', page=page) }}'" id="page_btn"
+                                onclick="location.href='{{ url_for('list_of_sales_order', page=page) }}'" id="page_btn"
                                 class="btn btn-warning btn-sm text-white">{{page}}
                         </button>
                     </div>
                     {% else %}
                     <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
                         <button type="button"
-                                onclick="location.href='{{ url_for('dashboard', page=page) }}'" id="page_btn"
+                                onclick="location.href='{{ url_for('list_of_sales_order', page=page) }}'" id="page_btn"
                                 class="btn btn-outline-info btn-bg btn-sm">{{page}}
                         </button>
                     </div>
@@ -363,7 +373,7 @@
                     {% if all_SalesOrder.has_next %}
                     <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
                         <button type="button"
-                                onclick="location.href='{{ url_for('dashboard', page=all_SalesOrder.next_num) }}'"
+                                onclick="location.href='{{ url_for('list_of_sales_order', page=all_SalesOrder.next_num) }}'"
                                 class="btn btn-info btn-sm btn-bg">Next
                         </button>
                     </div>
@@ -399,6 +409,11 @@
                     <label style="font-weight:600">Total Payable:</label> &#8377 {{pending_final_total}}
                 </div>
             </div>
+            <div class="row w-100 mx-auto">
+                <div class="col text-end">
+                    <label style="font-weight:600">Total Tax Received:</label> &#8377 {{tax_total}}
+                </div>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -425,7 +440,7 @@
     </div>
 </div>
 
-<script src="{{url_for('static', filename='js/checkbox_del.js')}}"></script>
+<script src="{{url_for('static', filename='js/sale_orders.js')}}"></script>
 
 
 {% endblock %}

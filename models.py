@@ -101,7 +101,9 @@ class SalesOrder(db.Model):
     dop = db.Column(db.String(100))
     bill = db.Column(db.String(100))
     bill_date = db.Column(db.String(100))
-    final_deal = db.Column(db.Float)
+    amount = db.Column(db.Float)
+    gst_amount = db.Column(db.Float)
+    total_amount = db.Column(db.Float)
     gst = db.Column(db.String(100))
     amount_received_date = db.Column(db.String(100))
 
@@ -111,7 +113,7 @@ class SalesOrder(db.Model):
 
     filename = db.Column(db.String())
 
-    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, final_deal, gst,
+    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, amount,gst_amount,total_amount, gst,
                  filename=None, amount_received_date=None):
         self.client_id = client_id
         self.content_advt = content_advt
@@ -119,7 +121,9 @@ class SalesOrder(db.Model):
         self.dop = dop
         self.bill = bill
         self.bill_date = bill_date
-        self.final_deal = final_deal
+        self.amount = amount
+        self.gst_amount = gst_amount
+        self.total_amount = total_amount
         self.gst = gst
         self.amount_received_date = amount_received_date
         self.filename = filename

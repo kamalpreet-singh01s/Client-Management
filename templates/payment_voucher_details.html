@@ -24,11 +24,11 @@
                 Approve Voucher?
             </div>
             <div class="modal-footer">
-                <button class="btn btn-danger btn-sm"
+                <button class="btn btn-info btn-bg btn-sm"
                         onclick="location.href='{{ url_for('approve_voucher', voucher_id = voucher.id) }}'">
                     Approve
                 </button>
-                <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
+                <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal"
                 >Close
                 </button>
             </div>
@@ -217,7 +217,7 @@
 <script src="{{url_for('static', filename='js/voucher_details.js')}}"></script>
 <script>
     if (document.referrer.includes('voucher-list')){
-        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', record_id=record.id)}}'")
+        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', sale_order_id=sale_order.id)}}'")
         console.log('voucher-list')
     }
     else if(document.referrer.includes('create-new-payment-voucher')){
@@ -226,7 +226,7 @@
     }
     else if(document.referrer.includes('create-payment-voucher')){
 
-        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', record_id=record.id)}}'")
+        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', sale_order_id=sale_order.id)}}'")
     }
 
     else if(document.referrer.includes('all-vouchers-list')){

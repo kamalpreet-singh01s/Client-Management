@@ -1,9 +1,0 @@
-Id,Client,AD/GP/Others,RO Date,DoP,Bill No.,Bill Date,Final Deal(Rs.),GST(%),Amount Received Date
-345,32,test,2023-02-07,2023-02-07,646,2023-02-07,792.0,12,
-341,33,test,2023-02-07,2023-02-07,612,2023-02-07,328.0,18,
-343,37,Facere voluptatum voluptatum.test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test test ,2023-02-07,2023-02-07,444,2023-02-07,378.0,18,
-339,37,test,2023-02-07,2023-02-07,427,2023-02-07,528.0,28,
-340,39,test,2023-02-07,2023-02-07,316,2023-02-07,733.0,18,
-311,34,test,2023-09-01,2022-09-29,220,2023-02-10,112.0,12,NaN
-310,34,test,2023-06-08,2023-05-31,219,2023-09-19,112.0,12,NaN
-309,34,test,2023-06-18,2023-10-12,218,2023-06-21,112.0,12,NaN

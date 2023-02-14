@@ -130,7 +130,7 @@ input::-webkit-inner-spin-button {
 
                     <div class="col form_editable mb-2" hidden>
                         <label>Phone</label>
-                        <input class="form-control" type="text" name="phone_no"
+                        <input class="form-control" type="number" name="phone_no"
                                value="{{client_to_update.phone_no}}">
                     </div>
 
@@ -150,7 +150,7 @@ input::-webkit-inner-spin-button {
         </div>
 
     </div>
-    <input type="text" name="old_final_deal" value="{{old_final_deal}}" hidden>
+    <input type="text" name="old_total_amount" value="{{old_total_amount}}" hidden>
 </form>
 <script src="{{url_for('static', filename='js/edit_client.js')}}"></script>
 {% include 'footer.html' %}

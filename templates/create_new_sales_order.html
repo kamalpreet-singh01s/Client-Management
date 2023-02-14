@@ -8,13 +8,8 @@
 label{
 font-weight:bold;
 }
-s
 
-    input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+
 
 </style>
 
@@ -76,49 +71,94 @@ input::-webkit-inner-spin-button {
             </div>
 
             <div class="row mb-3">
-                {% if request.form['amount_by_user']%}
                 <div class="col">
+                    <div class="row mb-3">
 
-                    <label class="form-label">Final Deal<span style="color:red">*</span></label>
-                    <input type="number" class="form-control" id="amount_by_user" name="amount_by_user" value="{{request.form['amount_by_user']}}"
-                           placeholder="Final Deal" required>
-                </div>
-                {% else %}
-                <div class="col">
+                        <div class="col">
+                            <label class="form-label">Bill Copy</label>
+                            <input type="file" accept="application/pdf" class="form-control" name="file">
+                        </div>
 
-                    <label class="form-label">Amount<span style="color:red">*</span></label>
-                    <input type="number" class="form-control" id="amount_by_user" name="amount_by_user" value="0"
-                           placeholder="Final Deal" required>
+
+                    </div>
                 </div>
-                {% endif %}
-                <div class="col">
-                    <label class="form-label">GST(%)<span style="color:red">*</span></label>
-                    {{form.gst(class="form-select form-select")}}
+                <div class="col mt-3" style="border-radius:20px; background-color:#00faff26">
+
+                    <div class="row mt-3 mb-1">
+                        {% if request.form['amount_by_user']%}
+                        <div class="col mt-1">
+                            <label class="form-label">Amount (Rs.)<span style="color:red">*</span></label>
+                        </div>
+                        <div class="col">
+                            <input type="number" class="form-control" id="amount_by_user" name="amount_by_user"
+                                   value="{{request.form['amount_by_user']}}"
+                                   placeholder="Amount" required>
+                        </div>
+                        {% else %}
+                        <div class="col mt-1">
+                            <label class="form-label">Amount (Rs.)<span style="color:red">*</span></label>
+                        </div>
+                        <div class="col">
+
+
+                            <input type="number" class="form-control" id="amount_by_user" name="amount_by_user"
+                                   value="0"
+                                   placeholder="Amount" required>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="row mb-1">
+                        <div class="col mt-1">
+                            <label class="form-label">GST(%)<span style="color:red">*</span></label>
+                        </div>
+                        <div class="col">
+
+                            {{form.gst(class="form-select form-select")}}
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col mt-1">
+                            <label class="form-label">GST Amount (Rs.)</label>
+                        </div>
+                        <div class="col">
+
+                            <input type="text" class="form-control" id="gst_amount"
+                                   name="gst_amount" value="0"
+                                   placeholder="GST Amount" readonly>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mb-3">
+                        {% if request.form['total_amount_including_gst'] %}
+                        <div class="col mt-1">
+                            <label class="form-label">Total Amount</label>
+                        </div>
+                        <div class="col">
+
+                            <input type="text" class="form-control" id="total_amount_including_gst"
+                                   name="total_amount_including_gst"
+                                   value="{{request.form['total_amount_including_gst']}}"
+                                   placeholder="Total Including GST" readonly>
+                        </div>
+                        {% else %}
+                        <div class="col mt-1">
+                            <label class="form-label">Total Amount</label>
+                        </div>
+                        <div class="col">
+
+                            <input type="text" class="form-control" id="total_amount_including_gst"
+                                   name="total_amount_including_gst" value="0"
+                                   placeholder="Total Including GST" readonly>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
-                {% if request.form['final_deal_including_gst'] %}
-                <div class="col">
-                    <label class="form-label">Total Amount (Including GST)</label>
-                    <input type="text" class="form-control" id="final_deal_including_gst" name="final_deal_including_gst" value="{{request.form['final_deal_including_gst']}}"
-                           placeholder="Total Including GST" readonly>
-                </div>
-                {% else %}
-                <div class="col">
-                    <label class="form-label">Total Amount (Including GST)</label>
-                    <input type="text" class="form-control" id="final_deal_including_gst" name="final_deal_including_gst" value="0"
-                           placeholder="Total Including GST" readonly>
-                </div>
-                {% endif %}
+
             </div>
 
 
-            <div class="row mb-3">
-
-                <div class="col">
-                    <label class="form-label">Bill Copy</label>
-                    <input type="file" accept="application/pdf" class="form-control" name="file">
-                </div>
-
-            </div>
             <div class="row ">
                 <div class="col mt-3 mb-3 text-center">
                     <button type="submit" class="btn btn w-25 btn-bg" id="btn-bg" data-toggle="modal"

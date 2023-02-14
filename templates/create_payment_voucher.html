@@ -7,11 +7,7 @@
     font-weight:bold;
 }
 
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
+
 
 </style>
 <div class="row w-75 mx-auto" style="margin-top:40px; background-color:#eff4ff; border-radius:20px">
@@ -49,7 +45,7 @@ input::-webkit-inner-spin-button {
                     <div class="form-outline">
                         <label class="form-label">Client Name<span style="color:red">*</span></label>
                         <input type="text" class="form-control" name="date_of_order"
-                               value="{{record.client_name.client_name}}" required disabled/>
+                               value="{{sale_order.client_name.client_name}}" required disabled/>
 
                     </div>
                 </div>
@@ -58,7 +54,7 @@ input::-webkit-inner-spin-button {
                     <div class="col">
                         <div class="form-outline">
                             <label class="form-label">Bill No.<span style="color:red">*</span></label>
-                            <input type="number" class="form-control" name="bill" value="{{record.bill}}"
+                            <input type="number" class="form-control" name="bill" value="{{sale_order.bill}}"
                                    disabled/>
                         </div>
                     </div>
@@ -93,7 +89,7 @@ input::-webkit-inner-spin-button {
 <script src="{{url_for('static', filename='js/create_payment_voucher.js')}}"></script>
 <script>
     if (document.referrer.includes('voucher-list')){
-        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', record_id=record.id)}}'")
+        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', sale_order_id=sale_order.id)}}'")
         console.log('voucher-list')
     }
     else{

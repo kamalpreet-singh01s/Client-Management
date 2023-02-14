@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
 
+
+
     <link rel="icon" type="image/x-icon" href="{{url_for('static', filename= 'favicon.ico')}}">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -92,9 +94,9 @@ background: white;
 </head>
 <body>
 
-<nav style="position:sticky; top:0; z-index:1; box-shadow: rgb(38, 57, 77) 0px 10px 20px -10px;" class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav style="position:sticky; top:0; z-index:1; box-shadow: rgb(38, 57, 77) 0px 10px 20px -10px;" class="navbar navbar-expand-lg navbar-dark bg-dark" id="nav">
     <div class="container w-75">
-        <a href="{{url_for('dashboard', page=1)}}" class="navbar-brand"><img src="{{url_for('static', filename= 'images/logo.png')}}"
+        <a href="{{url_for('list_of_sales_order', page=1)}}" class="navbar-brand"><img src="{{url_for('static', filename= 'images/logo.png')}}"
                                                                  style="background-color: #ffffff; border-radius:50px; margin:auto;"
                                                                  height="40px" alt="LOGO" class="navbar-brand"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -105,7 +107,7 @@ background: white;
         <ul class="navbar-nav mx-auto">
 
             <li class="nav-item active " style="">
-                <a href="{{url_for('dashboard',  page=1)}}" class="nav-link active">Sales Orders</a>
+                <a href="{{url_for('list_of_sales_order',  page=1)}}" class="nav-link active">Sales Orders</a>
             </li>
             <li class="nav-item active ">
                 <a href="{{url_for('all_vouchers_list', page=1)}}" class="nav-link active">Payment Vouchers</a>
@@ -125,7 +127,7 @@ background: white;
             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                 <a class="dropdown-item" href="{{url_for('manage_users')}}">Manage Users</a>
 
-                <a class="dropdown-item" href="{{url_for('file_upload')}}">Import Records</a>
+                <a class="dropdown-item" href="{{url_for('file_upload')}}">Import Sale Orders</a>
 
                 <div class="dropdown-divider"></div>
                 <div><a class="dropdown-item logout" href="{{url_for('logout')}}">Logout</a></div>

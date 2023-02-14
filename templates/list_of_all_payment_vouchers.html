@@ -67,7 +67,7 @@
                 &#8592 Back
             </button>
         </div>
-        <table class="table table-hover table-sortable" id="table-count">
+        <table class="table table-hover table-sortable text-center" id="table-count">
             <thead>
             <tr>
                 <th>S.No.</th>
@@ -76,8 +76,8 @@
                 <th>Approval Date</th>
                 <th>Client</th>
                 <th>Bill No.</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th style="text-align:right">Amount</th>
+                <th style="width:100px">Status</th>
             </tr>
             </thead>
             <tbody>
@@ -117,7 +117,7 @@
                     }}
                 </td>
 
-                <td style="cursor: pointer;"
+                <td style="cursor: pointer;text-align:right"
                     onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
                 >{{ voucher.amount }}
                 </td>
