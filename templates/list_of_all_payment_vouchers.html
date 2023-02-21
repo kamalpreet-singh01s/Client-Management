@@ -24,9 +24,34 @@
 }
 
 
+
 </style>
 
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
 
+                </button>
+            </div>
+            <div class="modal-body" style="text-align:left">
+                Do you really want to delete this sale order?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm"
+                        onclick="del_fun()">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-info btn-sm btn-bg" data-dismiss="modal"
+                        >Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <div class="w-75 mx-auto" style="overflow-x:hidden">
@@ -52,24 +77,44 @@
             <div class="col-7 text-start">
                 <h5 class="mb-2">List of Payment Vouchers</h5>
             </div>
+
+        </div>
+    </form>
+
+        <div class="row">
+            <div class="col" style="display:block" id="back_button">
+            <button type="button" class="btn btn-info btn-bg btn-sm" style="padding:0.3rem 1.5rem;"
+                    onclick="history.back()">
+                &#8592 Back
+            </button>
+        </div>
+            <div class="col-2" id="action_dropdown" style="display:none">
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                        Action
+                    </button>
+                    <div class="dropdown-menu">
+                        <button type="button" class="dropdown-item" id="del"
+                                data-target="#exampleModalCenter" data-toggle="modal">Delete Selected
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <div class="col text-end mt-3">
                 <a class="add_button"
                    style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
                    href="{{url_for('create_new_payment_voucher')}}" id="add">Create <i
                         class="fa fa-plus" aria-hidden="true"></i></a>
             </div>
-        </div>
-    </form>
-    <form>
-        <div class="col" style="display:block" id="back_button">
-            <button type="button" class="btn btn-info btn-bg btn-sm" style="padding:0.3rem 1.5rem;"
-                    onclick="history.back()">
-                &#8592 Back
-            </button>
+
         </div>
         <table class="table table-hover table-sortable text-center" id="table-count">
             <thead>
             <tr>
+                <th></th>
                 <th>S.No.</th>
                 <th>Ref.No.</th>
                 <th>Payment Date</th>
@@ -82,8 +127,16 @@
             </thead>
             <tbody>
             {% for voucher in all_vouchers %}
+
+
+
             <tr>
-                <td></td>
+                <td>
+                    <input onchange="toggleDelbox()" class="form-check-input hidden" name="check-box" id="check"
+                           type="checkbox"
+                           value="{{ voucher.id }}">
+                </td>
+                <td class="numbered"></td>
                 <td style="cursor: pointer;"
                     onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
                 >{{
@@ -119,7 +172,7 @@
 
                 <td style="cursor: pointer;text-align:right"
                     onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >{{ voucher.amount }}
+                >&#8377 {{ voucher.amount }}
                 </td>
 
                 <td style="cursor: pointer; border-radius:20px; text-align:center;width:100px" class="status"
@@ -131,7 +184,7 @@
             {% endfor %}
             </tbody>
         </table>
-    </form>
+
     {% if not request.args['search'] %}
     <div class="row mb-5">
         <div class="col">
@@ -177,6 +230,17 @@
         </div>
     </div>
     {% endif %}
+</div>
+
+<div hidden>
+    <form method="POST" action="{{url_for('get_checked_boxes_for_all_payment_vouchers')}}">
+
+        <input type="text" id="rec_ids" name="rec_ids"/>
+        <button type="submit" id="stu_ids_submit">
+            Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+        </button>
+
+    </form>
 </div>
 
 <script src="{{url_for('static', filename='js/all_payment_vouchers_list.js')}}"></script>

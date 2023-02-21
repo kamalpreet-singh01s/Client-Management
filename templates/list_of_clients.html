@@ -141,7 +141,7 @@
                 <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.address }}
                 </td>
 
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.credit_amount }}</td>
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">&#8377 {{ client.credit_amount }}</td>
 
             </tr>
             {% endfor %}

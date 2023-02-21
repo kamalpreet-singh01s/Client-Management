@@ -96,11 +96,15 @@ input::-webkit-inner-spin-button {
                 </tr>
                 <tr>
                     <td class="bold">Overall Received Total:</td>
-                    <td>&#8377 {{overall_payment_total}}</td>
+                    <td>&#8377 {{client_to_update.overall_received}}</td>
                 </tr>
                 <tr>
                     <td class="bold">Overall Payable Total:</td>
-                    <td>&#8377 {{total_payable}}</td>
+                    <td>&#8377 {{client_to_update.overall_payable}}</td>
+                </tr>
+                <tr>
+                    <td class="bold">Total Credit:</td>
+                    <td>&#8377 {{client_to_update.credit_amount}}</td>
                 </tr>
                 </tbody>
 

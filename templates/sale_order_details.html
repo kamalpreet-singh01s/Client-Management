@@ -207,6 +207,10 @@ body{
                 <div class="col-6 mb-2" style="font-size:large; font-weight:bold" id="visible_client_name">
                     <u>{{client.client_name}}/{{sale_order_to_update.bill}}</u>
                 </div>
+                <div class="col text-end">
+                    <label>Credit: </label>
+                    &#8377 {{client.credit_amount}}
+                </div>
 
                 <table class="table">
 
@@ -232,7 +236,7 @@ body{
 
                     <tr>
                         <td class="bold">Amount (Rs.):</td>
-                        <td>{{sale_order_to_update.amount}}</td>
+                        <td>&#8377 {{sale_order_to_update.amount}}</td>
                     </tr>
 
                     <tr>
@@ -242,12 +246,18 @@ body{
 
                     <tr>
                         <td class="bold">GST Amount (Rs.):</td>
-                        <td>{{sale_order_to_update.gst_amount}}</td>
+                        <td>&#8377 {{sale_order_to_update.gst_amount}}</td>
                     </tr>
 
                     <tr>
                         <td class="bold">Total Amount (Including GST):</td>
-                        <td>{{sale_order_to_update.total_amount}}</td>
+                        <td>&#8377 {{sale_order_to_update.total_amount}}</td>
+
+                    </tr>
+
+                    <tr>
+                        <td class="bold">Total Paid:</td>
+                        <td>&#8377 {{sale_order_to_update.total_paid}}</td>
                     </tr>
 
                     </tbody>
@@ -370,6 +380,9 @@ body{
                         </div>
                         {% endif %}
                     </div>
+
+                            <input type="text" value="{{sale_order_to_update.total_amount}}" name="previous_total_amount" hidden>
+
                 </div>
 
             </div>
@@ -510,6 +523,7 @@ body{
     <div style="display:none">
         {{form.client_name (class="client_name")}}
     </div>
+
 </form>
 
 

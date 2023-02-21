@@ -41,10 +41,6 @@ last_updated_time = time_now.strftime("%I:%M %p")
 No_Record_Found = 'No Record Found'
 
 
-
-
-
-
 @app.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
@@ -254,7 +250,7 @@ def add_client():
 
                 added_client = Client(client_name=request.form["client_name"], email=request.form["email"],
                                       phone_no=request.form["phone_no"],
-                                      address=request.form["address"]
+                                      address=request.form["address"], overall_payable=0, overall_received=0
                                       )
 
                 db.session.add(added_client)
@@ -288,34 +284,39 @@ def delete_client(client_id):
 def update_client(client_id):
     if "username" in session:
 
-        get_client = SalesOrder.query.filter_by(client_id=client_id).all()
-
-        overall_payment_total = 0
-        overall_payable_total = 0
-        for i in get_client:
-            if i.status.value == SalesOrderStatus.received.value:
-                overall_payment_total = overall_payment_total + i.total_amount
+        get_sale_orders = SalesOrder.query.filter_by(client_id=client_id).all()
+        total = 0
+        for i in get_sale_orders:
             if i.status.value == SalesOrderStatus.pending.value:
-                overall_payable_total = overall_payable_total + i.total_amount
+                total = total + i.total_amount
+        print(total)
 
-        get_vouchers = PaymentVoucher.query.filter_by(client_id=client_id).all()
-        total_amount = SalesOrder.query.filter_by(client_id=client_id).all()
-        overall_payable_total = 0
-        total_total_amount = 0
-
-        for i in total_amount:
-            total_total_amount = total_total_amount + i.total_amount
-        print(total_total_amount, 'final')
-
-        for i in get_vouchers:
-
-            if i.status.value == PaymentStatus.approved.value:
-                overall_payable_total = i.amount + overall_payable_total
-
-        total_payable = total_total_amount - overall_payable_total
+        # overall_payment_total = 0
+        # overall_payable_total = 0
+        # for i in get_client:
+        #     if i.status.value == SalesOrderStatus.received.value:
+        #         overall_payment_total = overall_payment_total + i.total_amount
+        #     if i.status.value == SalesOrderStatus.pending.value:
+        #         overall_payable_total = overall_payable_total + i.total_amount
+        #
+        # get_vouchers = PaymentVoucher.query.filter_by(client_id=client_id).all()
+        # total_amount = SalesOrder.query.filter_by(client_id=client_id).all()
+        # overall_payable_total = 0
+        # total_total_amount = 0
+        #
+        # for i in total_amount:
+        #     total_total_amount = total_total_amount + i.total_amount
+        # print(total_total_amount, 'final')
+        #
+        # for i in get_vouchers:
+        #
+        #     if i.status.value == PaymentStatus.approved.value:
+        #         overall_payable_total = i.amount + overall_payable_total
+        #
+        # total_payable = total_total_amount - overall_payable_total
 
         client_to_update = Client.query.filter_by(id=client_id).first()
-
+        # client_to_update.overall_payable = total - client_to_update.overall_received
         if request.method == "POST":
             message = ''
             if any(char.isdigit() for char in request.form["client_name"]):
@@ -340,8 +341,7 @@ def update_client(client_id):
                 db.session.commit()
                 flash('Client Updated.', category='success')
         return render_template(Templates.update_client, client_to_update=client_to_update, last_updated=last_updated,
-                               last_updated_time=last_updated_time, overall_payment_total=overall_payment_total,
-                               total_payable=total_payable
+                               last_updated_time=last_updated_time
                                )
     return render_template(Templates.login)
 
@@ -360,7 +360,7 @@ def get_checked_boxes_for_client():
             db.session.delete(delete)
             db.session.commit()
         flash("Client Deleted", category='success')
-        return redirect(url_for('all_client_names'))
+        return redirect(url_for('all_client_names', page=1))
 
     return render_template(Templates.login)
 
@@ -425,29 +425,58 @@ def list_of_sales_order(page):
                                                                                               error_out=False)
         all_sales_order_count = db.session.query(SalesOrder).count()
 
-        total_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.received.value).all()
-        pending_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.pending.value).all()
+        # total_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.received.value).all()
+        # pending_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.pending.value).all()
 
         all_sales_order = SalesOrder.query.all()
 
-        total_amount_total = 0
-        pending_final_total = 0
+        for i in all_sales_order:
+            voucher_count = PaymentVoucher.query.filter(PaymentVoucher.sales_order_id == i.id).all()
+            print(len(voucher_count))
+
+        # total_amount_total = 0
+        # pending_final_total = 0
         tax_total = 0
 
-        for i in total_amount:
-            total_amount_total = round(float(i.total_amount) + total_amount_total, 2)
-        for i in pending_amount:
-            pending_final_total = round(float(i.total_amount) + pending_final_total, 2)
+        total_received = 0
+        total_payable = 0
+
+        all_clients = Client.query.all()
+
+        for i in all_clients:
+            total_received = round(float(i.overall_received) + total_received, 2)
+
+        for i in all_clients:
+            total_payable = round(float(i.overall_payable) + total_payable, 2)
 
         for i in all_sales_order:
             if i.status.value == SalesOrderStatus.received.value:
                 tax_total = round(float(i.gst_amount) + tax_total, 2)
-        print(tax_total)
 
         return render_template(Templates.list_of_sales_order, all_SalesOrder=all_sales_order_paginate,
-                               final_deal_total=total_amount_total,
-                               pending_final_total=pending_final_total, all_SalesOrder_count=all_sales_order_count, tax_total=tax_total)
+                               final_deal_total=total_received,
+                               pending_final_total=total_payable, all_SalesOrder_count=all_sales_order_count,
+                               tax_total=tax_total)
     return render_template(Templates.login)
+
+
+# onchange get credit amount
+@app.route('/get_credit_list/<client_name>')
+def get_credit_list(client_name):
+    # sale_orders = SalesOrder.query.filter_by(id=bill_no).first()
+    client_results = Client.query.filter_by(id=client_name).all()
+    credit_list = []
+    for client in client_results:
+        # print(client.client_id)
+        # print(client.client_name)
+        client_obj = {
+
+            'client_id': client.id,
+            'client_credit_amount': client.credit_amount
+        }
+        credit_list.append(client_obj)
+
+    return jsonify({'credit_list': credit_list})
 
 
 # create a new sale order
@@ -460,6 +489,7 @@ def add_sale_order():
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
 
         if request.method == "POST":
+            client = Client.query.filter_by(id=request.form["client_name"]).first()
 
             exists = db.session.query(SalesOrder.bill).filter_by(bill=request.form["bill"]).first() is not None
             if exists:
@@ -467,7 +497,7 @@ def add_sale_order():
                 return render_template(Templates.add_sale_order, form=form)
 
             get_file = request.files['file']
-            print(get_file)
+
             if get_file:
                 filename = 'Bill No' + '-' + request.form["bill"] + '-' + request.form["date_of_order"] + '.pdf'
                 get_file.save(os.path.join(UPLOAD_FOLDER, filename))
@@ -475,11 +505,15 @@ def add_sale_order():
                 sale_order = SalesOrder(request.form["client_name"], request.form["content_advt"],
                                         request.form["date_of_order"], request.form["dop"], request.form["bill"],
                                         request.form["bill_date"], request.form["amount_by_user"],
-                                        request.form["gst_amount"], request.form['total_amount_including_gst'],
-                                        request.form['gst'],
-                                        filename=os.path.join(UPLOAD_FOLDER, filename))
+                                        request.form["gst_amount"],
+                                        gst=request.form['gst'],
+                                        total_amount=request.form['total_amount_including_gst'],
+                                        filename=os.path.join(UPLOAD_FOLDER, filename), total_paid=0,
+                                        client_credit=request.form["credit"])
 
                 db.session.add(sale_order)
+                client = Client.query.filter_by(id=request.form["client_name"]).first()
+                client.overall_payable = client.overall_payable + float(request.form["total_amount_including_gst"])
                 db.session.commit()
                 flash(f'Sales Order With Bill No. {request.form["bill"]} Created Successfully', category='success')
                 return redirect(url_for('list_of_sales_order', page=1))
@@ -491,11 +525,13 @@ def add_sale_order():
                                         bill_date=request.form["bill_date"],
                                         amount=round(float(request.form["amount_by_user"]), 2),
                                         gst_amount=float(request.form["gst_amount"]),
-                                        total_amount=round(float(request.form["total_amount_including_gst"]), 2),
+                                        total_amount=request.form['total_amount_including_gst'],
                                         gst=request.form["gst"],
-                                        filename=None)
+                                        filename=None, total_paid=0, client_credit=request.form["credit"])
 
                 db.session.add(sale_order)
+                client = Client.query.filter_by(id=request.form["client_name"]).first()
+                client.overall_payable = client.overall_payable + float(request.form["total_amount_including_gst"])
                 db.session.commit()
                 flash(f'Sales Order With Bill No. {request.form["bill"]} Created Successfully', category='success')
                 return redirect(url_for('list_of_sales_order', page=1))
@@ -509,6 +545,7 @@ def sale_order_details(sale_order_id):
     if "username" in session:
 
         sale_order_to_update = SalesOrder.query.filter_by(id=sale_order_id).first()
+        client = Client.query.filter_by(id=sale_order_to_update.client_id).first()
         get_gst_percentage = sale_order_to_update.gst
         print(get_gst_percentage, type(get_gst_percentage))
         client = Client.query.filter(Client.id == sale_order_to_update.client_id).first()
@@ -542,7 +579,15 @@ def sale_order_details(sale_order_id):
             sale_order_to_update.gst = request.form["gst"]
             sale_order_to_update.gst_amount = request.form["gst_amount"]
             sale_order_to_update.amount = request.form["amount_by_user"]
-            sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
+
+            if float(request.form["total_amount_including_gst"]) != float(request.form["previous_total_amount"]):
+                sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
+                client.overall_payable = (client.overall_payable - float(
+                    request.form["previous_total_amount"])) + float(request.form["total_amount_including_gst"])
+                print(client.overall_payable, 'cli overall')
+            else:
+                sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
+                print('test')
 
             get_file = request.files['file']
             if request.files['file']:
@@ -599,6 +644,7 @@ def set_cancel(sale_order_id):
 
     sale_order_to_update.status = SalesOrderStatus.cancelled.value
     sale_order_to_update.amount_received_date = date_now
+    client.overall_payable = client.overall_payable - sale_order_to_update.total_amount
     db.session.commit()
     flash('Sales Order Cancelled', category='success')
 
@@ -612,10 +658,31 @@ def set_cancel(sale_order_id):
 def get_checked_boxes():
     if 'username' in session and request.method == "POST":
         all_vouchers = PaymentVoucher.query.all()
+
         rec_ids = request.form['rec_ids']
         for ids in rec_ids.split(','):
+
             delete_rec = SalesOrder.query.filter_by(id=ids).first()
-            print(delete_rec)
+
+            payment_voucher = PaymentVoucher.query.filter_by(sales_order_id=ids).first()
+            payment_voucher_list = PaymentVoucher.query.filter_by(sales_order_id=ids).all()
+            [print(i) for i in payment_voucher_list]
+
+            print(payment_voucher)
+            if payment_voucher is None:
+                # payment_voucher = PaymentVoucher.query.filter(PaymentVoucher.bill_no.bill == delete_rec.bill).first()
+                client = Client.query.filter_by(id=delete_rec.client_id).first()
+
+                client.overall_payable = client.overall_payable - (delete_rec.total_amount)
+            else:
+                client = Client.query.filter_by(id=delete_rec.client_id).first()
+
+                client.overall_payable = client.overall_payable - (delete_rec.total_amount - payment_voucher.amount)
+
+            if len(payment_voucher_list) > 0:
+                flash("Cannot delete Sale order with a voucher", category='error')
+                return redirect(url_for('list_of_sales_order', page=1))
+
             for voucher in all_vouchers:
 
                 if voucher.bill_no.bill == delete_rec.bill:
@@ -624,7 +691,7 @@ def get_checked_boxes():
                 os.remove(delete_rec.filename)
             db.session.delete(delete_rec)
             db.session.commit()
-        flash("Sales Order Deleted", category='success')
+            flash("Sales Order Deleted", category='success')
         return redirect(url_for('list_of_sales_order', page=1))
 
     return render_template(Templates.login)
@@ -819,12 +886,12 @@ def csv_file_sale_order_to_update():
                      'Total(Including GST)', 'Amount Received Date'])
                 for rec_id in rec_ids.split(','):
                     sale_order = SalesOrder.query.filter_by(id=rec_id).first()
-
-                    final = [sale_order.id, sale_order.client_id, sale_order.content_advt, sale_order.date_of_order,
-                             sale_order.dop, sale_order.bill,
-                             sale_order.bill_date, sale_order.amount, sale_order.gst, sale_order.gst_amount,
-                             sale_order.total_amount, sale_order.amount_received_date]
-                    write_file.writerow(final)
+                    if sale_order.status.value == SalesOrderStatus.pending.value:
+                        final = [sale_order.id, sale_order.client_id, sale_order.content_advt, sale_order.date_of_order,
+                                 sale_order.dop, sale_order.bill,
+                                 sale_order.bill_date, sale_order.amount, sale_order.gst, sale_order.gst_amount,
+                                 sale_order.total_amount, sale_order.amount_received_date]
+                        write_file.writerow(final)
         else:
             file_name = 'sale_order.csv'
             with open(os.path.join(Report_Generated_File, file_name), mode='w', newline='') as file:
@@ -854,6 +921,31 @@ def all_vouchers_list(page):
     return render_template(Templates.login)
 
 
+# delete multiple payment vouchers in different sales order using checkbox
+@app.route('/get_checked_boxes_for_all_payment_vouchers', methods=['GET', 'POST'])
+def get_checked_boxes_for_all_payment_vouchers():
+    if 'username' in session and request.method == "POST":
+        rec_ids = request.form['rec_ids']
+        for ids in rec_ids.split(','):
+
+            get_sale_order = SalesOrder.query.filter(PaymentVoucher.id == ids).first()
+            delete = PaymentVoucher.query.filter_by(id=ids).first()
+
+            if get_sale_order.status.value == SalesOrderStatus.received.value:
+                flash("Cannot make changes to Sales order voucher with status Received", category='error')
+                return redirect(url_for('all_vouchers_list', page=1))
+            if delete.status.value == PaymentStatus.approved.value:
+                flash("Cannot make changes to voucher with status Approved", category='error')
+                return redirect(url_for('all_vouchers_list', page=1))
+
+            db.session.delete(delete)
+            db.session.commit()
+        flash("Voucher Deleted", category='success')
+        return redirect(url_for('all_vouchers_list', page=1))
+
+    return render_template(Templates.login)
+
+
 # List of payment vouchers for particular sales order
 @app.route('/voucher-list/<int:sale_order_id>', methods=['GET', 'POST'])
 def voucher_list(sale_order_id):
@@ -868,7 +960,7 @@ def voucher_list(sale_order_id):
                 total_amount = total_amount + voucher.amount
         if float(total_amount) >= sale_order.total_amount:
             sale_order.status = SalesOrderStatus.received.value
-            client.credit_amount = round(client.credit_amount + float(total_amount) - sale_order.total_amount, 2)
+            # client.credit_amount = round(client.credit_amount + float(total_amount) - sale_order.total_amount, 2)
             db.session.commit()
 
         return render_template('list_of_sale_order_vouchers.html', total_vouchers=total_vouchers, sale_order=sale_order,
@@ -1012,14 +1104,65 @@ def approve_voucher(voucher_id):
         voucher_to_update.status = PaymentStatus.approved.value
         total_amount = 0
         sale_order = SalesOrder.query.filter_by(bill=voucher_to_update.bill_no.bill).first()
-
+        client = Client.query.filter_by(id=sale_order.client_id).first()
         total_vouchers = PaymentVoucher.query.filter(PaymentVoucher.sales_order_id == sale_order.id).all()
-        for i in total_vouchers:
 
+        # for i in total_vouchers:
+        #     total_amount = total_amount + i.amount
+        #
+        # if client.credit_amount > 0:
+        #     if voucher_to_update.amount > sale_order.total_amount - total_amount:
+        #         client.credit_amount = client.credit_amount + (total_amount - voucher_to_update.amount)
+
+        if client.credit_amount == 0 and voucher_to_update.amount == client.overall_payable:
+            print("test")
+            client.overall_payable = client.overall_payable - voucher_to_update.amount
+            client.overall_received = client.overall_received + voucher_to_update.amount
+
+        elif client.credit_amount == 0 and voucher_to_update.amount < client.overall_payable:
+
+            print("voucher smaller")
+            client.overall_payable = client.overall_payable - voucher_to_update.amount
+            client.overall_received = client.overall_received + voucher_to_update.amount
+
+        elif client.credit_amount == 0 and voucher_to_update.amount > client.overall_payable:
+            print("voucher greater")
+            client.credit_amount = client.credit_amount + (voucher_to_update.amount - client.overall_payable)
+            client.overall_received = client.overall_received + client.overall_payable
+            client.overall_payable = 0
+
+
+        elif client.credit_amount > voucher_to_update.amount:
+            print("credit greater")
+            client.overall_payable = client.overall_payable - voucher_to_update.amount
+            client.overall_received = client.overall_received + voucher_to_update.amount
+            client.credit_amount = client.credit_amount - voucher_to_update.amount
+            # client.credit_amount = 0
+
+        elif client.credit_amount < voucher_to_update.amount:
+            print("credit less")
+            client.overall_received = client.overall_received + (voucher_to_update.amount - client.overall_payable)
+            client.overall_payable = client.overall_payable - (voucher_to_update.amount - client.overall_payable)
+
+            client.credit_amount = voucher_to_update.amount - client.credit_amount
+
+        elif client.credit_amount == voucher_to_update.amount:
+            print("equal")
+            client.overall_received = client.overall_received + voucher_to_update.amount
+            client.overall_payable = client.overall_payable - voucher_to_update.amount
+            client.credit_amount = client.credit_amount - voucher_to_update.amount
+
+        for i in total_vouchers:
             total_amount = total_amount + i.amount
             if float(total_amount) >= sale_order.total_amount:
                 sale_order.status = SalesOrderStatus.received.value
                 sale_order.amount_received_date = date_today
+
+            sale_order.total_paid = float(total_amount)
+
+            if sale_order.total_paid >= sale_order.total_amount:
+                sale_order.total_paid = sale_order.total_amount
+        print(total_amount)
 
         db.session.commit()
         flash('Voucher Updated', category='success')
@@ -1051,9 +1194,12 @@ def get_checked_boxes_for_payment_vouchers(sale_order_id):
                 flash("Cannot make changes to this record.", category='error')
                 return redirect(url_for('voucher_list', sale_order_id=sale_order_id))
             delete = PaymentVoucher.query.filter_by(id=ids).first()
+            if delete.status.value == PaymentStatus.approved.value:
+                flash("Cannot make changes to Approved Voucher", category='error')
+                return redirect(url_for('voucher_list', sale_order_id=sale_order_id))
             db.session.delete(delete)
             db.session.commit()
-        flash("Sales Order Deleted", category='success')
+        flash("Voucher Deleted", category='success')
         return redirect(url_for('voucher_list', sale_order_id=sale_order_id))
 
     return render_template(Templates.login)
@@ -1114,8 +1260,8 @@ def file_upload():
 
                             row.dop = read_file.loc[count, 'DoP']
                             row.bill_date = read_file.loc[count, 'Bill Date'],
-                            row.amount = read_file.loc[count, 'Amount(Rs.)'],
-                            row.gst_amount = read_file.loc[count, 'GST(Rs.)'],
+                            row.amount = float(read_file.loc[count, 'Amount(Rs.)']),
+                            row.gst_amount = float(read_file.loc[count, 'GST(Rs.)']),
                             row.total_amount = float(read_file.loc[count, 'Total(Including GST)']),
                             row.gst = str(read_file.loc[count, 'GST(%)']),
 
@@ -1130,7 +1276,7 @@ def file_upload():
                 print(exists)
                 if not exists:
                     new_client = Client(client_name=read_file.loc[count, 'Client'], email=None, phone_no=None,
-                                        address=None, credit_amount=0)
+                                        address=None, credit_amount=0, overall_received=None, overall_payable=None)
                     db.session.add(new_client)
                     db.session.commit()
 
@@ -1159,13 +1305,14 @@ def file_upload():
                                                         bill=int(read_file.loc[count, 'Bill No.']),
                                                         bill_date=
                                                         read_file.loc[count, 'Bill Date'],
-                                                        amount=read_file.loc[count, 'Amount(Rs.)'],
-                                                        gst_amount=read_file.loc[count, 'GST(Rs.)'],
+                                                        amount=float(read_file.loc[count, 'Amount(Rs.)']),
+                                                        gst_amount=float(read_file.loc[count, 'GST(Rs.)']),
                                                         total_amount=float(
                                                             read_file.loc[count, 'Total(Including GST)']),
                                                         gst=str(read_file.loc[count, 'GST(%)']),
                                                         amount_received_date=read_file.loc[
                                                             count, 'Amount Received Date'],
+                                                        total_paid=0
                                                         )
                             db.session.add(new_sale_order)
                             db.session.commit()

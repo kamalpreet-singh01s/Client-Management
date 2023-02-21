@@ -20,10 +20,17 @@ font-weight:bold;
         <fieldset>
             {{ form.csrf_token}}
             <div class="row mb-3 mt-3">
-                <div class="col-6">
+                <div class="col">
                     <div class="form-outline">
                         <label class="form-label">Client Name<span style="color:red">*</span></label>
                         {{form.client_name(class="form-select form-select-lg mb-3")}}
+
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="form-outline">
+                        <label class="form-label">Credit</label>
+                        <input type="text" class="form-control form-control-lg" name="credit" id="credit" readonly>
 
                     </div>
                 </div>

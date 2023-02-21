@@ -79,13 +79,17 @@ class Client(db.Model):
     address = db.Column(db.String(500))
 
     credit_amount = db.Column(db.Float, default=0.0)
+    overall_payable = db.Column(db.Float)
+    overall_received = db.Column(db.Float)
 
-    def __init__(self, client_name, email, phone_no, address, credit_amount=None):
+    def __init__(self, client_name, email, phone_no, address,overall_payable,overall_received, credit_amount=None):
         self.client_name = client_name
 
         self.email = email
         self.phone_no = phone_no
         self.address = address
+        self.overall_payable = overall_payable
+        self.overall_received = overall_received
 
         self.credit_amount = credit_amount
 
@@ -105,7 +109,9 @@ class SalesOrder(db.Model):
     gst_amount = db.Column(db.Float)
     total_amount = db.Column(db.Float)
     gst = db.Column(db.String(100))
+    total_paid = db.Column(db.Float)
     amount_received_date = db.Column(db.String(100))
+    client_credit = db.Column(db.Float)
 
     status = db.Column(
         db.Enum(SalesOrderStatus, values_callable=lambda x: [str(stat.value) for stat in SalesOrderStatus]),
@@ -113,7 +119,7 @@ class SalesOrder(db.Model):
 
     filename = db.Column(db.String())
 
-    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, amount,gst_amount,total_amount, gst,
+    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, amount,gst_amount,total_amount, gst,total_paid,client_credit,
                  filename=None, amount_received_date=None):
         self.client_id = client_id
         self.content_advt = content_advt
@@ -125,6 +131,8 @@ class SalesOrder(db.Model):
         self.gst_amount = gst_amount
         self.total_amount = total_amount
         self.gst = gst
+        self.total_paid = total_paid
+        self.client_credit = client_credit
         self.amount_received_date = amount_received_date
         self.filename = filename
 

@@ -82,10 +82,10 @@ a {
             <div class="col text-center">
                 <div class="row">
                     <div class="col text-end">
-                        <a href="#" class="links">HOME</a>
+                        <a href="{{url_for('list_of_sales_order', page=1)}}" class="links">HOME</a>
                     </div>
                     <div class="col text-start">
-                        <a href="#" class="links">GO BACK</a>
+                        <a type="button" onclick="history.back();" class="links">GO BACK</a>
                     </div>
                 </div>
 

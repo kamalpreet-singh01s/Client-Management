@@ -189,3 +189,54 @@ amount_by_user.onchange = function () {
 }
 
 
+
+
+
+let credit = document.getElementById('credit');
+let client_name_select = document.getElementById('client_name');
+
+client_name_select.onchange = function () {
+    client_name = client_name_select.value;
+    fetch('/get_credit_list/' + client_name).then(function (response) {
+        response.json().then(function (data) {
+            optionHTML = '';
+            for (client of data.credit_list) {
+
+            credit.value = client.client_credit_amount;
+            }
+            console.log(optionHTML)
+
+        });
+    });
+}
+
+client_name_select.onload = function () {
+    client_name = client_name_select.value;
+    fetch('/get_credit_list/' + client_name).then(function (response) {
+        response.json().then(function (data) {
+            optionHTML = '';
+            for (client of data.credit_list) {
+
+            credit.value = client.client_credit_amount;
+            }
+            console.log(optionHTML)
+
+        });
+    });
+}
+
+
+window.onload = function () {
+    client_name = client_name_select.value;
+    fetch('/get_credit_list/' + client_name).then(function (response) {
+        response.json().then(function (data) {
+            optionHTML = '';
+            for (client of data.credit_list) {
+
+            credit.value = client.client_credit_amount;
+            }
+            console.log(optionHTML)
+
+        });
+    });
+}
