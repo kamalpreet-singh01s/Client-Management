@@ -1207,11 +1207,17 @@ def approve_voucher(voucher_id):
             print("credit less")
             # client.overall_received = client.overall_received + (voucher_to_update.amount - client.overall_payable)
             # client.overall_payable = client.overall_payable - (voucher_to_update.amount - client.overall_payable)
+
             sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+            if sale_order.total_payable < 0:
+                sale_order.total_payable = 0
             sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
+
+            if sale_order.total_paid > sale_order.total_amount:
+                client.credit_amount = sale_order.total_paid - sale_order.total_amount
             client.overall_received = client.overall_received + sale_order.total_paid
             client.overall_payable = client.overall_payable - sale_order.total_paid
-            # client.credit_amount = voucher_to_update.amount - client.credit_amount
+
 
         elif client.credit_amount == voucher_to_update.amount:
             print("equal")

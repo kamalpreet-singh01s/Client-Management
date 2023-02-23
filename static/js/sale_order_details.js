@@ -383,12 +383,15 @@ total_payable_amount.value = parseFloat(total_payable_amount.value) - parseFloat
 
 
     if (parseFloat(document.getElementById("credit_amount").innerText) == parseFloat(total_amount_including_gst.value)){
-        adjust_credit_textbox.value = parseFloat(document.getElementById("credit_amount").innerText)
-        total_payable_amount.value = parseFloat(total_amount_including_gst.value) - parseFloat(document.getElementById("credit_amount").innerText)
-        document.getElementById("credit_amount").textContent = 0
 
-
+        if (parseFloat(document.getElementById("credit_amount").innerText) > parseFloat(total_payable_amount.value)){
+            document.getElementById("credit_amount").textContent = parseFloat(document.getElementById("credit_amount").innerText) - parseFloat(total_payable_amount.value)
+            adjust_credit_textbox.value = total_payable_amount.value
+            total_payable_amount.value = 0
+        }
     }
+
+
 
 
 //    if (document.getElementById("credit_amount").innerText < total_amount_including_gst.value){
