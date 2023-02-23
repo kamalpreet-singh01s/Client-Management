@@ -44,7 +44,7 @@ font-weight:bold;
                     <div class="form-outline">
                         <label class="form-label">AD/GP/Others.<span style="color:red">*</span></label>
                         <textarea id="form3Example2" class="form-control" rows="3"
-                                  name="content_advt">{{request.form['content_advt']}}</textarea>
+                                  name="content_advt" required>{{request.form['content_advt']}}</textarea>
                     </div>
                 </div>
             </div>
@@ -71,8 +71,8 @@ font-weight:bold;
                 <div class="col">
 
                     <label class="form-label">Bill No.<span style="color:red">*</span></label>
-                    <input type="number" class="form-control" name="bill" value="{{request.form['bill']}}"
-                           placeholder="Bill No." required>
+                    <input type="number" class="form-control" name="bill" value="{{bill_no}}"
+                           placeholder="Bill No." required readonly>
                 </div>
                 <div class="col">
 

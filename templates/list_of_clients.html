@@ -115,7 +115,8 @@
                 <th>Email</th>
                 <th>Phone No.</th>
                 <th>Address</th>
-
+                <th>Overall Payable</th>
+                <th>Overall Received</th>
                 <th>Credit</th>
 
             </tr>
@@ -139,6 +140,12 @@
                     }}
                 </td>
                 <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.address }}
+                </td>
+
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">&#8377 {{ client.overall_payable }}
+                </td>
+
+                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">&#8377 {{ client.overall_received }}
                 </td>
 
                 <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">&#8377 {{ client.credit_amount }}</td>

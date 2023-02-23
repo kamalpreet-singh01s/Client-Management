@@ -185,7 +185,7 @@ gst_select.onchange = function () {
         total_amount_including_gst.value = '0';
 
     }
-
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
     }
     if (gst_no == 18){
         final_deal_amount_gst = parseFloat((18 / 100) * amount_by_user.value)
@@ -199,6 +199,8 @@ gst_select.onchange = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
     if (gst_no == 5){
         final_deal_amount_gst = parseFloat((5 / 100) * amount_by_user.value)
@@ -212,6 +214,8 @@ gst_select.onchange = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
     if (gst_no == 28){
         final_deal_amount_gst = parseFloat((28 / 100) * amount_by_user.value)
@@ -225,6 +229,8 @@ gst_select.onchange = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
 }
 
@@ -244,6 +250,8 @@ window.onload = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
     if (gst_no == 18){
         final_deal_amount_gst = parseFloat((18 / 100) * amount_by_user.value)
@@ -257,6 +265,8 @@ window.onload = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
     if (gst_no == 5){
         final_deal_amount_gst = parseFloat((5 / 100) * amount_by_user.value)
@@ -270,6 +280,8 @@ window.onload = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
     if (gst_no == 28){
         final_deal_amount_gst = parseFloat((28 / 100) * amount_by_user.value)
@@ -283,6 +295,8 @@ window.onload = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
 }
 
@@ -322,6 +336,8 @@ amount_by_user.onchange = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
     if (gst_no == 5){
         final_deal_amount_gst = parseFloat((5 / 100) * amount_by_user.value)
@@ -335,6 +351,8 @@ amount_by_user.onchange = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
     if (gst_no == 28){
         final_deal_amount_gst = parseFloat((28 / 100) * amount_by_user.value)
@@ -348,6 +366,8 @@ amount_by_user.onchange = function () {
         total_amount_including_gst.value = '0';
 
     }
+    document.getElementById("total_payable_amount").value = total_amount_including_gst.value
+
     }
 }
 
@@ -389,6 +409,13 @@ total_payable_amount.value = parseFloat(total_payable_amount.value) - parseFloat
             adjust_credit_textbox.value = total_payable_amount.value
             total_payable_amount.value = 0
         }
+        if (parseFloat(document.getElementById("credit_amount").innerText) == parseFloat(total_payable_amount.value)){
+
+        document.getElementById("credit_amount").textContent = parseFloat(document.getElementById("credit_amount").innerText) - parseFloat(total_payable_amount.value)
+        adjust_credit_textbox.value = total_payable_amount.value
+        total_payable_amount.value = 0
+        }
+
     }
 
 
@@ -404,6 +431,6 @@ total_payable_amount.value = parseFloat(total_payable_amount.value) - parseFloat
 //
 //
 //    }
-
-    console.log(parseFloat(document.getElementById("credit_amount").innerText))
+    document.getElementById("amount_by_user").readOnly = true;
+//    console.log(parseFloat(document.getElementById("credit_amount").innerText))
 }

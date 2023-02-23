@@ -487,7 +487,11 @@ def add_sale_order():
     if "username" in session:
         form = Form()
         form.client_name.choices = [(client.id, client.client_name) for client in Client.query.all()]
-
+        bill_no = db.session.query(SalesOrder).order_by(SalesOrder.id.desc()).first()
+        if bill_no:
+            bill_no = int(bill_no.bill) + 1
+        else:
+            bill_no = 1
         if request.method == "POST":
             client = Client.query.filter_by(id=request.form["client_name"]).first()
 
@@ -538,7 +542,7 @@ def add_sale_order():
                 db.session.commit()
                 flash(f'Sales Order With Bill No. {request.form["bill"]} Created Successfully', category='success')
                 return redirect(url_for('list_of_sales_order', page=1))
-        return render_template(Templates.add_sale_order, form=form, date_today=date_today)
+        return render_template(Templates.add_sale_order, form=form, date_today=date_today, bill_no=bill_no)
     return render_template(Templates.login)
 
 
@@ -624,11 +628,21 @@ def sale_order_details(sale_order_id):
                 client.overall_received = client.overall_received + float(request.form['adjust_credit_textbox'])
 
             if float(request.form["total_amount_including_gst"]) != float(request.form["previous_total_amount"]):
-                sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
-                sale_order_to_update.total_payable = float(request.form["total_payable_amount"])
-                client.overall_payable = (client.overall_payable - float(
-                    request.form["previous_total_amount"])) + float(request.form["total_amount_including_gst"])
-                print(client.overall_payable, 'cli overall')
+
+                if float(request.form["total_amount_including_gst"]) > client.overall_payable:
+                    client.overall_payable = float(request.form["total_amount_including_gst"]) - client.overall_payable
+
+                    sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
+                    sale_order_to_update.total_payable = float(request.form["total_payable_amount"])
+                    # client.overall_payable = (client.overall_payable - float(
+                    #     request.form["previous_total_amount"])) + float(request.form["total_amount_including_gst"])
+                    print(client.overall_payable, 'cli overall')
+
+                elif float(request.form["total_amount_including_gst"]) < client.overall_payable:
+                    client.overall_payable = client.overall_payable - float(request.form["total_amount_including_gst"])
+                    sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
+                    sale_order_to_update.total_payable = float(request.form["total_payable_amount"])
+
             else:
                 sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
 
@@ -736,6 +750,10 @@ def get_checked_boxes():
 
             if delete_rec.status.value == SalesOrderStatus.received.value:
                 flash(f"Cannot make changes to bill no. {delete_rec.bill}",
+                      category='error')
+                return redirect(url_for('list_of_sales_order', page=1))
+            if delete_rec.adjusted_credit > 0:
+                flash(f"Cannot delete Sale order with bill no. {delete_rec.bill}. Some Credit amount is being used.",
                       category='error')
                 return redirect(url_for('list_of_sales_order', page=1))
 

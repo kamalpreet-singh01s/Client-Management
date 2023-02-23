@@ -336,7 +336,7 @@ body{
                 <div class="row display-11">
 
                     <div class="col form_editable" hidden>
-                        <label>Email</label>
+                        <label>Email</label><label><span style="color:red">*</span></label>
                         <input class="form-control" type="text" name="email"
                                value="{{sale_order_to_update.client_name.email}}">
                     </div>
@@ -344,7 +344,7 @@ body{
                 <div class="row display-11">
 
                     <div class="col form_editable" hidden>
-                        <label>Phone</label>
+                        <label>Phone</label><label><span style="color:red">*</span></label>
                         <input class="form-control" type="text" name="phone_no"
                                value="{{sale_order_to_update.client_name.phone_no}}">
                     </div>
@@ -352,7 +352,7 @@ body{
                 </div>
 
                 <div class="col form_editable" hidden>
-                    <label>Address</label>
+                    <label>Address</label><label><span style="color:red">*</span></label>
                     <input class="form-control" type="text" name="address"
                            value="{{sale_order_to_update.client_name.address}}">
                 </div>
@@ -438,7 +438,7 @@ body{
                         <div class="col">
 
                             <input type="text" class="form-control" id="adjust_credit_textbox"
-                                   name="adjust_credit_textbox" value="0"
+                                   name="adjust_credit_textbox" value="{{sale_order_to_update.adjusted_credit}}"
                                    readonly>
                         </div>
                     </div>
@@ -527,14 +527,14 @@ body{
             <div class="row display-11 mb-1">
 
                 <div class="col form_editable" hidden>
-                    <label>AD/GP/Others</label>
+                    <label>AD/GP/Others</label><label><span style="color:red">*</span></label>
                     <textarea style="height:100px" class="form-control" name="content_advt">{{sale_order_to_update.content_advt}}</textarea>
                 </div>
             </div>
             <div class="row display-11 mb-1">
 
                 <div class="col form_editable" hidden>
-                    <label>Release Order Date</label>
+                    <label>Release Order Date</label><label><span style="color:red">*</span></label>
                     <input class="form-control" type="date" name="date_of_order"
                            value="{{sale_order_to_update.date_of_order}}">
                 </div>
@@ -542,14 +542,14 @@ body{
             <div class="row display-11 mb-1">
 
                 <div class="col form_editable" hidden>
-                    <label>Date of Publication</label>
+                    <label>Date of Publication</label><label><span style="color:red">*</span></label>
                     <input class="form-control" type="date" name="dop" value="{{sale_order_to_update.dop}}">
                 </div>
             </div>
             <div class="row display-11 mb-4">
 
                 <div class="col form_editable" hidden>
-                    <label>Bill Date</label>
+                    <label>Bill Date</label><label><span style="color:red">*</span></label>
                     <input class="form-control" type="date" name="bill_date" value="{{sale_order_to_update.bill_date}}"
                            readonly>
                 </div>
@@ -571,7 +571,7 @@ body{
     <div class="row w-75 mx-auto" style="margin-bottom:10rem">
 
         {% if sale_order_to_update.filename %}
-        <div class="col-1 me-3" style=" font-size:large; font-weight:bold">
+        <div class="col-1" style="margin-right:80px; font-size:large; font-weight:bold">
             Attachment:
         </div>
         <div class="col" id="current_file">
