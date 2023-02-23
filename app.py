@@ -492,8 +492,16 @@ def add_sale_order():
             bill_no = int(bill_no.bill) + 1
         else:
             bill_no = 1
+
+        client_table_len = db.session.query(Client).count()
+
         if request.method == "POST":
-            client = Client.query.filter_by(id=request.form["client_name"]).first()
+            # client = Client.query.filter_by(id=request.form["client_name"]).first()
+
+
+            if client_table_len < 1:
+                flash('Please Add a Client before creating Sale Order', category='error')
+                return render_template(Templates.add_sale_order, form=form, date_today=date_today, bill_no=bill_no)
 
             exists = db.session.query(SalesOrder.bill).filter_by(bill=request.form["bill"]).first() is not None
             if exists:
@@ -526,9 +534,9 @@ def add_sale_order():
             else:
                 sale_order = SalesOrder(client_id=request.form["client_name"],
                                         content_advt=request.form["content_advt"],
-                                        date_of_order=request.form["date_of_order"],
-                                        dop=request.form["dop"], bill=request.form["bill"],
-                                        bill_date=request.form["bill_date"],
+                                        date_of_order=date_today,
+                                        dop=date_today, bill=bill_no,
+                                        bill_date=date_today,
                                         amount=round(float(request.form["amount_by_user"]), 2),
                                         gst_amount=float(request.form["gst_amount"]),
                                         total_amount=request.form['total_amount_including_gst'],
@@ -539,6 +547,9 @@ def add_sale_order():
                 db.session.add(sale_order)
                 client = Client.query.filter_by(id=request.form["client_name"]).first()
                 client.overall_payable = client.overall_payable + float(request.form["total_amount_including_gst"])
+
+
+
                 db.session.commit()
                 flash(f'Sales Order With Bill No. {request.form["bill"]} Created Successfully', category='success')
                 return redirect(url_for('list_of_sales_order', page=1))
