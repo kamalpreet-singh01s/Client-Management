@@ -308,7 +308,7 @@ amount_by_user.onchange = function () {
         total_amount_including_gst.value = '0';
 
     }
-
+        document.getElementById("total_payable_amount").value = total_amount_including_gst.value
     }
     if (gst_no == 18){
         final_deal_amount_gst = parseFloat((18 / 100) * amount_by_user.value)
@@ -351,4 +351,56 @@ amount_by_user.onchange = function () {
     }
 }
 
+//credit_available = document.getElementById("credit_amount")
+adjust_credit_textbox = document.getElementById("adjust_credit_textbox")
+total_payable_amount = document.getElementById("total_payable_amount")
+total_amount_including_gst = document.getElementById("total_amount_including_gst")
+credit_add_button = document.getElementById("credit_add_button")
+function adjustCredit(){
+//    credit_available = '{{client.credit_amount}}'
 
+    if (parseFloat(document.getElementById("credit_amount").innerText) < parseFloat(total_amount_including_gst.value)){
+//        adjust_credit_textbox.value = document.getElementById("credit_amount").innerText
+//        total_payable_amount.value = total_amount_including_gst.value + total_amount_including_gst.value - document.getElementById("credit_amount").innerText
+        adjust_credit_textbox.value = parseFloat(adjust_credit_textbox.value) + parseFloat(document.getElementById("credit_amount").innerText)
+//        console.log(total_payable_amount.value)
+console.log(adjust_credit_textbox.value + 'adj')
+total_payable_amount.value = parseFloat(total_payable_amount.value) - parseFloat(document.getElementById("credit_amount").innerText)
+        document.getElementById("credit_amount").textContent = '0'
+
+        credit_add_button.remove();
+        document.getElementById("message").style.display = 'block';
+
+    }
+
+    if (parseFloat(document.getElementById("credit_amount").innerText) > parseFloat(total_amount_including_gst.value)){
+    console.log('test')
+        adjust_credit_textbox.value = total_amount_including_gst.value
+        total_payable_amount.value = adjust_credit_textbox.value - total_amount_including_gst.value
+        document.getElementById("credit_amount").textContent = document.getElementById("credit_amount").innerText - total_amount_including_gst.value
+        console.log(total_payable_amount.value)
+    }
+
+
+    if (parseFloat(document.getElementById("credit_amount").innerText) == parseFloat(total_amount_including_gst.value)){
+        adjust_credit_textbox.value = parseFloat(document.getElementById("credit_amount").innerText)
+        total_payable_amount.value = parseFloat(total_amount_including_gst.value) - parseFloat(document.getElementById("credit_amount").innerText)
+        document.getElementById("credit_amount").textContent = 0
+
+
+    }
+
+
+//    if (document.getElementById("credit_amount").innerText < total_amount_including_gst.value){
+//        total_payable_amount.value = parseFloat(total_payable_amount.value) - parseFloat(document.getElementById("credit_amount").innerText)
+//        adjust_credit_textbox.value = parseFloat(adjust_credit_textbox.value) + parseFloat(document.getElementById("credit_amount").innerText)
+//        console.log(adjust_credit_textbox.value + 'adjust')
+//        console.log(total_payable_amount.value)
+//
+//        document.getElementById("credit_amount").textContent = 0
+//
+//
+//    }
+
+    console.log(parseFloat(document.getElementById("credit_amount").innerText))
+}

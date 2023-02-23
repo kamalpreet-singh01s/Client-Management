@@ -237,7 +237,7 @@ def add_client():
             if any(char.isdigit() for char in request.form["client_name"]):
                 message = 'Name cannot contain numbers or any special character'
 
-            if request.form["phone_no"].isalpha() or len(request.form["phone_no"]) < 10:
+            if request.form["phone_no"].isalpha() or not len(request.form["phone_no"]) == 10:
                 message = 'Not a Valid Phone number.'
 
             if not re.fullmatch(email_reg, request.form['email']):
@@ -509,7 +509,9 @@ def add_sale_order():
                                         gst=request.form['gst'],
                                         total_amount=request.form['total_amount_including_gst'],
                                         filename=os.path.join(UPLOAD_FOLDER, filename), total_paid=0,
-                                        client_credit=request.form["credit"])
+                                        total_payable=request.form['total_amount_including_gst'],
+                                        adjusted_credit=0
+                                        )
 
                 db.session.add(sale_order)
                 client = Client.query.filter_by(id=request.form["client_name"]).first()
@@ -527,7 +529,8 @@ def add_sale_order():
                                         gst_amount=float(request.form["gst_amount"]),
                                         total_amount=request.form['total_amount_including_gst'],
                                         gst=request.form["gst"],
-                                        filename=None, total_paid=0, client_credit=request.form["credit"])
+                                        filename=None, total_paid=0,
+                                        total_payable=request.form['total_amount_including_gst'], adjusted_credit=0)
 
                 db.session.add(sale_order)
                 client = Client.query.filter_by(id=request.form["client_name"]).first()
@@ -547,7 +550,7 @@ def sale_order_details(sale_order_id):
         sale_order_to_update = SalesOrder.query.filter_by(id=sale_order_id).first()
         client = Client.query.filter_by(id=sale_order_to_update.client_id).first()
         get_gst_percentage = sale_order_to_update.gst
-        print(get_gst_percentage, type(get_gst_percentage))
+
         client = Client.query.filter(Client.id == sale_order_to_update.client_id).first()
         form = Form()
 
@@ -580,14 +583,54 @@ def sale_order_details(sale_order_id):
             sale_order_to_update.gst_amount = request.form["gst_amount"]
             sale_order_to_update.amount = request.form["amount_by_user"]
 
+            if float(request.form['adjust_credit_textbox']) == 0:
+                if float(request.form["total_amount_including_gst"]) != float(request.form["previous_total_amount"]):
+                    sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
+                    client.overall_payable = (client.overall_payable - float(
+                        request.form["previous_total_amount"])) + float(request.form["total_amount_including_gst"])
+                    print(client.overall_payable, 'cli overall')
+                else:
+                    sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
+
+            if float(request.form['adjust_credit_textbox']) == float(request.form["total_amount_including_gst"]):
+                sale_order_to_update.total_payable = float(request.form['total_payable_amount'])
+                sale_order_to_update.adjusted_credit = float(request.form["total_amount_including_gst"]) - float(
+                    request.form["total_payable_amount"])
+                client.credit_amount = client.credit_amount - sale_order_to_update.adjusted_credit
+                sale_order_to_update.total_paid = sale_order_to_update.total_paid + float(
+                    request.form["adjust_credit_textbox"])
+
+                client.overall_payable = client.overall_payable - float(request.form['adjust_credit_textbox'])
+                client.overall_received = client.overall_received + float(request.form["total_amount_including_gst"])
+
+            if float(request.form['adjust_credit_textbox']) > float(request.form["total_amount_including_gst"]):
+                sale_order_to_update.total_payable = float(request.form['total_payable_amount'])
+                sale_order_to_update.adjusted_credit = client.credit_amount - float(
+                    request.form["total_amount_including_gst"])
+                client.credit_amount = client.credit_amount - sale_order_to_update.adjusted_credit
+
+                client.overall_payable = client.overall_payable - float(request.form['adjust_credit_textbox'])
+                client.overall_received = client.overall_received + float(request.form["total_amount_including_gst"])
+
+            if float(request.form['adjust_credit_textbox']) < float(request.form["total_amount_including_gst"]):
+                sale_order_to_update.total_payable = float(request.form['total_payable_amount'])
+                sale_order_to_update.adjusted_credit = float(request.form['adjust_credit_textbox'])
+
+                sale_order_to_update.total_paid = sale_order_to_update.total_paid + float(
+                    request.form['adjust_credit_textbox'])
+
+                client.credit_amount = client.credit_amount - float(request.form['adjust_credit_textbox'])
+                client.overall_payable = client.overall_payable - float(request.form['adjust_credit_textbox'])
+                client.overall_received = client.overall_received + float(request.form['adjust_credit_textbox'])
+
             if float(request.form["total_amount_including_gst"]) != float(request.form["previous_total_amount"]):
                 sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
+                sale_order_to_update.total_payable = float(request.form["total_payable_amount"])
                 client.overall_payable = (client.overall_payable - float(
                     request.form["previous_total_amount"])) + float(request.form["total_amount_including_gst"])
                 print(client.overall_payable, 'cli overall')
             else:
                 sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
-                print('test')
 
             get_file = request.files['file']
             if request.files['file']:
@@ -595,6 +638,13 @@ def sale_order_details(sale_order_id):
                     sale_order_to_update.date_of_order) + '.pdf'
                 get_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 sale_order_to_update.filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+            if float(sale_order_to_update.total_paid) >= float(sale_order_to_update.total_amount):
+                print("testing")
+                sale_order_to_update.total_paid = sale_order_to_update.total_amount
+
+                sale_order_to_update.status = SalesOrderStatus.received.value
+                sale_order_to_update.amount_received_date = date_now
 
             db.session.commit()
 
@@ -663,7 +713,7 @@ def get_checked_boxes():
         for ids in rec_ids.split(','):
 
             delete_rec = SalesOrder.query.filter_by(id=ids).first()
-
+            print(delete_rec.status.value)
             payment_voucher = PaymentVoucher.query.filter_by(sales_order_id=ids).first()
             payment_voucher_list = PaymentVoucher.query.filter_by(sales_order_id=ids).all()
             [print(i) for i in payment_voucher_list]
@@ -680,7 +730,13 @@ def get_checked_boxes():
                 client.overall_payable = client.overall_payable - (delete_rec.total_amount - payment_voucher.amount)
 
             if len(payment_voucher_list) > 0:
-                flash("Cannot delete Sale order with a voucher", category='error')
+                flash(f"Cannot delete Sale order with bill no. {delete_rec.bill} because it contains a voucher",
+                      category='error')
+                return redirect(url_for('list_of_sales_order', page=1))
+
+            if delete_rec.status.value == SalesOrderStatus.received.value:
+                flash(f"Cannot make changes to bill no. {delete_rec.bill}",
+                      category='error')
                 return redirect(url_for('list_of_sales_order', page=1))
 
             for voucher in all_vouchers:
@@ -691,7 +747,7 @@ def get_checked_boxes():
                 os.remove(delete_rec.filename)
             db.session.delete(delete_rec)
             db.session.commit()
-            flash("Sales Order Deleted", category='success')
+            flash(f"Sales Order with bill no. {delete_rec.bill} Deleted", category='success')
         return redirect(url_for('list_of_sales_order', page=1))
 
     return render_template(Templates.login)
@@ -1116,12 +1172,16 @@ def approve_voucher(voucher_id):
 
         if client.credit_amount == 0 and voucher_to_update.amount == client.overall_payable:
             print("test")
+            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
             client.overall_payable = client.overall_payable - voucher_to_update.amount
             client.overall_received = client.overall_received + voucher_to_update.amount
 
         elif client.credit_amount == 0 and voucher_to_update.amount < client.overall_payable:
 
             print("voucher smaller")
+            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
             client.overall_payable = client.overall_payable - voucher_to_update.amount
             client.overall_received = client.overall_received + voucher_to_update.amount
 
@@ -1130,38 +1190,52 @@ def approve_voucher(voucher_id):
             client.credit_amount = client.credit_amount + (voucher_to_update.amount - client.overall_payable)
             client.overall_received = client.overall_received + client.overall_payable
             client.overall_payable = 0
-
+            sale_order.total_payable = 0
+            sale_order.total_paid = sale_order.total_amount
 
         elif client.credit_amount > voucher_to_update.amount:
             print("credit greater")
             client.overall_payable = client.overall_payable - voucher_to_update.amount
             client.overall_received = client.overall_received + voucher_to_update.amount
-            client.credit_amount = client.credit_amount - voucher_to_update.amount
+            # client.credit_amount = client.credit_amount - voucher_to_update.amount
+
+            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
             # client.credit_amount = 0
 
         elif client.credit_amount < voucher_to_update.amount:
             print("credit less")
-            client.overall_received = client.overall_received + (voucher_to_update.amount - client.overall_payable)
-            client.overall_payable = client.overall_payable - (voucher_to_update.amount - client.overall_payable)
-
-            client.credit_amount = voucher_to_update.amount - client.credit_amount
+            # client.overall_received = client.overall_received + (voucher_to_update.amount - client.overall_payable)
+            # client.overall_payable = client.overall_payable - (voucher_to_update.amount - client.overall_payable)
+            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
+            client.overall_received = client.overall_received + sale_order.total_paid
+            client.overall_payable = client.overall_payable - sale_order.total_paid
+            # client.credit_amount = voucher_to_update.amount - client.credit_amount
 
         elif client.credit_amount == voucher_to_update.amount:
             print("equal")
             client.overall_received = client.overall_received + voucher_to_update.amount
             client.overall_payable = client.overall_payable - voucher_to_update.amount
-            client.credit_amount = client.credit_amount - voucher_to_update.amount
+            # client.credit_amount = client.credit_amount - voucher_to_update.amount
+            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
 
-        for i in total_vouchers:
-            total_amount = total_amount + i.amount
-            if float(total_amount) >= sale_order.total_amount:
-                sale_order.status = SalesOrderStatus.received.value
-                sale_order.amount_received_date = date_today
+        if sale_order.total_paid >= sale_order.total_amount:
+            sale_order.status = SalesOrderStatus.received.value
+            sale_order.amount_received_date = date_today
 
-            sale_order.total_paid = float(total_amount)
+        # for i in total_vouchers:
+        #     total_amount = total_amount + i.amount
+        #     if float(total_amount) >= sale_order.total_amount:
+        #         sale_order.status = SalesOrderStatus.received.value
+        #         sale_order.amount_received_date = date_today
+        #
+        #     sale_order.total_paid = sale_order.total_paid + float(total_amount)
+        #
+        #     if sale_order.total_paid >= sale_order.total_amount:
+        #         sale_order.total_paid = sale_order.total_amount
 
-            if sale_order.total_paid >= sale_order.total_amount:
-                sale_order.total_paid = sale_order.total_amount
         print(total_amount)
 
         db.session.commit()
@@ -1272,7 +1346,7 @@ def file_upload():
                 exists = db.session.query(db.exists().where(
                     Client.client_name == read_file.loc[count, 'Client'])).scalar()
                 get_client_id = Client.query.filter_by(client_name=read_file.loc[count, 'Client']).first()
-
+                print(get_client_id, 'test')
                 print(exists)
                 if not exists:
                     new_client = Client(client_name=read_file.loc[count, 'Client'], email=None, phone_no=None,
@@ -1312,8 +1386,12 @@ def file_upload():
                                                         gst=str(read_file.loc[count, 'GST(%)']),
                                                         amount_received_date=read_file.loc[
                                                             count, 'Amount Received Date'],
-                                                        total_paid=0
+                                                        total_paid=0, total_payable=float(
+                                    read_file.loc[count, 'Total(Including GST)']), adjusted_credit=0
                                                         )
+                            client = Client.query.filter_by(id=get_client_id.id).first()
+                            client.overall_payable = client.overall_payable + new_sale_order.total_amount
+
                             db.session.add(new_sale_order)
                             db.session.commit()
                             count += 1

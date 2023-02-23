@@ -33,6 +33,11 @@ body{
 
 
 
+
+
+
+
+
 </style>
 
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
@@ -188,6 +193,11 @@ body{
 
 
 
+
+
+
+
+
     </script>
     <div class="row w-75 mx-auto">
         <div class="col mb-1" style="display:block" id="back_button">
@@ -202,14 +212,13 @@ body{
         </div>
     </div>
     <div class="w-75 mx-auto row  form-group" style="background-color:#eff4ff; border-radius:20px">
-        <div class="col-6">
+        <div class="col-5">
             <div class="row mt-2" id="hide_table">
                 <div class="col-6 mb-2" style="font-size:large; font-weight:bold" id="visible_client_name">
                     <u>{{client.client_name}}/{{sale_order_to_update.bill}}</u>
                 </div>
                 <div class="col text-end">
-                    <label>Credit: </label>
-                    &#8377 {{client.credit_amount}}
+                    Credit: {{client.credit_amount}}
                 </div>
 
                 <table class="table">
@@ -231,7 +240,6 @@ body{
                         <td class="bold">Address:</td>
                         <td>{{client.address}}</td>
                     </tr>
-
 
 
                     <tr>
@@ -256,8 +264,20 @@ body{
                     </tr>
 
                     <tr>
+                        <td class="bold">Adjusted Credit</td>
+                        <td>&#8377 {{sale_order_to_update.adjusted_credit}}</td>
+
+                    </tr>
+
+                    <tr>
                         <td class="bold">Total Paid:</td>
                         <td>&#8377 {{sale_order_to_update.total_paid}}</td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="bold">Total Payable:</td>
+                        <td>&#8377 {{sale_order_to_update.total_payable}}</td>
                     </tr>
 
                     </tbody>
@@ -265,12 +285,42 @@ body{
                 </table>
             </div>
 
-            <div class="w-75">
+            <div class="w-100">
                 <div class="row">
                     <div class="col mb-2" style="font-size:large; font-weight:bold" id="client_details" hidden>
                         <u>Client Details</u>
                     </div>
+                    <div class="col text-end form_editable" hidden>
+                        {% if sale_order_to_update.status.value != SalesOrderStatus.received.value and
+                        sale_order_to_update.status.value != SalesOrderStatus.cancelled.value %}
+                        {% if client.credit_amount != 0%}
+                        <div class="row">
+                            <div class="col-5">
+                                <label>Credit: &#8377</label>
+                            </div>
+                            <div class="col-3 text-start">
 
+                                <p id="credit_amount">{{client.credit_amount}}</p>
+
+                            </div>
+                            <div class="col text-start text-success" style="display:none" id="message">
+                                <h6 >Added!</h6>
+                            </div>
+
+                            <div class="col text-start">
+                                <button type="button" class="btn btn-info btn-bg btn-sm"
+                                        onclick="adjustCredit()"
+                                        style="padding: 0px 6px;" id="credit_add_button">+
+                                </button>
+
+                            </div>
+
+
+                        </div>
+
+                        {% endif %}
+                        {% endif %}
+                    </div>
                 </div>
 
 
@@ -380,8 +430,46 @@ body{
                         </div>
                         {% endif %}
                     </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col mt-1">
+                            <label class="form-label">Adjusted Credit</label>
+                        </div>
+                        <div class="col">
 
-                            <input type="text" value="{{sale_order_to_update.total_amount}}" name="previous_total_amount" hidden>
+                            <input type="text" class="form-control" id="adjust_credit_textbox"
+                                   name="adjust_credit_textbox" value="0"
+                                   readonly>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mb-3">
+                        {% if request.form['total_amount_including_gst'] %}
+                        <div class="col mt-1">
+                            <label class="form-label">Total Payable Amount</label>
+                        </div>
+                        <div class="col">
+
+                            <input type="text" class="form-control" id="total_payable_amount"
+                                   name="total_payable_amount"
+                                   value="{{sale_order_to_update.total_payable}}"
+                                   placeholder="" readonly>
+                        </div>
+                        {% else %}
+                        <div class="col mt-1">
+                            <label class="form-label">Total Payable Amount</label>
+                        </div>
+                        <div class="col">
+
+                            <input type="text" class="form-control" id="total_payable_amount"
+                                   name="total_payable_amount" value="{{sale_order_to_update.total_payable}}"
+                                    readonly>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <input type="text" value="{{sale_order_to_update.total_amount}}" name="previous_total_amount"
+                           hidden>
 
                 </div>
 
@@ -391,8 +479,8 @@ body{
         <div class="col-1">
 
         </div>
-        <div class="col-5" id="hide_table2">
-            <div class="row w-75">
+        <div class="col-6" id="hide_table2">
+            <div class="row w-100">
                 <div class="row">
                     <div class="col mt-3 mb-2" style="font-size:large; font-weight:bold">
                         <u>Bill Details</u>
@@ -429,7 +517,7 @@ body{
                 </table>
             </div>
         </div>
-        <div class="col-5">
+        <div class="col-6">
             <div class="row" style="font-size:large; font-weight:bold" id="bill_details" hidden>
                 <div class="col mb-2">
                     <u>Bill Details</u>
@@ -489,7 +577,9 @@ body{
         <div class="col" id="current_file">
             <a class="me-3" style="text-decoration:none; font-size:large"
                href="{{url_for('download',filename = sale_order_to_update.filename, sale_order_id = sale_order_to_update.id)}}">{{client.client_name}}/{{sale_order_to_update.bill}}</a>
-            <button type="button" class="btn btn-success btn-sm" id="update_btn_file" onclick="new_file_upload()" hidden>Update</button>
+            <button type="button" class="btn btn-success btn-sm" id="update_btn_file" onclick="new_file_upload()"
+                    hidden>Update
+            </button>
         </div>
 
         <div class="col text-start" id="update_file" hidden>
@@ -503,20 +593,21 @@ body{
         </div>
 
 
-
         {% else %}
-        <div class="col-7 text-end" style="font-size:large; font-weight:bold">
-            Attachment:
-        </div>
-        <div class="col" style="font-size:large" id="no_attachment">
-            No Attachment
-        </div>
-        <div class="col text-start" id="upload_file" hidden>
-            <label for="file1-upload" style="font-weight:600" class="custom-file-upload">
-                <i class="fa fa-cloud-upload"></i>Upload Attachment
-            </label>
-            <input id="file1-upload" name='file' type="file" accept="application/pdf" style="display:none;">
+        <div class="row w-75">
+            <div class="col-2" style="font-size:large; font-weight:bold">
+                Attachment:
+            </div>
+            <div class="col" style="font-size:large" id="no_attachment">
+                No Attachment
+            </div>
+            <div class="col text-start" id="upload_file" hidden>
+                <label for="file1-upload" style="font-weight:600" class="custom-file-upload">
+                    <i class="fa fa-cloud-upload"></i>Upload Attachment
+                </label>
+                <input id="file1-upload" name='file' type="file" accept="application/pdf" style="display:none;">
 
+            </div>
         </div>
         {% endif %}
     </div>

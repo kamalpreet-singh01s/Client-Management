@@ -110,8 +110,9 @@ class SalesOrder(db.Model):
     total_amount = db.Column(db.Float)
     gst = db.Column(db.String(100))
     total_paid = db.Column(db.Float)
+    total_payable = db.Column(db.Float)
+    adjusted_credit = db.Column(db.Float)
     amount_received_date = db.Column(db.String(100))
-    client_credit = db.Column(db.Float)
 
     status = db.Column(
         db.Enum(SalesOrderStatus, values_callable=lambda x: [str(stat.value) for stat in SalesOrderStatus]),
@@ -119,7 +120,7 @@ class SalesOrder(db.Model):
 
     filename = db.Column(db.String())
 
-    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, amount,gst_amount,total_amount, gst,total_paid,client_credit,
+    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, amount,gst_amount,total_amount, gst,total_paid,total_payable,adjusted_credit,
                  filename=None, amount_received_date=None):
         self.client_id = client_id
         self.content_advt = content_advt
@@ -132,7 +133,9 @@ class SalesOrder(db.Model):
         self.total_amount = total_amount
         self.gst = gst
         self.total_paid = total_paid
-        self.client_credit = client_credit
+        self.total_payable = total_payable
+        self.adjusted_credit = adjusted_credit
+
         self.amount_received_date = amount_received_date
         self.filename = filename
 
