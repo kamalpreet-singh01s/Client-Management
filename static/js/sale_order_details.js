@@ -55,6 +55,9 @@ hide_table.parentNode.removeChild(hide_table);
 hide_table2 = document.getElementById('hide_table2');
 hide_table2.parentNode.removeChild(hide_table2);
 
+hide_table3 = document.getElementById('hide_table3');
+hide_table3.parentNode.removeChild(hide_table3);
+
 document.getElementById("client_details").hidden = false;
 document.getElementById("bill_details").hidden = false;
 

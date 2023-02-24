@@ -38,6 +38,8 @@ body{
 
 
 
+
+
 </style>
 
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
@@ -198,6 +200,8 @@ body{
 
 
 
+
+
     </script>
     <div class="row w-75 mx-auto">
         <div class="col mb-1" style="display:block" id="back_button">
@@ -217,9 +221,7 @@ body{
                 <div class="col-6 mb-2" style="font-size:large; font-weight:bold" id="visible_client_name">
                     <u>{{client.client_name}}/{{sale_order_to_update.bill}}</u>
                 </div>
-                <div class="col text-end">
-                    Credit: {{client.credit_amount}}
-                </div>
+
 
                 <table class="table">
 
@@ -241,45 +243,6 @@ body{
                         <td>{{client.address}}</td>
                     </tr>
 
-
-                    <tr>
-                        <td class="bold">Amount (Rs.):</td>
-                        <td>&#8377 {{sale_order_to_update.amount}}</td>
-                    </tr>
-
-                    <tr>
-                        <td class="bold">GST(%):</td>
-                        <td>{{sale_order_to_update.gst}}</td>
-                    </tr>
-
-                    <tr>
-                        <td class="bold">GST Amount (Rs.):</td>
-                        <td>&#8377 {{sale_order_to_update.gst_amount}}</td>
-                    </tr>
-
-                    <tr>
-                        <td class="bold">Total Amount (Including GST):</td>
-                        <td>&#8377 {{sale_order_to_update.total_amount}}</td>
-
-                    </tr>
-
-                    <tr>
-                        <td class="bold">Adjusted Credit</td>
-                        <td>&#8377 {{sale_order_to_update.adjusted_credit}}</td>
-
-                    </tr>
-
-                    <tr>
-                        <td class="bold">Total Paid:</td>
-                        <td>&#8377 {{sale_order_to_update.total_paid}}</td>
-                    </tr>
-
-
-                    <tr>
-                        <td class="bold">Total Payable:</td>
-                        <td>&#8377 {{sale_order_to_update.total_payable}}</td>
-                    </tr>
-
                     </tbody>
 
                 </table>
@@ -290,37 +253,7 @@ body{
                     <div class="col mb-2" style="font-size:large; font-weight:bold" id="client_details" hidden>
                         <u>Client Details</u>
                     </div>
-                    <div class="col text-end form_editable" hidden>
-                        {% if sale_order_to_update.status.value != SalesOrderStatus.received.value and
-                        sale_order_to_update.status.value != SalesOrderStatus.cancelled.value %}
-                        {% if client.credit_amount != 0%}
-                        <div class="row">
-                            <div class="col-5">
-                                <label>Credit: &#8377</label>
-                            </div>
-                            <div class="col-3 text-start">
 
-                                <p id="credit_amount">{{client.credit_amount}}</p>
-
-                            </div>
-                            <div class="col text-start text-success" style="display:none" id="message">
-                                <h6 >Added!</h6>
-                            </div>
-
-                            <div class="col text-start">
-                                <button type="button" class="btn btn-info btn-bg btn-sm"
-                                        onclick="adjustCredit()"
-                                        style="padding: 0px 6px;" id="credit_add_button">+
-                                </button>
-
-                            </div>
-
-
-                        </div>
-
-                        {% endif %}
-                        {% endif %}
-                    </div>
                 </div>
 
 
@@ -357,121 +290,6 @@ body{
                            value="{{sale_order_to_update.client_name.address}}">
                 </div>
 
-
-                <div class="col mt-3 form_editable" style="padding:9px;border-radius:20px; background-color:#00faff26"
-                     hidden>
-
-                    <div class="row mt-3 mb-1">
-                        {% if request.form['amount_by_user']%}
-                        <div class="col mt-1">
-                            <label class="form-label">Amount (Rs.)<span style="color:red">*</span></label>
-                        </div>
-                        <div class="col">
-                            <input type="number" class="form-control" id="amount_by_user" name="amount_by_user"
-                                   value="{{request.form['amount_by_user']}}"
-                                   placeholder="Amount" required>
-                        </div>
-                        {% else %}
-                        <div class="col mt-1">
-                            <label class="form-label">Amount (Rs.)<span style="color:red">*</span></label>
-                        </div>
-                        <div class="col">
-
-
-                            <input type="number" class="form-control" id="amount_by_user" name="amount_by_user"
-                                   value="{{sale_order_to_update.amount}}"
-                                   placeholder="Amount" required>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="row mb-1">
-                        <div class="col mt-1">
-                            <label class="form-label">GST(%)<span style="color:red">*</span></label>
-                        </div>
-                        <div class="col">
-                            {{form.gst(class="form-select form-select")}}
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col mt-1">
-                            <label class="form-label">GST Amount (Rs.)</label>
-                        </div>
-                        <div class="col">
-
-                            <input type="text" class="form-control" id="gst_amount"
-                                   name="gst_amount" value="0"
-                                   placeholder="GST Amount" readonly>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row mb-3">
-                        {% if request.form['total_amount_including_gst'] %}
-                        <div class="col mt-1">
-                            <label class="form-label">Total Amount</label>
-                        </div>
-                        <div class="col">
-
-                            <input type="text" class="form-control" id="total_amount_including_gst"
-                                   name="total_amount_including_gst"
-                                   value="{{request.form['total_amount_including_gst']}}"
-                                   placeholder="Total Including GST" readonly>
-                        </div>
-                        {% else %}
-                        <div class="col mt-1">
-                            <label class="form-label">Total Amount</label>
-                        </div>
-                        <div class="col">
-
-                            <input type="text" class="form-control" id="total_amount_including_gst"
-                                   name="total_amount_including_gst" value="0"
-                                   placeholder="Total Including GST" readonly>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col mt-1">
-                            <label class="form-label">Adjusted Credit</label>
-                        </div>
-                        <div class="col">
-
-                            <input type="text" class="form-control" id="adjust_credit_textbox"
-                                   name="adjust_credit_textbox" value="{{sale_order_to_update.adjusted_credit}}"
-                                   readonly>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row mb-3">
-                        {% if request.form['total_amount_including_gst'] %}
-                        <div class="col mt-1">
-                            <label class="form-label">Total Payable Amount</label>
-                        </div>
-                        <div class="col">
-
-                            <input type="text" class="form-control" id="total_payable_amount"
-                                   name="total_payable_amount"
-                                   value="{{sale_order_to_update.total_payable}}"
-                                   placeholder="" readonly>
-                        </div>
-                        {% else %}
-                        <div class="col mt-1">
-                            <label class="form-label">Total Payable Amount</label>
-                        </div>
-                        <div class="col">
-
-                            <input type="text" class="form-control" id="total_payable_amount"
-                                   name="total_payable_amount" value="{{sale_order_to_update.total_payable}}"
-                                    readonly>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <input type="text" value="{{sale_order_to_update.total_amount}}" name="previous_total_amount"
-                           hidden>
-
-                </div>
 
             </div>
         </div>
@@ -559,15 +377,210 @@ body{
 
         </div>
 
-    </div>
+        <div class="row w-100 mx-auto justify-content-end">
+            <hr>
 
-    <div class="row ">
-        <div class="row">
-            <hr class="mx-auto"
-                style="border-left: 2px solid lightgrey; background-color:rgba(248,249,250)"/>
+            <div class="col-6" id="hide_table3">
+                <div class="row">
+                    <div class="col-11 text-end text-success">
+                        Credit: {{client.credit_amount}}
+                    </div>
+                </div>
+                <br>
+                <table class="table table-hover">
+                    <tr>
+                        <td class="bold">Amount (Rs.):</td>
+                        <td>&#8377 {{sale_order_to_update.amount}}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="bold">GST(%):</td>
+                        <td>{{sale_order_to_update.gst}}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="bold">GST Amount (Rs.):</td>
+                        <td>&#8377 {{sale_order_to_update.gst_amount}}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="bold">Total Amount (Including GST):</td>
+                        <td>&#8377 {{sale_order_to_update.total_amount}}</td>
+
+                    </tr>
+
+                    <tr>
+                        <td class="bold">Adjusted Credit</td>
+                        <td>&#8377 {{sale_order_to_update.adjusted_credit}}</td>
+
+                    </tr>
+
+                    <tr>
+                        <td class="bold">Total Paid:</td>
+                        <td>&#8377 {{sale_order_to_update.total_paid}}</td>
+                    </tr>
+
+
+                    <tr>
+                        <td class="bold">Total Payable:</td>
+                        <td>&#8377 {{sale_order_to_update.total_payable}}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-6 mt-3 form_editable" style="padding:9px;border-radius:20px; background-color:#daf2ff"
+                 hidden>
+                <div class="row justify-content-end">
+                    <div class="col text-end form_editable" hidden>
+                        {% if sale_order_to_update.status.value != SalesOrderStatus.received.value and
+                        sale_order_to_update.status.value != SalesOrderStatus.cancelled.value %}
+                        {% if client.credit_amount != 0%}
+                        <div class="row">
+                            <div class="col-8">
+                                <label>Credit: &#8377</label>
+                            </div>
+                            <div class="col-2 text-start">
+
+                                <p id="credit_amount">{{client.credit_amount}}</p>
+
+                            </div>
+                            <div class="col-2 text-start text-success" style="display:none" id="message">
+                                <h6>Added!</h6>
+                            </div>
+
+                            <div class="col text-start">
+                                <button type="button" class="btn btn-info btn-bg btn-sm"
+                                        onclick="adjustCredit()"
+                                        style="padding: 0px 6px;" id="credit_add_button">+
+                                </button>
+
+                            </div>
+
+
+                        </div>
+
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mt-3 mb-1">
+                    {% if request.form['amount_by_user']%}
+                    <div class="col mt-1">
+                        <label class="form-label">Amount (Rs.)<span style="color:red">*</span></label>
+                    </div>
+                    <div class="col">
+                        <input type="number" class="form-control" id="amount_by_user" name="amount_by_user"
+                               value="{{request.form['amount_by_user']}}"
+                               placeholder="Amount" required>
+                    </div>
+                    {% else %}
+                    <div class="col mt-1">
+                        <label class="form-label">Amount (Rs.)<span style="color:red">*</span></label>
+                    </div>
+                    <div class="col">
+
+
+                        <input type="number" class="form-control" id="amount_by_user" name="amount_by_user"
+                               value="{{sale_order_to_update.amount}}"
+                               placeholder="Amount" required>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="row mb-1">
+                    <div class="col mt-1">
+                        <label class="form-label">GST(%)<span style="color:red">*</span></label>
+                    </div>
+                    <div class="col">
+                        {{form.gst(class="form-select form-select")}}
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col mt-1">
+                        <label class="form-label">GST Amount (Rs.)</label>
+                    </div>
+                    <div class="col">
+
+                        <input type="text" class="form-control" id="gst_amount"
+                               name="gst_amount" value="0"
+                               placeholder="GST Amount" readonly>
+                    </div>
+                </div>
+                <hr>
+                <div class="row mb-3">
+                    {% if request.form['total_amount_including_gst'] %}
+                    <div class="col mt-1">
+                        <label class="form-label">Total Amount</label>
+                    </div>
+                    <div class="col">
+
+                        <input type="text" class="form-control" id="total_amount_including_gst"
+                               name="total_amount_including_gst"
+                               value="{{request.form['total_amount_including_gst']}}"
+                               placeholder="Total Including GST" readonly>
+                    </div>
+                    {% else %}
+                    <div class="col mt-1">
+                        <label class="form-label">Total Amount</label>
+                    </div>
+                    <div class="col">
+
+                        <input type="text" class="form-control" id="total_amount_including_gst"
+                               name="total_amount_including_gst" value="0"
+                               placeholder="Total Including GST" readonly>
+                    </div>
+                    {% endif %}
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col mt-1">
+                        <label class="form-label">Adjusted Credit</label>
+                    </div>
+                    <div class="col">
+
+                        <input type="text" class="form-control" id="adjust_credit_textbox"
+                               name="adjust_credit_textbox" value="{{sale_order_to_update.adjusted_credit}}"
+                               readonly>
+                    </div>
+                </div>
+                <hr>
+                <div class="row mb-3">
+                    {% if request.form['total_amount_including_gst'] %}
+                    <div class="col mt-1">
+                        <label class="form-label">Total Payable Amount</label>
+                    </div>
+                    <div class="col">
+
+                        <input type="text" class="form-control" id="total_payable_amount"
+                               name="total_payable_amount"
+                               value="{{sale_order_to_update.total_payable}}"
+                               placeholder="" readonly>
+                    </div>
+                    {% else %}
+                    <div class="col mt-1">
+                        <label class="form-label">Total Payable Amount</label>
+                    </div>
+                    <div class="col">
+
+                        <input type="text" class="form-control" id="total_payable_amount"
+                               name="total_payable_amount" value="{{sale_order_to_update.total_payable}}"
+                               readonly>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <input type="text" value="{{sale_order_to_update.total_amount}}" name="previous_total_amount"
+                       hidden>
+
+            </div>
+
         </div>
+
     </div>
 
+
+    <hr class="w-75 mx-auto">
     <div class="row w-75 mx-auto" style="margin-bottom:10rem">
 
         {% if sale_order_to_update.filename %}
