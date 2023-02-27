@@ -47,7 +47,11 @@ document.getElementById('no_attachment').hidden = true;
 //action_buttons.style.backgroundColor = "#141619";
 
 
+document.getElementById("bill_details").hidden = false;
+document.getElementById("client_details").hidden = false;
 
+hide_table3 = document.getElementById('hide_table3');
+hide_table3.parentNode.removeChild(hide_table3);
 
 hide_table = document.getElementById('hide_table');
 hide_table.parentNode.removeChild(hide_table);
@@ -55,11 +59,8 @@ hide_table.parentNode.removeChild(hide_table);
 hide_table2 = document.getElementById('hide_table2');
 hide_table2.parentNode.removeChild(hide_table2);
 
-hide_table3 = document.getElementById('hide_table3');
-hide_table3.parentNode.removeChild(hide_table3);
 
-document.getElementById("client_details").hidden = false;
-document.getElementById("bill_details").hidden = false;
+
 
 
 var form_editable = document.getElementsByClassName('form_editable');

@@ -189,6 +189,8 @@
                 <th title="Client Name" style="text-align:right">Amount</th>
                 <th title="Client Name" style="text-align:right">GST Amount</th>
                 <th title="Client Name" style="text-align:right">Total Amount</th>
+                <th title="Client Name" style="text-align:right">Total Received</th>
+                <th title="Client Name" style="text-align:right">Total Payable</th>
                 <th title="Shows Current Status of Payment">Status</th>
             </tr>
             </thead>
@@ -232,10 +234,20 @@
                     &#8377 {{ record.total_amount }}
                 </td>
 
+                 <td style="cursor: pointer;text-align:right"
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'">
+                    &#8377 {{ record.total_paid }}
+                </td>
+
+                <td style="cursor: pointer;text-align:right"
+                    onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'">
+                    &#8377 {{ record.total_payable }}
+                </td>
+
                 <td style="cursor: pointer; width:115px"
                     onclick="location.href='{{ url_for('sale_order_details', sale_order_id = record.id) }}'"
-                    class="status">
-                    {{ record.status.value }}
+                    >
+                    <label class="status">{{ record.status.value }}</label>
                 </td>
 
 

@@ -192,16 +192,6 @@ body{
 
 
 
-
-
-
-
-
-
-
-
-
-
     </script>
     <div class="row w-75 mx-auto">
         <div class="col mb-1" style="display:block" id="back_button">
@@ -364,7 +354,7 @@ body{
                     <input class="form-control" type="date" name="dop" value="{{sale_order_to_update.dop}}">
                 </div>
             </div>
-            <div class="row display-11 mb-4">
+            <div class="row display-11">
 
                 <div class="col form_editable" hidden>
                     <label>Bill Date</label><label><span style="color:red">*</span></label>
@@ -383,7 +373,7 @@ body{
             <div class="col-6" id="hide_table3">
                 <div class="row">
                     <div class="col-11 text-end text-success">
-                        Credit: {{client.credit_amount}}
+                        Credit aval : &#8377 {{client.credit_amount}}
                     </div>
                 </div>
                 <br>
@@ -403,27 +393,26 @@ body{
                         <td>&#8377 {{sale_order_to_update.gst_amount}}</td>
                     </tr>
 
-                    <tr>
-                        <td class="bold">Total Amount (Including GST):</td>
+                    <tr style="border-top: 2px solid black">
+                        <td class="bold">Total Amount:</td>
                         <td>&#8377 {{sale_order_to_update.total_amount}}</td>
 
                     </tr>
 
-                    <tr>
+                    <tr style="border-bottom: 2px solid black">
                         <td class="bold">Adjusted Credit</td>
                         <td>&#8377 {{sale_order_to_update.adjusted_credit}}</td>
 
                     </tr>
 
                     <tr>
-                        <td class="bold">Total Paid:</td>
-                        <td>&#8377 {{sale_order_to_update.total_paid}}</td>
-                    </tr>
-
-
-                    <tr>
                         <td class="bold">Total Payable:</td>
                         <td>&#8377 {{sale_order_to_update.total_payable}}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="bold">Total Paid:</td>
+                        <td>&#8377 {{sale_order_to_update.total_paid}}</td>
                     </tr>
                 </table>
             </div>
@@ -437,7 +426,7 @@ body{
                         {% if client.credit_amount != 0%}
                         <div class="row">
                             <div class="col-8">
-                                <label>Credit: &#8377</label>
+                                <label>Credit aval : &#8377</label>
                             </div>
                             <div class="col-2 text-start">
 
@@ -507,7 +496,7 @@ body{
                                placeholder="GST Amount" readonly>
                     </div>
                 </div>
-                <hr>
+                <hr style="border: 2px solid black">
                 <div class="row mb-3">
                     {% if request.form['total_amount_including_gst'] %}
                     <div class="col mt-1">
@@ -532,7 +521,7 @@ body{
                     </div>
                     {% endif %}
                 </div>
-                <hr>
+
                 <div class="row">
                     <div class="col mt-1">
                         <label class="form-label">Adjusted Credit</label>
@@ -544,7 +533,7 @@ body{
                                readonly>
                     </div>
                 </div>
-                <hr>
+                <hr style="border: 2px solid black">
                 <div class="row mb-3">
                     {% if request.form['total_amount_including_gst'] %}
                     <div class="col mt-1">

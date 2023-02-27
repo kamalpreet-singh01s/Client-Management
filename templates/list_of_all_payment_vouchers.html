@@ -175,9 +175,9 @@
                 >&#8377 {{ voucher.amount }}
                 </td>
 
-                <td style="cursor: pointer; border-radius:20px; text-align:center;width:100px" class="status"
+                <td style="cursor: pointer; width:100px"
                     onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >{{ voucher.status.value }}
+                ><label class="status">{{ voucher.status.value }}</label>
                 </td>
 
             </tr>

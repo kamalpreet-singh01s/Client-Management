@@ -1,15 +1,15 @@
 import csv
 import datetime
 import os
-import random
 import re
-import string
+import sys
 import webbrowser
 from datetime import timedelta
 
 import pandas as pd
 from flask import render_template, request, url_for, flash, redirect, session, send_from_directory, jsonify
 from flask_migrate import Migrate
+from flaskwebgui import FlaskUI
 from sqlalchemy import desc
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -291,32 +291,8 @@ def update_client(client_id):
                 total = total + i.total_amount
         print(total)
 
-        # overall_payment_total = 0
-        # overall_payable_total = 0
-        # for i in get_client:
-        #     if i.status.value == SalesOrderStatus.received.value:
-        #         overall_payment_total = overall_payment_total + i.total_amount
-        #     if i.status.value == SalesOrderStatus.pending.value:
-        #         overall_payable_total = overall_payable_total + i.total_amount
-        #
-        # get_vouchers = PaymentVoucher.query.filter_by(client_id=client_id).all()
-        # total_amount = SalesOrder.query.filter_by(client_id=client_id).all()
-        # overall_payable_total = 0
-        # total_total_amount = 0
-        #
-        # for i in total_amount:
-        #     total_total_amount = total_total_amount + i.total_amount
-        # print(total_total_amount, 'final')
-        #
-        # for i in get_vouchers:
-        #
-        #     if i.status.value == PaymentStatus.approved.value:
-        #         overall_payable_total = i.amount + overall_payable_total
-        #
-        # total_payable = total_total_amount - overall_payable_total
-
         client_to_update = Client.query.filter_by(id=client_id).first()
-        # client_to_update.overall_payable = total - client_to_update.overall_received
+
         if request.method == "POST":
             message = ''
             if any(char.isdigit() for char in request.form["client_name"]):
@@ -418,15 +394,12 @@ def csv_for_client():
 @app.route('/sales-orders/<int:page>', methods=['GET', 'POST'])
 def list_of_sales_order(page):
     if "username" in session:
-        per_page = 8
+        per_page = 7
 
         all_sales_order_paginate = SalesOrder.query.order_by(SalesOrder.bill.desc()).paginate(page=page,
                                                                                               per_page=per_page,
                                                                                               error_out=False)
         all_sales_order_count = db.session.query(SalesOrder).count()
-
-        # total_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.received.value).all()
-        # pending_amount = SalesOrder.query.filter(SalesOrder.status == SalesOrderStatus.pending.value).all()
 
         all_sales_order = SalesOrder.query.all()
 
@@ -434,8 +407,9 @@ def list_of_sales_order(page):
             voucher_count = PaymentVoucher.query.filter(PaymentVoucher.sales_order_id == i.id).all()
             print(len(voucher_count))
 
-        # total_amount_total = 0
-        # pending_final_total = 0
+            client = Client.query.filter_by(id=i.client_id).first()
+            print(client.overall_payable)
+
         tax_total = 0
 
         total_received = 0
@@ -463,12 +437,9 @@ def list_of_sales_order(page):
 # onchange get credit amount
 @app.route('/get_credit_list/<client_name>')
 def get_credit_list(client_name):
-    # sale_orders = SalesOrder.query.filter_by(id=bill_no).first()
     client_results = Client.query.filter_by(id=client_name).all()
     credit_list = []
     for client in client_results:
-        # print(client.client_id)
-        # print(client.client_name)
         client_obj = {
 
             'client_id': client.id,
@@ -496,8 +467,6 @@ def add_sale_order():
         client_table_len = db.session.query(Client).count()
 
         if request.method == "POST":
-            # client = Client.query.filter_by(id=request.form["client_name"]).first()
-
 
             if client_table_len < 1:
                 flash('Please Add a Client before creating Sale Order', category='error')
@@ -548,8 +517,6 @@ def add_sale_order():
                 client = Client.query.filter_by(id=request.form["client_name"]).first()
                 client.overall_payable = client.overall_payable + float(request.form["total_amount_including_gst"])
 
-
-
                 db.session.commit()
                 flash(f'Sales Order With Bill No. {request.form["bill"]} Created Successfully', category='success')
                 return redirect(url_for('list_of_sales_order', page=1))
@@ -563,7 +530,7 @@ def sale_order_details(sale_order_id):
     if "username" in session:
 
         sale_order_to_update = SalesOrder.query.filter_by(id=sale_order_id).first()
-        client = Client.query.filter_by(id=sale_order_to_update.client_id).first()
+
         get_gst_percentage = sale_order_to_update.gst
 
         client = Client.query.filter(Client.id == sale_order_to_update.client_id).first()
@@ -645,8 +612,7 @@ def sale_order_details(sale_order_id):
 
                     sale_order_to_update.total_amount = request.form["total_amount_including_gst"]
                     sale_order_to_update.total_payable = float(request.form["total_payable_amount"])
-                    # client.overall_payable = (client.overall_payable - float(
-                    #     request.form["previous_total_amount"])) + float(request.form["total_amount_including_gst"])
+
                     print(client.overall_payable, 'cli overall')
 
                 elif float(request.form["total_amount_including_gst"]) < client.overall_payable:
@@ -743,9 +709,8 @@ def get_checked_boxes():
             payment_voucher_list = PaymentVoucher.query.filter_by(sales_order_id=ids).all()
             [print(i) for i in payment_voucher_list]
 
-            print(payment_voucher)
             if payment_voucher is None:
-                # payment_voucher = PaymentVoucher.query.filter(PaymentVoucher.bill_no.bill == delete_rec.bill).first()
+
                 client = Client.query.filter_by(id=delete_rec.client_id).first()
 
                 client.overall_payable = client.overall_payable - (delete_rec.total_amount)
@@ -759,7 +724,7 @@ def get_checked_boxes():
                       category='error')
                 return redirect(url_for('list_of_sales_order', page=1))
 
-            if delete_rec.status.value == SalesOrderStatus.received.value:
+            if delete_rec.status.value == SalesOrderStatus.received.value or delete_rec.status.value == SalesOrderStatus.cancelled.value:
                 flash(f"Cannot make changes to bill no. {delete_rec.bill}",
                       category='error')
                 return redirect(url_for('list_of_sales_order', page=1))
@@ -1045,7 +1010,6 @@ def voucher_list(sale_order_id):
                 total_amount = total_amount + voucher.amount
         if float(total_amount) >= sale_order.total_amount:
             sale_order.status = SalesOrderStatus.received.value
-            # client.credit_amount = round(client.credit_amount + float(total_amount) - sale_order.total_amount, 2)
             db.session.commit()
 
         return render_template('list_of_sale_order_vouchers.html', total_vouchers=total_vouchers, sale_order=sale_order,
@@ -1068,11 +1032,9 @@ def create_payment_voucher(sale_order_id):
 
             if payment_voucher_count < 1:
                 voucher_no = 0
-                random_string = ''
-                while voucher_no < 10:
-                    random_string += random.choice(string.ascii_lowercase + string.ascii_uppercase)
-                    voucher_no += 1
-                ref_no = f"{random_string}-{sale_order.bill}-{voucher_no + 1}"
+
+                voucher_no += 1
+                ref_no = f"PAY-{sale_order.bill}-{voucher_no + 1}"
                 voucher = PaymentVoucher(reference_no=ref_no, payment_date=date_today,
                                          amount=request.form["amount"], sales_order_id=sale_order.id,
                                          client_id=sale_order.client_id)
@@ -1081,10 +1043,8 @@ def create_payment_voucher(sale_order_id):
                 flash('Payment Voucher Created', category='success')
                 return redirect(url_for('voucher_details', voucher_id=voucher.id))
             else:
-                random_string = ''
-                while len(random_string) < 10:
-                    random_string += random.choice(string.ascii_lowercase + string.ascii_uppercase)
-                ref_no = f"{random_string}-{sale_order.bill}-{int(last_voucher_ref_no.reference_no.split('-')[-1]) + 1}"
+
+                ref_no = f"PAY-{sale_order.bill}-{int(last_voucher_ref_no.reference_no.split('-')[-1]) + 1}"
 
                 voucher = PaymentVoucher(reference_no=ref_no, payment_date=date_today,
                                          amount=request.form["amount"], sales_order_id=sale_order.id,
@@ -1139,10 +1099,8 @@ def create_new_payment_voucher():
                 return redirect(url_for('create_new_payment_voucher'))
             if payment_voucher_count < 1:
                 voucher_no = 0
-                random_string = ''
-                for i in range(10):
-                    random_string += random.choice(string.ascii_lowercase + string.ascii_uppercase)
-                ref_no = f"{random_string}-{request.form['bill_no']}-{voucher_no + 1}"
+
+                ref_no = f"PAY-{request.form['bill_no']}-{voucher_no + 1}"
                 voucher = PaymentVoucher(reference_no=ref_no, payment_date=date_today,
                                          amount=request.form["amount"], sales_order_id=bill_no.id,
                                          client_id=client.id)
@@ -1151,10 +1109,8 @@ def create_new_payment_voucher():
                 flash('Voucher created', category='success')
                 return redirect(url_for('voucher_details', voucher_id=voucher.id))
             else:
-                random_string = ''
-                for i in range(10):
-                    random_string += random.choice(string.ascii_lowercase + string.ascii_uppercase)
-                ref_no = f"{random_string}-{request.form['bill_no']}-{int(last_voucher_ref_no.reference_no.split('-')[-1]) + 1}"
+
+                ref_no = f"PAY-{request.form['bill_no']}-{int(last_voucher_ref_no.reference_no.split('-')[-1]) + 1}"
 
                 voucher = PaymentVoucher(reference_no=ref_no, payment_date=date_today,
                                          amount=request.form["amount"], sales_order_id=bill_no.id,
@@ -1192,27 +1148,41 @@ def approve_voucher(voucher_id):
         client = Client.query.filter_by(id=sale_order.client_id).first()
         total_vouchers = PaymentVoucher.query.filter(PaymentVoucher.sales_order_id == sale_order.id).all()
 
-        # for i in total_vouchers:
-        #     total_amount = total_amount + i.amount
-        #
-        # if client.credit_amount > 0:
-        #     if voucher_to_update.amount > sale_order.total_amount - total_amount:
-        #         client.credit_amount = client.credit_amount + (total_amount - voucher_to_update.amount)
 
         if client.credit_amount == 0 and voucher_to_update.amount == client.overall_payable:
             print("test")
-            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
-            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
-            client.overall_payable = client.overall_payable - voucher_to_update.amount
-            client.overall_received = client.overall_received + voucher_to_update.amount
+            if voucher_to_update.amount < sale_order.total_payable:
+                print("smaller")
+                sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+                sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
+                client.overall_payable = client.overall_payable - voucher_to_update.amount
+                client.overall_received = client.overall_received + voucher_to_update.amount
+
+            else:
+                print("greater")
+                client.credit_amount = client.credit_amount + (voucher_to_update.amount - sale_order.total_payable)
+                sale_order.total_paid = sale_order.total_paid + sale_order.total_payable
+                client.overall_payable = client.overall_payable - sale_order.total_payable
+                client.overall_received = client.overall_received + sale_order.total_payable
+                sale_order.total_payable = 0
 
         elif client.credit_amount == 0 and voucher_to_update.amount < client.overall_payable:
-
             print("voucher smaller")
-            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
-            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
-            client.overall_payable = client.overall_payable - voucher_to_update.amount
-            client.overall_received = client.overall_received + voucher_to_update.amount
+            if voucher_to_update.amount < sale_order.total_payable:
+                print("smaller")
+                sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+                sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
+                client.overall_payable = client.overall_payable - voucher_to_update.amount
+                client.overall_received = client.overall_received + voucher_to_update.amount
+
+            else:
+                print("greater")
+                client.credit_amount = client.credit_amount + (voucher_to_update.amount - sale_order.total_payable)
+                sale_order.total_paid = sale_order.total_paid + sale_order.total_payable
+                client.overall_payable = client.overall_payable - sale_order.total_payable
+                client.overall_received = client.overall_received + sale_order.total_payable
+                sale_order.total_payable = 0
+
 
         elif client.credit_amount == 0 and voucher_to_update.amount > client.overall_payable:
             print("voucher greater")
@@ -1237,39 +1207,41 @@ def approve_voucher(voucher_id):
             # client.overall_received = client.overall_received + (voucher_to_update.amount - client.overall_payable)
             # client.overall_payable = client.overall_payable - (voucher_to_update.amount - client.overall_payable)
 
-            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
-            if sale_order.total_payable < 0:
+            if voucher_to_update.amount < sale_order.total_payable:
+                sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+                # if sale_order.total_payable < 0:
+                #     sale_order.total_payable = 0
+                sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
+                client.overall_received = client.overall_received + voucher_to_update.amount
+                client.overall_payable = client.overall_payable - voucher_to_update.amount
+            else:
+                client.credit_amount = client.credit_amount + (voucher_to_update.amount - sale_order.total_payable)
+                sale_order.total_paid = sale_order.total_paid + sale_order.total_payable
+                client.overall_payable = client.overall_payable - sale_order.total_payable
+                client.overall_received = client.overall_received + sale_order.total_payable
                 sale_order.total_payable = 0
-            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
 
-            if sale_order.total_paid > sale_order.total_amount:
-                client.credit_amount = sale_order.total_paid - sale_order.total_amount
-            client.overall_received = client.overall_received + sale_order.total_paid
-            client.overall_payable = client.overall_payable - sale_order.total_paid
+
 
 
         elif client.credit_amount == voucher_to_update.amount:
             print("equal")
-            client.overall_received = client.overall_received + voucher_to_update.amount
-            client.overall_payable = client.overall_payable - voucher_to_update.amount
-            # client.credit_amount = client.credit_amount - voucher_to_update.amount
-            sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
-            sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
+            if voucher_to_update.amount < sale_order.total_payable:
+                sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
+                sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
+                client.overall_received = client.overall_received + voucher_to_update.amount
+                client.overall_payable = client.overall_payable - voucher_to_update.amount
+            else:
+                client.credit_amount = client.credit_amount + (voucher_to_update.amount - sale_order.total_payable)
+                sale_order.total_paid = sale_order.total_paid + sale_order.total_payable
+                client.overall_payable = client.overall_payable - sale_order.total_payable
+                client.overall_received = client.overall_received + sale_order.total_payable
+                sale_order.total_payable = 0
+
 
         if sale_order.total_paid >= sale_order.total_amount:
             sale_order.status = SalesOrderStatus.received.value
             sale_order.amount_received_date = date_today
-
-        # for i in total_vouchers:
-        #     total_amount = total_amount + i.amount
-        #     if float(total_amount) >= sale_order.total_amount:
-        #         sale_order.status = SalesOrderStatus.received.value
-        #         sale_order.amount_received_date = date_today
-        #
-        #     sale_order.total_paid = sale_order.total_paid + float(total_amount)
-        #
-        #     if sale_order.total_paid >= sale_order.total_amount:
-        #         sale_order.total_paid = sale_order.total_amount
 
         print(total_amount)
 
@@ -1434,5 +1406,33 @@ def file_upload():
     return render_template(Templates.file_upload)
 
 
+# ui = FlaskUI(app)
+#
+# if __name__ == "__main__":
+#     # app.run(host='0.0.0.0')
+#     ui.run()
+
+
+# def start_flask(**server_kwargs):
+#
+#     app = server_kwargs.pop("app", None)
+#     server_kwargs.pop("debug", None)
+#
+#     try:
+#         import waitress
+#
+#         waitress.serve(app, **server_kwargs)
+#     except:
+#         app.run(**server_kwargs)
+
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    app.run(debug=True)
+
+    # Default start flask
+    # FlaskUI(
+    #     app=app,
+    #     server="flask",
+    #     width=800,
+    #     height=600,
+    # ).run()

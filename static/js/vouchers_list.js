@@ -2,19 +2,25 @@
 $(document).ready(function(){
     $( ".status:contains('Draft')" ).css( "color", "white" );
     $( ".status:contains('Draft')" ).css( "background-color", "#ffc107" );
-    $( ".status:contains('Draft')" ).css( "font-weight" , "600" );
+    $( ".status:contains('Draft')" ).css( "font-weight" , "bold" );
+       $( ".status:contains('Draft')" ).css( "border-radius" , "20px" );
+    $( ".status:contains('Draft')" ).css( "padding" , "4px 5px" );
 })
 
 $(document).ready(function(){
     $( ".status:contains('Cancelled')" ).css( "color", "white" );
     $( ".status:contains('Cancelled')" ).css( "background-color", "red" );
-    $( ".status:contains('Cancelled')" ).css( "font-weight" , "600" );
+    $( ".status:contains('Cancelled')" ).css( "font-weight" , "bold" );
+       $( ".status:contains('Cancelled')" ).css( "border-radius" , "20px" );
+    $( ".status:contains('Cancelled')" ).css( "padding" , "4px 5px" );
 })
 
 $(document).ready(function(){
     $( ".status:contains('Approved')" ).css( "color", "white" );
     $( ".status:contains('Approved')" ).css( "background-color", "green" );
-    $( ".status:contains('Approved')" ).css( "font-weight" , "600" );
+    $( ".status:contains('Approved')" ).css( "font-weight" , "bold" );
+       $( ".status:contains('Approved')" ).css( "border-radius" , "20px" );
+    $( ".status:contains('Approved')" ).css( "padding" , "4px 5px" );
 })
 
 //
