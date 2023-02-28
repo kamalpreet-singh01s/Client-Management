@@ -20,7 +20,6 @@ mysql-connector==2.2.9
 mysql-connector-python==8.0.32
 mysql-connector-python-rf==2.2.2
 mysqlclient==2.1.1
-numpy==1.24.1
 pandas==1.5.2
 pefile==2023.2.7
 protobuf==3.20.3
