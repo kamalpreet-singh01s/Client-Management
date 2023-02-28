@@ -11,7 +11,13 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    pass
+    DEBUG = False
+    SECRET_KEY = config['SECRET_KEY']
+    # SQLALCHEMY_DATABASE_URI = f"mysql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}/{config['DB_NAME']}"
+    # SQLALCHEMY_DATABASE_URI = f"postgresql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}:{config['DB_PORT']}/{config['DB_NAME']}"
+    SQLALCHEMY_DATABASE_URI = f"postgresql://client_management_user:So46RrmnpQXKsuOmgJoq9JOOsLDDLFE2@dpg-cfus5nt3t39doauefb6g-a.oregon-postgres.render.com/client_management"
+
+    SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 
 class DevelopmentConfig(Config):
@@ -20,7 +26,8 @@ class DevelopmentConfig(Config):
 
     # database configuration
     # SQLALCHEMY_DATABASE_URI = app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///client.sqlite3'
-    SQLALCHEMY_DATABASE_URI = f"postgresql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}:{config['DB_PORT']}/{config['DB_NAME']}"
+    # SQLALCHEMY_DATABASE_URI = f"postgresql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}:{config['DB_PORT']}/{config['DB_NAME']}"
+    SQLALCHEMY_DATABASE_URI = f"mysql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}/{config['DB_NAME']}"
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
 

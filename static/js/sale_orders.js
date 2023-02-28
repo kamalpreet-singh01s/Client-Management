@@ -94,6 +94,7 @@ $(document).ready(function(){
     $( ".status:contains('Pending')" ).css( "background-color", "#ffc107" );
     $( ".status:contains('Pending')" ).css( "font-weight" , "bold" );
     $( ".status:contains('Pending')" ).css( "border-radius" , "20px" );
+    $( ".status:contains('Pending')" ).css( "padding" , "4px 11px" );
 })
 
 $(document).ready(function(){
@@ -101,6 +102,8 @@ $(document).ready(function(){
     $( ".status:contains('Cancel')" ).css( "background-color", "red" );
     $( ".status:contains('Cancel')" ).css( "font-weight" , "bold" );
     $( ".status:contains('Cancel')" ).css( "border-radius" , "20px" );
+    $( ".status:contains('Cancel')" ).css( "padding" , "4px 11px" );
+
 })
 
 $(document).ready(function(){
@@ -108,6 +111,8 @@ $(document).ready(function(){
     $( ".status:contains('Received')" ).css( "background-color", "green" );
     $( ".status:contains('Received')" ).css( "font-weight" , "bold" );
     $( ".status:contains('Received')" ).css( "border-radius" , "20px" );
+    $( ".status:contains('Received')" ).css( "padding" , "4px 11px" );
+
 })
 
 
