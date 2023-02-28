@@ -1164,10 +1164,7 @@ def approve_voucher(voucher_id):
         client = Client.query.filter_by(id=sale_order.client_id).first()
         total_vouchers = PaymentVoucher.query.filter(PaymentVoucher.sales_order_id == sale_order.id).all()
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 1ed0195881a477cb1ce81aabe2e37b0c0e7cbf1a
         if client.credit_amount == 0 and voucher_to_update.amount == client.overall_payable:
             print("test")
             if voucher_to_update.amount < sale_order.total_payable:
@@ -1256,10 +1253,6 @@ def approve_voucher(voucher_id):
                 client.overall_payable = client.overall_payable - sale_order.total_payable
                 client.overall_received = client.overall_received + sale_order.total_payable
                 sale_order.total_payable = 0
-<<<<<<< HEAD
-=======
-
->>>>>>> 1ed0195881a477cb1ce81aabe2e37b0c0e7cbf1a
 
         if sale_order.total_paid >= sale_order.total_amount:
             sale_order.status = SalesOrderStatus.received.value
@@ -1449,11 +1442,11 @@ def file_upload():
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
+
     app.run()
-=======
+
     app.run(debug=True)
->>>>>>> 1ed0195881a477cb1ce81aabe2e37b0c0e7cbf1a
+
 
     # Default start flask
     # FlaskUI(
