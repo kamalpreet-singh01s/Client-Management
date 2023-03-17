@@ -15,7 +15,7 @@ class ProductionConfig(Config):
     SECRET_KEY = config['SECRET_KEY']
     # SQLALCHEMY_DATABASE_URI = f"mysql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}/{config['DB_NAME']}"
     # SQLALCHEMY_DATABASE_URI = f"postgresql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}:{config['DB_PORT']}/{config['DB_NAME']}"
-    SQLALCHEMY_DATABASE_URI = f"postgresql://client_management_user:rPMMjjCRyaM3VIiTysCD3KgQ0RVwYvBy@dpg-cfut2v9mbjsj9aml20r0-a.oregon-postgres.render.com/client_management_jz5l"
+    
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
