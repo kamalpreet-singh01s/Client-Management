@@ -1,102 +1,100 @@
-{%extends "index.html"%}
+{% extends "index.html" %}
 
-{%block content%}
-{% include 'alert.html' %}
-<style>
-    label{
-    font-weight:bold;
-}
+{% block content %}
+    {% include 'alert.html' %}
+    <style>
+        label {
+            font-weight: bold;
+        }
+    </style>
+    <div class="row w-75 mx-auto" style="margin-top:40px; background-color:#eff4ff; border-radius:20px">
 
+        <form action="{{ request.path }}" method="post" enctype="multipart/form-data">
 
-
-</style>
-<div class="row w-75 mx-auto" style="margin-top:40px; background-color:#eff4ff; border-radius:20px">
-
-    <form action="{{request.path}}" method="post" enctype="multipart/form-data">
-
-        <fieldset>
+            <fieldset>
 
 
-            <div class="row mb-3 mt-5">
-                <div class="row">
-                    <div class="col text-start mb-3">
-                        <button type="button" class="btn btn-info btn-sm btn-bg" style="padding:0.3rem 1.5rem"
-                                onclick="history.back()">
-                            &#8592 Back
-                        </button>
+                <div class="row mb-3 mt-5">
+                    <div class="row">
+                        <div class="col text-start mb-3">
+                            <button type="button" class="btn btn-info btn-sm btn-bg" style="padding:0.3rem 1.5rem"
+                                    onclick="history.back()">
+                                &#8592 Back
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-outline">
-                        <label class="form-label">Payment Date<span style="color:red">*</span></label>
-                        <input type="date" class="form-control" name="payment_date" value="{{date_today}}" disabled>
+                    <div class="col-6">
+                        <div class="form-outline">
+                            <label class="form-label">Payment Date<span style="color:red">*</span></label>
+                            <input type="date" class="form-control" name="payment_date" value="{{ date_today }}"
+                                   disabled>
 
+                        </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="form-outline">
-                        <label class="form-label">Approval Date<span style="color:red">*</span></label>
-                        <input type="date" class="form-control" name="approval_date" value="{{date_today}}" disabled>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <div class="form-outline">
-                        <label class="form-label">Client Name<span style="color:red">*</span></label>
-                        <input type="text" class="form-control" name="date_of_order"
-                               value="{{sale_order.client_name.client_name}}" required disabled/>
-
-                    </div>
-                </div>
-                <div class="col">
-
                     <div class="col">
                         <div class="form-outline">
-                            <label class="form-label">Bill No.<span style="color:red">*</span></label>
-                            <input type="number" class="form-control" name="bill" value="{{sale_order.bill}}"
-                                   disabled/>
+                            <label class="form-label">Approval Date<span style="color:red">*</span></label>
+                            <input type="date" class="form-control" name="approval_date" value="{{ date_today }}"
+                                   disabled>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="form-outline">
-                    <label class="form-label">Amount<span style="color:red">*</span></label>
-                    <input type="number" class="form-control" name="amount" id="amount"
-                           value="{{request.form['amount']}}"
-                           placeholder="Amount" required/>
+                <div class="row mb-3">
+                    <div class="col">
+                        <div class="form-outline">
+                            <label class="form-label">Client Name<span style="color:red">*</span></label>
+                            <input type="text" class="form-control" name="date_of_order"
+                                   value="{{ sale_order.client_name.client_name }}" required disabled/>
+
+                        </div>
+                    </div>
+                    <div class="col">
+
+                        <div class="col">
+                            <div class="form-outline">
+                                <label class="form-label">Bill No.<span style="color:red">*</span></label>
+                                <input type="number" class="form-control" name="bill" value="{{ sale_order.bill }}"
+                                       disabled/>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="row ">
-                <div class="col mt-3 mb-3 text-center">
-                    <button type="submit" class="btn w-25 btn-bg" data-toggle="modal"
-                            data-target=".bd-example-modal-lg">Create Voucher
-                    </button>
+                <div class="row mb-3">
+                    <div class="form-outline">
+                        <label class="form-label">Amount<span style="color:red">*</span></label>
+                        <input type="number" class="form-control" name="amount" id="amount"
+                               value="{{ request.form['amount'] }}"
+                               placeholder="Amount" required/>
+                    </div>
                 </div>
-            </div>
+                <div class="row ">
+                    <div class="col mt-3 mb-3 text-center">
+                        <button type="submit" class="btn w-25 btn-bg" data-toggle="modal"
+                                data-target=".bd-example-modal-lg">Create Voucher
+                        </button>
+                    </div>
+                </div>
 
-        </fieldset>
-
-
-    </form>
-</div>
-
-<br>
-<br>
-<br>
-
-<script src="{{url_for('static', filename='js/create_payment_voucher.js')}}"></script>
-<script>
-    if (document.referrer.includes('voucher-list')){
-        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('voucher_list', sale_order_id=sale_order.id)}}'")
-        console.log('voucher-list')
-    }
-    else{
-        console.log('all-voucher-list')
-        document.getElementById('back_button').setAttribute('onclick',"location.href='{{url_for('all_vouchers_list', page=1)}}'")
-    }
+            </fieldset>
 
 
-</script>
-{%endblock%}
+        </form>
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+    <script src="{{ url_for('static', filename='js/create_payment_voucher.js') }}"></script>
+    <script>
+        if (document.referrer.includes('voucher-list')) {
+            document.getElementById('back_button').setAttribute('onclick', "location.href='{{url_for('voucher_list', sale_order_id=sale_order.id)}}'")
+            console.log('voucher-list')
+        } else {
+            console.log('all-voucher-list')
+            document.getElementById('back_button').setAttribute('onclick', "location.href='{{url_for('all_vouchers_list', page=1)}}'")
+        }
+
+
+    </script>
+{% endblock %}

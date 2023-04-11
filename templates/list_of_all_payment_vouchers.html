@@ -1,93 +1,92 @@
-{%extends "index.html"%}
+{% extends "index.html" %}
 
-{%block content%}
+{% block content %}
 
-{% include 'alert.html' %}
-<br>
+    {% include 'alert.html' %}
+    <br>
 
-<style>
+    <style>
 
-.cell-4 {
-  width: 200px;
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+        .cell-4 {
+            width: 200px;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
 
-.status {
-  width: 85px;
-  display: block;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+        .status {
+            width: 85px;
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
 
 
+    </style>
 
-</style>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
 
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
-
-                </button>
-            </div>
-            <div class="modal-body" style="text-align:left">
-                Do you really want to delete this sale order?
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger btn-sm"
-                        onclick="del_fun()">
-                    Delete
-                </button>
-                <button type="button" class="btn btn-info btn-sm btn-bg" data-dismiss="modal"
-                        >Close
-                </button>
+                    </button>
+                </div>
+                <div class="modal-body" style="text-align:left">
+                    Do you really want to delete this sale order?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger btn-sm"
+                            onclick="del_fun()">
+                        Delete
+                    </button>
+                    <button type="button" class="btn btn-info btn-sm btn-bg" data-dismiss="modal"
+                    >Close
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
-<div class="w-75 mx-auto" style="overflow-x:hidden">
-    <form method="GET" action="{{ url_for('search_vouchers') }}">
-        <div class="row w-100 mx-auto mb-4">
-            <div class="col-5">
-                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                    <div class="btn-group me-2" role="group" aria-label="First group">
-                        <input type="text" class="form-control form-control-sm" style="height:20px" name="search"
-                               placeholder="Search" value="{{request.args['search']}}"/>
+    <div class="w-75 mx-auto" style="overflow-x:hidden">
+        <form method="GET" action="{{ url_for('search_vouchers') }}">
+            <div class="row w-100 mx-auto mb-4">
+                <div class="col-5">
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        <div class="btn-group me-2" role="group" aria-label="First group">
+                            <input type="text" class="form-control form-control-sm" style="height:20px" name="search"
+                                   placeholder="Search" value="{{ request.args['search'] }}"/>
+
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Second group">
+                            <button type="submit" class="btn btn-info btn-sm btn-bg"
+                            >Search
+                            </button>
+
+                        </div>
 
                     </div>
-                    <div class="btn-group me-2" role="group" aria-label="Second group">
-                        <button type="submit" class="btn btn-info btn-sm btn-bg"
-                        >Search
-                        </button>
-
-                    </div>
-
                 </div>
-            </div>
 
-            <div class="col-7 text-start">
-                <h5 class="mb-2">List of Payment Vouchers</h5>
-            </div>
+                <div class="col-7 text-start">
+                    <h5 class="mb-2">List of Payment Vouchers</h5>
+                </div>
 
-        </div>
-    </form>
+            </div>
+        </form>
 
         <div class="row">
             <div class="col" style="display:block" id="back_button">
-            <button type="button" class="btn btn-info btn-bg btn-sm" style="padding:0.3rem 1.5rem;"
-                    onclick="history.back()">
-                &#8592 Back
-            </button>
-        </div>
+                <button type="button" class="btn btn-info btn-bg btn-sm" style="padding:0.3rem 1.5rem;"
+                        onclick="history.back()">
+                    &#8592 Back
+                </button>
+            </div>
             <div class="col-2" id="action_dropdown" style="display:none">
                 <div class="btn-group btn-group-sm">
                     <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown"
@@ -106,7 +105,7 @@
             <div class="col text-end mt-3">
                 <a class="add_button"
                    style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
-                   href="{{url_for('create_new_payment_voucher')}}" id="add">Create <i
+                   href="{{ url_for('create_new_payment_voucher') }}" id="add">Create <i
                         class="fa fa-plus" aria-hidden="true"></i></a>
             </div>
 
@@ -130,118 +129,117 @@
 
 
 
-            <tr>
-                <td>
-                    <input onchange="toggleDelbox()" class="form-check-input hidden" name="check-box" id="check"
-                           type="checkbox"
-                           value="{{ voucher.id }}">
-                </td>
-                <td class="numbered"></td>
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >{{
-                    voucher.reference_no }}
-                </td>
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >{{
-                    voucher.payment_date }}
-                </td>
-                {% if voucher.approval_date %}
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >{{ voucher.approval_date }}
-                </td>
-                {%else%}
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >Not Yet Approved
-                </td>
-                {% endif %}
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >{{ voucher.client_name.client_name
-                    }}
-                </td>
-                <td style="cursor: pointer;"
-                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >{{
-                    voucher.bill_no.bill
-                    }}
-                </td>
+                <tr>
+                    <td>
+                        <input onchange="toggleDelbox()" class="form-check-input hidden" name="check-box" id="check"
+                               type="checkbox"
+                               value="{{ voucher.id }}">
+                    </td>
+                    <td class="numbered"></td>
+                    <td style="cursor: pointer;"
+                        onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                    >{{ voucher.reference_no }}
+                    </td>
+                    <td style="cursor: pointer;"
+                        onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                    >{{ voucher.payment_date }}
+                    </td>
+                    {% if voucher.approval_date %}
+                        <td style="cursor: pointer;"
+                            onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                        >{{ voucher.approval_date }}
+                        </td>
+                    {% else %}
+                        <td style="cursor: pointer;"
+                            onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                        >Not Yet Approved
+                        </td>
+                    {% endif %}
+                    <td style="cursor: pointer;"
+                        onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                    >{{ voucher.client_name.client_name }}
+                    </td>
+                    <td style="cursor: pointer;"
+                        onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                    >{{ voucher.bill_no.bill }}
+                    </td>
 
-                <td style="cursor: pointer;text-align:right"
-                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                >&#8377 {{ voucher.amount }}
-                </td>
+                    <td style="cursor: pointer;text-align:right"
+                        onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                    >&#8377 {{ voucher.amount }}
+                    </td>
 
-                <td style="cursor: pointer; width:100px"
-                    onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
-                ><label class="status">{{ voucher.status.value }}</label>
-                </td>
+                    <td style="cursor: pointer; width:100px"
+                        onclick="location.href='{{ url_for('voucher_details', voucher_id = voucher.id) }}'"
+                    ><label class="status">{{ voucher.status.value }}</label>
+                    </td>
 
-            </tr>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
 
-    {% if not request.args['search'] %}
-    <div class="row mb-5">
-        <div class="col">
-            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                {% if all_vouchers.has_prev %}
-                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
-                    <button type="button"
-                            onclick="location.href='{{ url_for('all_vouchers_list', page=all_vouchers.prev_num) }}'"
-                            class="btn btn-info btn-bg btn-sm text-white">Previous
-                    </button>
+        {% if not request.args['search'] %}
+            <div class="row mb-5">
+                <div class="col">
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                        {% if all_vouchers.has_prev %}
+                            <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                                <button type="button"
+                                        onclick="location.href='{{ url_for('all_vouchers_list', page=all_vouchers.prev_num) }}'"
+                                        class="btn btn-info btn-bg btn-sm text-white">Previous
+                                </button>
+                            </div>
+                        {% endif %}
+                        {% for page in all_vouchers.iter_pages() %}
+                            {% if page %}
+                                {% if all_vouchers.page == page %}
+                                    <div class="btn-group mr-2" role="group" aria-label="Second group"
+                                         style="padding:1px 2px">
+                                        <button type="button"
+                                                onclick="location.href='{{ url_for('all_vouchers_list', page=page) }}'"
+                                                id="page_btn"
+                                                class="btn btn-warning btn-sm text-white">{{ page }}
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    <div class="btn-group mr-2" role="group" aria-label="Second group"
+                                         style="padding:1px 2px">
+                                        <button type="button"
+                                                onclick="location.href='{{ url_for('all_vouchers_list', page=page) }}'"
+                                                id="page_btn"
+                                                class="btn btn-info btn-bg btn-sm">{{ page }}
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                . . .
+                            {% endif %}
+                        {% endfor %}
+                        {% if all_vouchers.has_next %}
+                            <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                                <button type="button"
+                                        onclick="location.href='{{ url_for('all_vouchers_list', page=all_vouchers.next_num) }}'"
+                                        class="btn btn-info btn-bg btn-sm text-white">Next
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-                {% endif %}
-                {% for page in all_vouchers.iter_pages()%}
-                {% if page %}
-                {% if all_vouchers.page == page %}
-                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
-                    <button type="button"
-                            onclick="location.href='{{ url_for('all_vouchers_list', page=page) }}'" id="page_btn"
-                            class="btn btn-warning btn-sm text-white">{{page}}
-                    </button>
-                </div>
-                {% else %}
-                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
-                    <button type="button"
-                            onclick="location.href='{{ url_for('all_vouchers_list', page=page) }}'" id="page_btn"
-                            class="btn btn-info btn-bg btn-sm">{{page}}
-                    </button>
-                </div>
-                {% endif %}
-                {% else %}
-                . . .
-                {% endif %}
-                {% endfor %}
-                {% if all_vouchers.has_next %}
-                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
-                    <button type="button"
-                            onclick="location.href='{{ url_for('all_vouchers_list', page=all_vouchers.next_num) }}'"
-                            class="btn btn-info btn-bg btn-sm text-white">Next
-                    </button>
-                </div>
-                {% endif %}
             </div>
-        </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
 
-<div hidden>
-    <form method="POST" action="{{url_for('get_checked_boxes_for_all_payment_vouchers')}}">
+    <div hidden>
+        <form method="POST" action="{{ url_for('get_checked_boxes_for_all_payment_vouchers') }}">
 
-        <input type="text" id="rec_ids" name="rec_ids"/>
-        <button type="submit" id="stu_ids_submit">
-            Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
-        </button>
+            <input type="text" id="rec_ids" name="rec_ids"/>
+            <button type="submit" id="stu_ids_submit">
+                Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+            </button>
 
-    </form>
-</div>
+        </form>
+    </div>
 
-<script src="{{url_for('static', filename='js/all_payment_vouchers_list.js')}}"></script>
-{%endblock%}
+    <script src="{{ url_for('static', filename='js/all_payment_vouchers_list.js') }}"></script>
+{% endblock %}

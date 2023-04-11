@@ -1,42 +1,39 @@
 {%- for category, message in get_flashed_messages(with_categories = true) %}
 
-
-    {%if category== 'success'%}
-    <div class="success p-1" id="alert-success">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        {{ message }}
-    </div>
-    {%else%}
-    <div class="error p-1" id="alert-error">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        {{ message }}
-    </div>
-    {%endif%}
+    {% if category== 'success' %}
+        <div class="success p-1" id="alert-success">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ message }}
+        </div>
+    {% else %}
+        <div class="error p-1" id="alert-error">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+            {{ message }}
+        </div>
+    {% endif %}
 
 
 {%- endfor %}
 
 <script>
-    if (!(document.getElementById('alert-success'))){
-    //pass
-}
-    else {
-    document.getElementById('alert-success')
-    setTimeout(() => {
-    document.getElementById('alert-success').style.display = 'none';
-    }, 5000);
+    if (!(document.getElementById('alert-success'))) {
+        //pass
+    } else {
+        document.getElementById('alert-success')
+        setTimeout(() => {
+            document.getElementById('alert-success').style.display = 'none';
+        }, 5000);
     }
 
 
-    if(!(document.getElementById('alert-error'))){
-    //pass
-    }
-    else{
-    alert_error=document.getElementById('alert-error');
-    setTimeout(() => {
+    if (!(document.getElementById('alert-error'))) {
+        //pass
+    } else {
+        alert_error = document.getElementById('alert-error');
+        setTimeout(() => {
 
-        alert_error.style.display = 'none';
-    }, 5000);
+            alert_error.style.display = 'none';
+        }, 5000);
     }
 
 </script>

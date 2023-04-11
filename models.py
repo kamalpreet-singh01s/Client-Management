@@ -3,7 +3,7 @@ import enum
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from config import DevelopmentConfig, ProductionConfig
+from config import ProductionConfig
 
 db = SQLAlchemy()
 
@@ -82,7 +82,7 @@ class Client(db.Model):
     overall_payable = db.Column(db.Float)
     overall_received = db.Column(db.Float)
 
-    def __init__(self, client_name, email, phone_no, address,overall_payable,overall_received, credit_amount=None):
+    def __init__(self, client_name, email, phone_no, address, overall_payable, overall_received, credit_amount=None):
         self.client_name = client_name
 
         self.email = email
@@ -120,7 +120,8 @@ class SalesOrder(db.Model):
 
     filename = db.Column(db.String())
 
-    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, amount,gst_amount,total_amount, gst,total_paid,total_payable,adjusted_credit,
+    def __init__(self, client_id, content_advt, date_of_order, dop, bill, bill_date, amount, gst_amount, total_amount,
+                 gst, total_paid, total_payable, adjusted_credit,
                  filename=None, amount_received_date=None):
         self.client_id = client_id
         self.content_advt = content_advt

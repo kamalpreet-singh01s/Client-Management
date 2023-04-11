@@ -1,39 +1,39 @@
-{%extends "index.html"%}
+{% extends "index.html" %}
 
-{%block content%}
-{%- for category, message in get_flashed_messages(with_categories = true) %}
-<span style="width:50px;">
+{% block content %}
+    {%- for category, message in get_flashed_messages(with_categories = true) %}
+        <span style="width:50px;">
 
-    {%if category== 'success'%}
+    {% if category== 'success' %}
         <li class="p-1 mb-1 bg-success text-white">{{ message }}</li>
-    {%else%}
+    {% else %}
         <li class="p-1 mb-1 bg-danger text-white">{{ message }}</li>
-    {%endif%}
+    {% endif %}
 
 </span>
-{%- endfor %}
+    {%- endfor %}
 
-<br>
-
-
+    <br>
 
 
 
 
-<div class="d-grid gap-2 col-3 mx-auto" style="margin:auto; margin-top:8%">
-    <form class="col g-3" action={{request.path}} method="post" enctype="multipart/form-data">
-        <div class="mb-2">
-            <label class="form-label">Bill PDF/Excel</label>
-                    <input type="file" class="form-control" name="file" accept=".csv" required>
-        </div>
 
 
-        <br>
-        <div class="d-grid gap-2 col-6 mx-auto">
-            <button type="submit" class="btn btn-info btn-bg btn-sm">Import</button>
-        </div>
+    <div class="d-grid gap-2 col-3 mx-auto" style="margin:auto; margin-top:8%">
+        <form class="col g-3" action={{ request.path }} method="post" enctype="multipart/form-data">
+            <div class="mb-2">
+                <label class="form-label">Bill PDF/Excel</label>
+                <input type="file" class="form-control" name="file" accept=".csv" required>
+            </div>
 
-    </form>
-</div>
 
-{%endblock%}
+            <br>
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <button type="submit" class="btn btn-info btn-bg btn-sm">Import</button>
+            </div>
+
+        </form>
+    </div>
+
+{% endblock %}

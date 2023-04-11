@@ -1,220 +1,227 @@
-{%extends "index.html"%}
+{% extends "index.html" %}
 
-{%block content%}
-
-
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
-
-                </button>
-            </div>
-            <div class="modal-body" style="text-align:left">
-                Do you really want to delete this record?
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger btn-sm"
-                        onclick="del_fun()">
-                    Delete
-                </button>
-                <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
-                        onclick="location.href='{{url_for('all_client_names', page=1)}}'">Close
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+{% block content %}
 
 
-<br>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Confirmation</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
 
-
-<form method="GET" action="{{ url_for('search_clients', page=1) }}">
-    <div class="row w-75 mx-auto">
-
-
-        <div class="col-5">
-            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                <div class="btn-group me-2" role="group" aria-label="First group">
-                    <input type="text" class="form-control form-control-sm" style="height:20px" name="search"
-                           placeholder="Search" value="{{request.args['search']}}"/>
-
-                </div>
-                <div class="btn-group me-2" role="group" aria-label="Second group">
-                    <button type="submit" class="btn btn-info btn-sm btn-bg"
-                    >Search
                     </button>
-
                 </div>
-
-            </div>
-        </div>
-
-        <div class="col-7 text-start">
-            <h5 class="mb-2">List of Clients</h5>
-        </div>
-
-    </div>
-</form>
-<br>
-<div class="w-75" style="margin:auto; margin-top:2px">
-
-    <div class="row mb-1 ">
-
-        <div class="col-2 text-center" style="display:none" id="action_dropdown">
-            <div class="btn-group btn-group-sm mt-2">
-                <button type="button" style="margin-right:33px;" class="btn btn-danger dropdown-toggle"
-                        data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false">
-                    Action
-                </button>
-                <div class="dropdown-menu">
-                    <button type="button" class="dropdown-item" data-target="#exampleModalCenter" data-toggle="modal">
-                        Delete Selected
+                <div class="modal-body" style="text-align:left">
+                    Do you really want to delete this record?
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger btn-sm"
+                            onclick="del_fun()">
+                        Delete
+                    </button>
+                    <button type="button" class="btn btn-info btn-bg btn-sm" data-dismiss="modal"
+                            onclick="location.href='{{ url_for('all_client_names', page=1) }}'">Close
                     </button>
                 </div>
             </div>
         </div>
-
-        <div class="col d-flex justify-content-end">
-            <form action="{{ url_for('csv_for_client') }}" method="POST">
-
-                <div class="" style="display:none" id="generate_custom_report">
-                    <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
-                    <button type="submit" class="btn btn-primary btn-sm" id="check_rec_ids_btn">Generate Custom Report
-                    </button>
-                </div>
-
-            </form>
-        </div>
     </div>
 
 
-    <form action="" method="post">
-        <div class="col text-end mb-3">
-            <a class="add_button"
-               style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
-               href="{{ url_for('add_client') }}" id="add">Create <i class="fa fa-plus" aria-hidden="true"></i></a>
-        </div>
-        <div class="row">
-            <div class="col">
-                {% include 'alert.html' %}
+    <br>
+
+
+    <form method="GET" action="{{ url_for('search_clients', page=1) }}">
+        <div class="row w-75 mx-auto">
+
+
+            <div class="col-5">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group me-2" role="group" aria-label="First group">
+                        <input type="text" class="form-control form-control-sm" style="height:20px" name="search"
+                               placeholder="Search" value="{{ request.args['search'] }}"/>
+
+                    </div>
+                    <div class="btn-group me-2" role="group" aria-label="Second group">
+                        <button type="submit" class="btn btn-info btn-sm btn-bg"
+                        >Search
+                        </button>
+
+                    </div>
+
+                </div>
             </div>
+
+            <div class="col-7 text-start">
+                <h5 class="mb-2">List of Clients</h5>
+            </div>
+
         </div>
-        <table class="table table-hover table-sortable text-center" id="table-count">
-
-            <thead>
-            <tr>
-                <th><input type="checkbox" id="check-All" onclick="toggleDelbox()" class=""></th>
-                <th>S.No.</th>
-                <th>Client</th>
-                <th>Email</th>
-                <th>Phone No.</th>
-                <th>Address</th>
-                <th>Overall Payable</th>
-                <th>Overall Received</th>
-                <th>Credit</th>
-
-            </tr>
-            </thead>
-            <tbody>
-            {% for client in clients %}
-
-            <tr style="cursor:pointer">
-                <td>
-                    <input onchange="toggleDelbox()" class="form-check-input hidden" name="check-box" id="check"
-                           type="checkbox"
-                           value="{{ client.id }}">
-                </td>
-                <td class="numbered"></td>
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.client_name
-                    }}
-                </td>
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.email }}
-                </td>
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.phone_no
-                    }}
-                </td>
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">{{ client.address }}
-                </td>
-
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">&#8377 {{ client.overall_payable }}
-                </td>
-
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">&#8377 {{ client.overall_received }}
-                </td>
-
-                <td onclick="location.href='{{url_for('update_client', client_id = client.id)}}'">&#8377 {{ client.credit_amount }}</td>
-
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
     </form>
-    <div class="row mb-5">
-        <div class="col">
-            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-                {% if clients.has_prev %}
-                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
-                    <button type="button"
-                            onclick="location.href='{{ url_for('search_clients', page=clients.prev_num, search=request.args.get('search', '')) }}'"
-                            class="btn btn-info btn-sm btn-bg text-white">Previous
+    <br>
+    <div class="w-75" style="margin:auto; margin-top:2px">
+
+        <div class="row mb-1 ">
+
+            <div class="col-2 text-center" style="display:none" id="action_dropdown">
+                <div class="btn-group btn-group-sm mt-2">
+                    <button type="button" style="margin-right:33px;" class="btn btn-danger dropdown-toggle"
+                            data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                        Action
                     </button>
+                    <div class="dropdown-menu">
+                        <button type="button" class="dropdown-item" data-target="#exampleModalCenter"
+                                data-toggle="modal">
+                            Delete Selected
+                        </button>
+                    </div>
                 </div>
-                {% endif %}
-                {% for page in clients.iter_pages()%}
-                {% if page %}
-                {% if clients.page == page %}
-                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
-                    <button type="button"
-                            onclick="location.href='{{ url_for('search_clients', page=page, search=request.args.get('search', '')) }}'" id="page_btn"
-                            class="btn btn-warning btn-sm text-white">{{page}}
-                    </button>
+            </div>
+
+            <div class="col d-flex justify-content-end">
+                <form action="{{ url_for('csv_for_client') }}" method="POST">
+
+                    <div class="" style="display:none" id="generate_custom_report">
+                        <input type="text" id="check_rec_ids" name="check_rec_ids" hidden/>
+                        <button type="submit" class="btn btn-primary btn-sm" id="check_rec_ids_btn">Generate Custom
+                            Report
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+
+        <form action="" method="post">
+            <div class="col text-end mb-3">
+                <a class="add_button"
+                   style="text-decoration:none;color:green;font-size:17px;padding:7px;font-weight:bold;margin-right:11px"
+                   href="{{ url_for('add_client') }}" id="add">Create <i class="fa fa-plus" aria-hidden="true"></i></a>
+            </div>
+            <div class="row">
+                <div class="col">
+                    {% include 'alert.html' %}
                 </div>
-                {% else %}
-                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
-                    <button type="button"
-                            onclick="location.href='{{ url_for('search_clients', page=page, search=request.args.get('search', '')) }}'" id="page_btn"
-                            class="btn btn-info btn-bg btn-sm">{{page}}
-                    </button>
-                </div>
-                {% endif %}
-                {% else %}
-                . . .
-                {% endif %}
+            </div>
+            <table class="table table-hover table-sortable text-center" id="table-count">
+
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="check-All" onclick="toggleDelbox()" class=""></th>
+                    <th>S.No.</th>
+                    <th>Client</th>
+                    <th>Email</th>
+                    <th>Phone No.</th>
+                    <th>Address</th>
+                    <th>Overall Payable</th>
+                    <th>Overall Received</th>
+                    <th>Credit</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for client in clients %}
+
+                    <tr style="cursor:pointer">
+                        <td>
+                            <input onchange="toggleDelbox()" class="form-check-input hidden" name="check-box" id="check"
+                                   type="checkbox"
+                                   value="{{ client.id }}">
+                        </td>
+                        <td class="numbered"></td>
+                        <td onclick="location.href='{{ url_for('update_client', client_id = client.id) }}'">{{ client.client_name }}
+                        </td>
+                        <td onclick="location.href='{{ url_for('update_client', client_id = client.id) }}'">{{ client.email }}
+                        </td>
+                        <td onclick="location.href='{{ url_for('update_client', client_id = client.id) }}'">{{ client.phone_no }}
+                        </td>
+                        <td onclick="location.href='{{ url_for('update_client', client_id = client.id) }}'">{{ client.address }}
+                        </td>
+
+                        <td onclick="location.href='{{ url_for('update_client', client_id = client.id) }}'">
+                            &#8377 {{ client.overall_payable }}
+                        </td>
+
+                        <td onclick="location.href='{{ url_for('update_client', client_id = client.id) }}'">
+                            &#8377 {{ client.overall_received }}
+                        </td>
+
+                        <td onclick="location.href='{{ url_for('update_client', client_id = client.id) }}'">
+                            &#8377 {{ client.credit_amount }}</td>
+
+                    </tr>
                 {% endfor %}
-                {% if clients.has_next %}
-                <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
-                    <button type="button"
-                            onclick="location.href='{{ url_for('search_clients', page=clients.next_num, search=request.args.get('search', '')) }}'"
-                            class="btn btn-info btn-bg btn-sm text-white">Next
-                    </button>
+                </tbody>
+            </table>
+
+        </form>
+        <div class="row mb-5">
+            <div class="col">
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    {% if clients.has_prev %}
+                        <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                            <button type="button"
+                                    onclick="location.href='{{ url_for('search_clients', page=clients.prev_num, search=request.args.get('search', '')) }}'"
+                                    class="btn btn-info btn-sm btn-bg text-white">Previous
+                            </button>
+                        </div>
+                    {% endif %}
+                    {% for page in clients.iter_pages() %}
+                        {% if page %}
+                            {% if clients.page == page %}
+                                <div class="btn-group mr-2" role="group" aria-label="Second group"
+                                     style="padding:1px 2px">
+                                    <button type="button"
+                                            onclick="location.href='{{ url_for('search_clients', page=page, search=request.args.get('search', '')) }}'"
+                                            id="page_btn"
+                                            class="btn btn-warning btn-sm text-white">{{ page }}
+                                    </button>
+                                </div>
+                            {% else %}
+                                <div class="btn-group mr-2" role="group" aria-label="Second group"
+                                     style="padding:1px 2px">
+                                    <button type="button"
+                                            onclick="location.href='{{ url_for('search_clients', page=page, search=request.args.get('search', '')) }}'"
+                                            id="page_btn"
+                                            class="btn btn-info btn-bg btn-sm">{{ page }}
+                                    </button>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            . . .
+                        {% endif %}
+                    {% endfor %}
+                    {% if clients.has_next %}
+                        <div class="btn-group mr-2" role="group" aria-label="Second group" style="padding:1px 2px">
+                            <button type="button"
+                                    onclick="location.href='{{ url_for('search_clients', page=clients.next_num, search=request.args.get('search', '')) }}'"
+                                    class="btn btn-info btn-bg btn-sm text-white">Next
+                            </button>
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </div>
     </div>
-</div>
-<br>
+    <br>
 
 
-<div hidden>
-    <form method="POST" action="/get_checked_boxes_for_client">
+    <div hidden>
+        <form method="POST" action="/get_checked_boxes_for_client">
 
-        <input type="text" id="rec_ids" name="rec_ids"/>
-        <button type="submit" class="del_button" id="stu_ids_submit">
-            Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
-        </button>
+            <input type="text" id="rec_ids" name="rec_ids"/>
+            <button type="submit" class="del_button" id="stu_ids_submit">
+                Del Selected<i class="fa fa-minus" aria-hidden="true"></i>
+            </button>
 
-    </form>
-</div>
+        </form>
+    </div>
 
-<script src="{{url_for('static', filename='js/client_checkbox.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/client_checkbox.js') }}"></script>
 
 
-{%endblock%}
+{% endblock %}

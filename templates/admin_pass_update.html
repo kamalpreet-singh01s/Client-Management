@@ -1,45 +1,45 @@
-{%extends "index.html"%}
+{% extends "index.html" %}
 
-{%block content%}
+{% block content %}
 
-<div class="row w-25 mx-auto">
-    <div class="row text-center mt-5 mb-3">
-        <h4>Change Password</h4>
+    <div class="row w-25 mx-auto">
+        <div class="row text-center mt-5 mb-3">
+            <h4>Change Password</h4>
+        </div>
+
+        <form method="POST" action="{{ change_admin_pass }}">
+            <div class="col mb-2">
+                {% include 'alert.html' %}
+            </div>
+            <div class="col mb-3">
+                <button type="button" class="btn btn-info btn-sm btn-bg" style="padding:0.3rem 1.5rem"
+                        onclick="location.href='{{ url_for('admin_details', admin_id = admin_id) }}'">
+                    &#8592 Back
+                </button>
+            </div>
+            <div class="col">
+                <label class="mb-2">Current Password <span style="color:red">*</span></label>
+                <input class="form-control" type="password" name="current_password" required>
+
+                <div class="row">
+                    <div class="col">
+                        <label class="mb-2">New Password <span style="color:red">*</span></label>
+                        <input class="form-control" type="password" name="new_password" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="mb-2">Confirm Password <span style="color:red">*</span></label>
+                        <input class="form-control" type="password" name="confirm_password" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <button type="submit" class="btn btn-primary btn-sm mt-3 w-100 btn-bg">Change Password</button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
-    <form method="POST" action="{{change_admin_pass}}">
-        <div class="col mb-2">
-            {% include 'alert.html' %}
-        </div>
-        <div class="col mb-3">
-            <button type="button" class="btn btn-info btn-sm btn-bg" style="padding:0.3rem 1.5rem"
-                    onclick="location.href='{{ url_for('admin_details', admin_id = admin_id) }}'">
-                &#8592 Back
-            </button>
-        </div>
-        <div class="col">
-            <label class="mb-2">Current Password <span style="color:red">*</span></label>
-            <input class="form-control" type="password" name="current_password" required>
-
-            <div class="row">
-                <div class="col">
-                    <label class="mb-2">New Password <span style="color:red">*</span></label>
-                    <input class="form-control" type="password" name="new_password" required>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <label class="mb-2">Confirm Password <span style="color:red">*</span></label>
-                    <input class="form-control" type="password" name="confirm_password" required>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col text-center">
-                    <button type="submit" class="btn btn-primary btn-sm mt-3 w-100 btn-bg">Change Password</button>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
-
-{%endblock%}
+{% endblock %}

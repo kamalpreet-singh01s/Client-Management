@@ -1,41 +1,37 @@
+let cli_values = [];
 
-var cli_values=[];
+let textbox = document.getElementById("rec_ids")
 
-textbox = document.getElementById("rec_ids")
-
-$(".form-check-input").click(function(){
-    cli_values=[];
-    $(".form-check-input").each(function(){
-        if($(this).is(":checked")){
-        cli_values.push($(this).val());
+$(".form-check-input").click(function () {
+    cli_values = [];
+    $(".form-check-input").each(function () {
+        if ($(this).is(":checked")) {
+            cli_values.push($(this).val());
         }
-        });
-        console.log(cli_values);
-        textbox.value = cli_values
+    });
+    console.log(cli_values);
+    textbox.value = cli_values
+
+});
+
+
+let get_check_for_csv = [];
+
+let textbox3 = document.getElementById("check_rec_ids")
+
+$(".form-check-input").click(function () {
+    get_check_for_csv = [];
+    $(".form-check-input").each(function () {
+        if ($(this).is(":checked")) {
+            get_check_for_csv.push($(this).val());
+        }
+
 
     });
+    console.log(get_check_for_csv);
+    textbox3.value = get_check_for_csv
 
-
-var get_check_for_csv=[];
-
-textbox3 = document.getElementById("check_rec_ids")
-
-$(".form-check-input").click(function(){
-    get_check_for_csv=[];
-    $(".form-check-input").each(function(){
-        if($(this).is(":checked")){
-        get_check_for_csv.push($(this).val());
-        }
-
-
-        });
-        console.log(get_check_for_csv);
-        textbox3.value = get_check_for_csv
-
-    });
-
-
-
+});
 
 
 //
@@ -49,20 +45,17 @@ $(".form-check-input").click(function(){
 //});
 
 function toggleDelbox() {
-  var elems = document.querySelectorAll('.hidden');
-  var shouldShowList = false;
-  elems.forEach(function(elem) {
-    if (elem.checked) {
-      shouldShowList = true;
-    }
-  });
-  document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
-  document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
-  document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
+    let elems = document.querySelectorAll('.hidden');
+    let shouldShowList = false;
+    elems.forEach(function (elem) {
+        if (elem.checked) {
+            shouldShowList = true;
+        }
+    });
+    document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
+    document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
+    document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
 }
-
-
-
 
 
 //function check_box() {
@@ -73,9 +66,9 @@ function toggleDelbox() {
 //}
 
 
-function del_fun(){
-        $('#stu_ids_submit').click()
-    }
+function del_fun() {
+    $('#stu_ids_submit').click()
+}
 
 //$(document).ready(function() {
 //
@@ -87,39 +80,37 @@ function del_fun(){
 //});
 
 
-
-
-  $("#check-All").change(function() {
-    var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+$("#check-All").change(function () {
+    let checkboxes = document.querySelectorAll('input[type="checkbox"]');
 //    var selectAll = document.getElementById("select_all");
-    for (var i = 0; i < checkboxes.length; i++) {
+    for (let i = 0; i < checkboxes.length; i++) {
         checkboxes[i].checked = !checkboxes[i].checked;
-        if(checkboxes[i].checked){
+        if (checkboxes[i].checked) {
             cli_values.push(checkboxes[i].getAttribute("value"));
 //            $("#add").hide();
 //             $("#check_rec_ids_btn").show();
 //             $update_check = $("#update_check").show();
 //             $update_label = $("#update_label").show();
 //             $("#action_dropdown").show()
-                var elems = document.querySelectorAll('.hidden');
-              var shouldShowList = false;
-              elems.forEach(function(elem) {
+            let elems = document.querySelectorAll('.hidden');
+            let shouldShowList = false;
+            elems.forEach(function (elem) {
                 if (elem.checked) {
-                  shouldShowList = true;
+                    shouldShowList = true;
                 }
-              });
-              document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
-              document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
-              document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
+            });
+            document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
+            document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
+            document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
 
 
             document.getElementById("rec_ids").value = cli_values
             document.getElementById("check_rec_ids").value = cli_values
-            var element = document.getElementById("check-All");
-             element.checked = true;
-        }else{
+            let element = document.getElementById("check-All");
+            element.checked = true;
+        } else {
 
-            var index = cli_values.indexOf(checkboxes[i].getAttribute("value"));
+            let index = cli_values.indexOf(checkboxes[i].getAttribute("value"));
             if (index > -1) {
                 cli_values.splice(index, 1);
 //                $("#add").show();
@@ -127,19 +118,19 @@ function del_fun(){
 //                $update_check = $("#update_check").hide();
 //                $update_label = $("#update_label").hide();
 //                $("#action_dropdown").hide()
-                var elems = document.querySelectorAll('.hidden');
-              var shouldShowList = false;
-              elems.forEach(function(elem) {
-                if (elem.checked) {
-                  shouldShowList = true;
-                }
-              });
-              document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
-              document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
-              document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
+                let elems = document.querySelectorAll('.hidden');
+                let shouldShowList = false;
+                elems.forEach(function (elem) {
+                    if (elem.checked) {
+                        shouldShowList = true;
+                    }
+                });
+                document.querySelector('#action_dropdown').style.display = shouldShowList ? '' : 'none';
+                document.querySelector('#generate_custom_report').style.display = shouldShowList ? '' : 'none';
+                document.querySelector('#add').style.display = shouldShowList ? 'none' : '';
 
-                var element = document.getElementById("check-All");
-             element.checked = false;
+                let element = document.getElementById("check-All");
+                element.checked = false;
             }
         }
     }
@@ -148,12 +139,12 @@ function del_fun(){
 });
 
 
-$(document).ready(function() {
-  var rows = $("#table-count tr");
-  rows.each(function(index) {
-    var column = $(this).find("td:nth-child(2)");
-    if (column.length) {
-      column.text(index);
-    }
-  });
+$(document).ready(function () {
+    let rows = $("#table-count tr");
+    rows.each(function (index) {
+        let column = $(this).find("td:nth-child(2)");
+        if (column.length) {
+            column.text(index);
+        }
+    });
 });

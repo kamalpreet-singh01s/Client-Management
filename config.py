@@ -14,8 +14,7 @@ class ProductionConfig(Config):
     DEBUG = False
     SECRET_KEY = config['SECRET_KEY']
     # SQLALCHEMY_DATABASE_URI = f"mysql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}/{config['DB_NAME']}"
-    # SQLALCHEMY_DATABASE_URI = f"postgresql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}:{config['DB_PORT']}/{config['DB_NAME']}"
-    
+    SQLALCHEMY_DATABASE_URI = f"postgresql://{config['DB_USER']}:{config['DB_PASSWORD']}@{config['DB_HOST']}:{config['DB_PORT']}/{config['DB_NAME']}"
 
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 

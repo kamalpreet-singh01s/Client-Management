@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
-
 from wtforms import SelectField
-from models import db, Gst
 from wtforms_sqlalchemy.fields import QuerySelectField
+
+from models import Gst
 
 
 class Form(FlaskForm):

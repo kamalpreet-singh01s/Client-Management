@@ -1,5 +1,5 @@
 $("#amount").keyup(function () {
-    if($(this).val() == "") {
+    if ($(this).val() === "") {
         $("#approve_button").hide();
         $("#cancel_button").hide();
     } else {
@@ -8,7 +8,6 @@ $("#amount").keyup(function () {
         $("#approve_button").show();
     }
 });
-
 
 
 //    document.getElementById('see_all_for_approved').hidden = false;

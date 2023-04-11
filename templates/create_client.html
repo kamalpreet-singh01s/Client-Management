@@ -1,62 +1,59 @@
 {% extends 'index.html' %}
 
 {% block content %}
-{% include 'alert.html' %}
+    {% include 'alert.html' %}
+    <style>
+        label {
+            font-weight: bold;
+        }
+    </style>
 
-
-<style>
-
-label{
-font-weight:bold;
-}
-
-
-
-</style>
-
-<div class="row w-75 mx-auto mt-5" style="background-color:#eff4ff; border-radius:20px">
-    <div class="col">
-        <div class="col-8 mx-auto">
-            <form action="{{url_for('add_client')}}" method="POST">
-                <br>
-
-                <br>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label class="form-label">Client Full Name<span style="color:red">*</span></label>
-                        <input type="text" class="form-control" value="{{request.form['client_name']}}" placeholder="Client Name" name="client_name"
-                               required>
-                    </div>
-                    <div class="col">
-                        <label class="form-label">Email<span style="color:red">*</span></label>
-                        <input type="text" class="form-control" placeholder="Email" value="{{request.form['email']}}" name="email" required>
-
-                    </div>
-                </div>
-
-                <div>
-                    <label class="form-label">Phone No.<span style="color:red">*</span></label>
-                    <input type="number" class="form-control" placeholder="Phone No." value="{{request.form['phone_no']}}" name="phone_no">
+    <div class="row w-75 mx-auto mt-5" style="background-color:#eff4ff; border-radius:20px">
+        <div class="col">
+            <div class="col-8 mx-auto">
+                <form action="{{ url_for('add_client') }}" method="POST">
                     <br>
-                </div>
-                <div>
-                    <label class="form-label">Address<span style="color:red">*</span></label>
-                    <textarea class="form-control" name="address" placeholder="Address" required>{{request.form['address']}}</textarea>
+
                     <br>
-                </div>
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="form-label">Client Full Name<span style="color:red">*</span></label>
+                            <input type="text" class="form-control" value="{{ request.form['client_name'] }}"
+                                   placeholder="Client Name" name="client_name"
+                                   required>
+                        </div>
+                        <div class="col">
+                            <label class="form-label">Email<span style="color:red">*</span></label>
+                            <input type="text" class="form-control" placeholder="Email"
+                                   value="{{ request.form['email'] }}" name="email" required>
+
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Phone No.<span style="color:red">*</span></label>
+                        <input type="number" class="form-control" placeholder="Phone No."
+                               value="{{ request.form['phone_no'] }}" name="phone_no">
+                        <br>
+                    </div>
+                    <div>
+                        <label class="form-label">Address<span style="color:red">*</span></label>
+                        <textarea class="form-control" name="address" placeholder="Address"
+                                  required>{{ request.form['address'] }}</textarea>
+                        <br>
+                    </div>
 
 
-                <div class="d-grid gap-2 col-4 mx-auto">
-                    <button type="submit" class="btn btn-bg">Create Client</button>
-                </div>
+                    <div class="d-grid gap-2 col-4 mx-auto">
+                        <button type="submit" class="btn btn-bg">Create Client</button>
+                    </div>
 
-            </form>
-            <br>
+                </form>
+                <br>
+            </div>
+
         </div>
-
     </div>
-</div>
 
-
-{% include 'footer.html' %}
+    {% include 'footer.html' %}
 {% endblock %}

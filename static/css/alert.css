@@ -1,44 +1,45 @@
 .error {
-  padding: 20px;
-  background-color: #f44336;
-  color: white;
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
 }
 
 .success {
-  padding: 20px;
-  background-color: #078927;
-  color: white;
+    padding: 20px;
+    background-color: #078927;
+    color: white;
 }
 
 .closebtn {
-  margin-left: 15px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 22px;
-  line-height: 20px;
-  cursor: pointer;
-  transition: 0.3s;
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 .closebtn:hover {
-  color: black;
+    color: black;
 }
 
-.btn-bg{
-background-color:#17a2b8; color:white
+.btn-bg {
+    background-color: #17a2b8;
+    color: white
 }
 
-.btn-bg:hover{
-    background-color:#31d2f2 !important;
-    color:black !important;
+.btn-bg:hover {
+    background-color: #31d2f2 !important;
+    color: black !important;
 }
 
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 
