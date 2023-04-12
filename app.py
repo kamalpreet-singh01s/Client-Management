@@ -1167,7 +1167,6 @@ def approve_voucher(voucher_id):
             client.overall_received = client.overall_received + sale_order.total_payable
             sale_order.total_payable = 0
 
-
     elif client.credit_amount == 0 and voucher_to_update.amount > client.overall_payable:
         print("voucher greater")
         client.credit_amount = client.credit_amount + (voucher_to_update.amount - client.overall_payable)
@@ -1180,21 +1179,15 @@ def approve_voucher(voucher_id):
         print("credit greater")
         client.overall_payable = client.overall_payable - voucher_to_update.amount
         client.overall_received = client.overall_received + voucher_to_update.amount
-        # client.credit_amount = client.credit_amount - voucher_to_update.amount
 
         sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
         sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
-        # client.credit_amount = 0
 
     elif client.credit_amount < voucher_to_update.amount:
         print("credit less")
-        # client.overall_received = client.overall_received + (voucher_to_update.amount - client.overall_payable)
-        # client.overall_payable = client.overall_payable - (voucher_to_update.amount - client.overall_payable)
 
         if voucher_to_update.amount < sale_order.total_payable:
             sale_order.total_payable = sale_order.total_payable - voucher_to_update.amount
-            # if sale_order.total_payable < 0:
-            #     sale_order.total_payable = 0
             sale_order.total_paid = sale_order.total_paid + voucher_to_update.amount
             client.overall_received = client.overall_received + voucher_to_update.amount
             client.overall_payable = client.overall_payable - voucher_to_update.amount
@@ -1204,9 +1197,6 @@ def approve_voucher(voucher_id):
             client.overall_payable = client.overall_payable - sale_order.total_payable
             client.overall_received = client.overall_received + sale_order.total_payable
             sale_order.total_payable = 0
-
-
-
 
     elif client.credit_amount == voucher_to_update.amount:
         print("equal")
@@ -1300,7 +1290,6 @@ def file_upload():
         sale_order = SalesOrder.query.all()
         count = 0
         while count != len(read_file):
-
             if 'Id' in read_file.columns:
                 if count >= len(read_file):
                     break
