@@ -1280,9 +1280,9 @@ def search_vouchers():
         sale_order_ids = [sale_order.id for sale_order in sale_orders]
         client_ids = [client.id for client in clients]
         if all_vouchers := PaymentVoucher.query.filter(
-            PaymentVoucher.reference_no.ilike(f"%{search}%")
-            | PaymentVoucher.sales_order_id.in_(sale_order_ids)
-            | PaymentVoucher.client_id.in_(client_ids)
+                PaymentVoucher.reference_no.ilike(f"%{search}%")
+                | PaymentVoucher.sales_order_id.in_(sale_order_ids)
+                | PaymentVoucher.client_id.in_(client_ids)
         ).all():
             return render_template('list_of_all_payment_vouchers.html', all_vouchers=all_vouchers)
         flash(No_Record_Found)
@@ -1350,7 +1350,7 @@ def file_upload():
                     print(bill_no_exists)
                     if bill_no_exists:
                         if get_sale_order_id := SalesOrder.query.filter_by(
-                            bill=str(read_file.loc[count, 'Bill No.'])
+                                bill=str(read_file.loc[count, 'Bill No.'])
                         ).first():
                             flash(f"Bill no {get_sale_order_id.bill} already exists in the Database! \n"
                                   f"Duplicate Bill No. at Row No. {count + 2}.")
